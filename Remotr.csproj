@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.46.0" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Orleans" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>Remotr</Title>
+    <Company>Aurelius LLC</Company>
+    <Authors>Thomas McEwen, Kiran Jacob</Authors>
+    <Description>A CQRS actor framework that wraps .Net Orleans to provide a different API that reduces deadlocks and allows for complex transactional state management.</Description>
+    <PackageTags>cqrs, actors, orleans, transactions, distributed, deadlocks, actor deadlocks, grains</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
