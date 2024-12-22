@@ -9,14 +9,14 @@
    7. Testing with Remotr  
    8. Examples  
 ## Quickstart  
-   1. Installing  
-   2. Setting Up IPersistentState Injection  
+### Installing  
+### Setting Up IPersistentState Injection  
       1. Set up for a single partition type (i.e. a single Cosmos container)  
          1) Creating a Manager Grain  
          2) DIing the IPersistentStore  
          3) Note: don’t put methods on the Manager Grain  
       2. Multiple partition type setup with Keyed DI  (i.e. multiple Cosmos containers)  
-   3. API documentation for more.  
+### API documentation for more.  
       1. [How to Best Use Remotr](?tab=t.0#bookmark=id.8my9k5fjbgbf)  
       2. [Remotr API documentation](?tab=t.0#bookmark=id.3y1k42j7wkv2)  
 ## Why Remotr was Created?  
