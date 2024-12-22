@@ -19,10 +19,8 @@
    2) DIing the IPersistentStore  
    3) Note: don’t put methods on the Manager Grain  
 2. Multiple partition type setup with Keyed DI  (i.e. multiple Cosmos containers)
- 
-### API documentation for more.  
-1. [How to Best Use Remotr](?tab=t.0#bookmark=id.8my9k5fjbgbf)  
-2. [Remotr API documentation](?tab=t.0#bookmark=id.3y1k42j7wkv2)  
+3. [View the API documentation for more.](#Remotr-Docs)
+  
 ## Why Remotr was Created?  
 1. Composite Transactional State  
    1. Child grain ids can be reused safely because of grain partitioning, meaning that there will only be one instance per partition of a child grain state with a particular id  
