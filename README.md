@@ -1,5 +1,5 @@
 
-1. Index  
+## Index  
    1. Quickstart  
    2. Why Remotr was Created?  
    3. Remotr Docs  
@@ -8,7 +8,7 @@
    6. Patterns  
    7. Testing with Remotr  
    8. Examples  
-2. Quickstart  
+## Quickstart  
    1. Installing  
    2. Setting Up IPersistentState Injection  
       1. Set up for a single partition type (i.e. a single Cosmos container)  
@@ -19,7 +19,7 @@
    3. API documentation for more.  
       1. [How to Best Use Remotr](?tab=t.0#bookmark=id.8my9k5fjbgbf)  
       2. [Remotr API documentation](?tab=t.0#bookmark=id.3y1k42j7wkv2)  
-3. Why Remotr was Created?  
+## Why Remotr was Created?  
    1. Composite Transactional State  
       1. Child grain ids can be reused safely because of grain partitioning, meaning that there will only be one instance per partition of a child grain state with a particular id  
          1) Singleton id pattern within a partition.  
@@ -41,7 +41,7 @@
       3. However, commands can’t be started if there are ongoing query executions, meaning that if a command is queued, it must wait for all active queries to finish before it can start. This is something that could be fixed in the future. It does imply that, for now, there could be write starvation if a partition constantly has interleaving queries, an unlikely scenario.  
    5. Child grain placement  
       1. Because child grains are always technically Stateless Worker Grains (an Orleans feature), they are always co-located with their manager grain, without exception. This means that while a grain partition could theoretically hold many gigabytes of data that isn’t in memory, developers should ensure that a large (many gigabytes in size) grain partition should never be active all at once. Child grains should be instantiated when necessary. If this is unavoidable, then the partition should probably be broken down into more granular parts anyways.   
-4. Remotr Docs  
+## Remotr Docs  
    1. First, you need to know…  
       1. Orleans  
          1) [https://learn.microsoft.com/en-us/dotnet/orleans/overview](https://learn.microsoft.com/en-us/dotnet/orleans/overview)   
@@ -97,11 +97,11 @@
       1. No possibility for sharing in-memory state between commands and queries other than the state of a Child Grain itself.  
          1) Note: this is something that will most likely be added in the future.  
    3. Reminders/Timers (don’t do it)  
-6. BAD PRACTICES  
+## BAD PRACTICES  
    1. Don’t inject the ExternalCommandFactory into a Command or Query. If a command or query doesn’t have access to a type of factory, this is by design. Only use the CommandFactory or QueryFactory which is found in the commands and queries by default.  
    2. NEVER run cross-partition commands. This shouldn’t even be possible without injecting the ExternalCommandFactory into a Command or Query.  
    3. Calling the Manager Grain of a Child Grain from the Child Grain itself. This is an inversion of the expected control flow, and usually makes it impossible to reuse Child Grains for other types of Manager Grains. It will also cause a deadlock (on itself) if you run a command against the Manager Grain from one of that Manager Grain’s Child Grains.   
-7. Patterns  
+## Patterns  
    1. Singleton IDs  
-8. Testing with Remotr  
-9. Examples
+## Testing with Remotr  
+## Examples
