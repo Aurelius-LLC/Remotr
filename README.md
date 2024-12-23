@@ -6,7 +6,7 @@ Remotr was created to simplify 3 common scenarios:</p>
 
 1. You want to use a database which allows for querying data using a rich SQL-like syntax.
 2. You want transactions that can span different grains without compromising on the previous point.
-3. You want to eliminate all non-cyclical actor deadlocks.
+3. You want to eliminate all actor deadlocks which aren't infinite cyclical deadlocks.
 
 ---
 
