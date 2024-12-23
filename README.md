@@ -12,26 +12,106 @@ Remotr was created to simplify 3 common scenarios:</p>
 
 
 ## Index  
-   1. Quickstart  
-   2. Why Remotr was Created?  
-   3. Remotr Docs  
-   4. Orleans Feature Differences  
-   5. BAD PRACTICES  
-   6. Patterns  
-   7. Testing with Remotr  
-   8. Examples
+   1. [Quickstart](#Quickstart)  
+   2. [Why Remotr was Created?](#Why-Remotr-was-Created?)
+   3. [Remotr Docs](#Remotr-Docs)  
+   4. [Orleans Feature Differences](#Orleans-Feature-Differences)  
+   5. [BAD PRACTICES](#BAD-PRACTICES)  
+   6. [Patterns](#Patterns)
+   7. [Testing with Remotr](#Testing-with-Remotr)
+   8. [Examples](#Examples)
 
 ## Quickstart
 
 ### Installing  
 
 ### Setting Up IPersistentState Injection  
-1. Set up for a single partition type (i.e. a single Cosmos container)  
-   1) Creating a Manager Grain  
-   2) DIing the IPersistentStore  
-   3) Note: don’t put methods on the Manager Grain  
-2. Multiple partition type setup with Keyed DI  (i.e. multiple Cosmos containers)
-3. [View the API documentation for more.](#Remotr-Docs)
+1. Add the Nuget package "Remotr" as a dependency of the project.
+2. Set up Orleans: [Orleans Quickstart Docs](https://learn.microsoft.com/en-us/dotnet/orleans/quickstarts/build-your-first-orleans-app?tabs=visual-studio)
+4. Set up Program.cs for Remotr
+
+   - Right now, only Cosmos is supported as a Database; however, other databases which support batch JSON transactions could be added in the future.
+   </br>
+   
+   ```csharp
+
+      // Set up Cosmos.
+      var cosmosClient = new CosmosClient(
+   
+         // Your Cosmos connection string.
+         builder.Configuration["COSMOS_CONNECTION_STRING"],
+   
+         new CosmosClientOptions()
+         {
+            // Define how Cosmos serializes properties.
+            SerializerOptions = new()
+            {
+               PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            }
+         }
+      );
+
+      // Set up Remotr
+      builder.Host.UseOrleans(siloBuilder =>
+      {
+          siloBuilder.UseRemotr(remotrBuilder =>
+          {
+              remotrBuilder.UseCosmosPersistence(cosmosClient, "trackr", cosmosBuilder =>
+              {
+                  // Transform GrainIds into corresponding Cosmos item ids for each Cosmos Container.
+                  // Cosmos item ids must be strings.
+                  cosmosBuilder.AddContainer("Customer", "/customerId", grainId =>  grainId.GetGuidKey().ToString());
+                  cosmosBuilder.AddContainer("Store", "/storeId", grainId => grainId.ToString());
+
+                  // Your Json serializer options.
+                  cosmosBuilder.UseJsonSerializer(jsonSerializerOptions);
+              });
+          });
+
+         ///
+         /// Other Orleans setup code
+         ///
+      });
+
+      // Don't forget to add the CosmosClient to the IServiceCollection as a singleton dependency.
+      serviceCollection.AddSingleton(cosmosClient);
+   ```
+6. Set up for a single partition type (i.e. a single Cosmos container)  
+   1) Creating a Manager Grain
+
+      ```csharp
+         // Create your grain interface.
+         using Remotr;
+
+         namespace MyNamespace;
+
+         // Make the Manager Grain interface.
+         // Using "Api" or "Manager" before Grain can signal that it's a Manager grain
+         public interface ICustomerApiGrain : ITransactionManagerGrain, IGrainWithGuidKey // For Manager grains, you can define what type of Grain key they will use.
+         {
+            // This will ALWAYS be empty.
+            // The interface simply defines how the Manager grain is accessed.
+         }
+
+         // Make the Manager Grain implementation.
+         // Need to have Manager Grains inherit from TransactionManagerGrain<IType> and IType
+         public class CustomerApiGrain : TransactionManagerGrain<ICustomerApiGrain>, ICustomerApiGrain
+         {
+            // Define what persistent store to use
+            // This comes from the previous code block cosmosBuilder.AddContainer("Customer" ...
+            public UserApiGrain([FromKeyedServices("Customer")] IPersistentStore persistentStore) : base(persistentStore)
+            {
+               // This will ALWAYS be empty.
+            }
+         }
+      ```
+
+      **That's it. You will never add methods to the Manager Grain itself. Instead, you will make queries and commands which can operate on it. More on that later.**
+
+   3) DIing the IPersistentStore  
+   4) Note: don’t put methods on the Manager Grain  
+7. Multiple partition type setup with Keyed DI  (i.e. multiple Cosmos containers)
+8. [View the API documentation for more.](#Remotr-Docs)
 
 
   
