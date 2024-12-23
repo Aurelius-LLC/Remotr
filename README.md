@@ -28,7 +28,7 @@ Remotr was created to simplify 3 common scenarios:</p>
 2. Set up Orleans: [Orleans Quickstart Docs](https://learn.microsoft.com/en-us/dotnet/orleans/quickstarts/build-your-first-orleans-app?tabs=visual-studio)
 4. Set up Program.cs for Remotr
 
-   - Right now, only Cosmos is supported as a Database; however, other databases which support batch JSON transactions could be added in the future.
+   - Right now, only Cosmos is supported as a database; however, other databases which support batch JSON transactions could be added in the future.
    </br>
    
    ```csharp
