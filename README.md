@@ -150,8 +150,8 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 
 ## Common Useful Remotr Patterns  
-1. **Singleton Child Grain IDs:** 
-2. **Empty Commands:** 
+1. **Singleton Child Grain IDs:** TODO
+2. **Empty Commands:** TODO
 
 
 ## TODO: Testing with Remotr  
