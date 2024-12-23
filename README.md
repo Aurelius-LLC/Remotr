@@ -97,7 +97,7 @@ Remotr was created to simplify 3 common scenarios:</p>
          {
             // Define what persistent store to use
             // This comes from the previous code block cosmosBuilder.AddContainer("Customer" ...
-            public UserApiGrain([FromKeyedServices("Customer")] IPersistentStore persistentStore) : base(persistentStore)
+            public CustomerApiGrain([FromKeyedServices("Customer")] IPersistentStore persistentStore) : base(persistentStore)
             {
                // This will ALWAYS be empty.
             }
@@ -190,10 +190,52 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
       1) Creating a Manager Grain: Refer to the [Quickstart](#Quickstart) for how to create Manager Grains.
          - **Note:** never add methods to Manager Grains. Instead, queries and commands should be written separately.
  
-      3) Creating a Child Grain  
+      3) Creating a Child Grain 
+         1) Child grains are created by defining the state of the grain.
+            ```csharp
+            [GenerateSerializer]
+            public sealed record CustomerState
+            {
+                [Id(0)]
+                public string Id { get; set; } = string.Empty;
+
+                [Id(1)]
+                public string FirstName { get; set; } = string.Empty;
+
+                [Id(2)]
+                public string LastName { get; set; } = string.Empty;
+
+                [Id(3)]
+                public string PhoneNumber {get; set; } = string.Empty;
+
+                [Id(4)]
+                public string Address { get; set; } = string.Empty;
+            }
+            ```
+            **IMPORTANT: Always add the GenerateSerializer attribute to child grain states.**
 
       4) Creating Commands and Queries  
-         1) Any registered services can be DIed into commands and queries  
+         // Any registered services can be DIed into commands and queries
+         1) Extend StatefulCommandHandler to create a command
+            ```csharp
+            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            {
+                public override async Task<bool> Execute(UpateCustomerInfoInput input) { ... }
+            }
+            
+            [GenerateSerializer]
+            public sealed record UpdateCustomerInfoInput(
+                string FirstName,
+                string LastName,
+                string PhoneNumber,
+                string Address);
+            ```
+            - The StatefulCommandHandler has three generic type parameters:
+                1) The state of the child grain the command is acting on
+                2) The input to the command
+                3) The return value of Execute
+            - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
+            - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
 
       5) Reading and Writing State  
          1) Only for Child Grains  
