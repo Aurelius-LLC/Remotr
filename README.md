@@ -23,9 +23,7 @@ Remotr was created to simplify 3 common scenarios:</p>
 
 ## Quickstart
 
-### Installing  
-
-### Setting Up IPersistentState Injection  
+### Installing and Set up
 1. Add the Nuget package "Remotr" as a dependency of the project.
 2. Set up Orleans: [Orleans Quickstart Docs](https://learn.microsoft.com/en-us/dotnet/orleans/quickstarts/build-your-first-orleans-app?tabs=visual-studio)
 4. Set up Program.cs for Remotr
