@@ -125,17 +125,18 @@ Remotr was created to simplify 3 common scenarios:</p>
 
 
 3. **Deadlocking Solved by Remotr** 
-   1. In Remotr, much like “async” is in many languages, CQRS is an infectious programming model. This means that once something is made as a query, not only can it not execute commands itself, but any downstream queries that it calls can’t execute commands either. This gives you a guarantee that executing a query on a Manager Grain will *never* result in any state being updated for the entire grain partition. This can drastically reduce the scope that a developer needs to reason about when considering if a particular method could safely write against state without causing upstream or downstream issues.
+   1. **Contagious Programming Model:** In Remotr, much like “async” is in many languages, CQRS is an contagious programming model. This means that once something is made as a query, not only can it not execute commands itself, but any downstream queries that it calls can’t execute commands either. This gives you a guarantee that executing a query on a Manager Grain will *never* result in any state being updated for the entire grain partition. This can drastically reduce the scope that a developer needs to reason about when considering if a particular method could safely write against state without causing upstream or downstream issues.
 
-   2. That being said, an incredibly important design principle of Remotr is that you should never do cross-partition commands.  
+   2. **Cross-Partition Commands:** With the previous point in mind, an incredibly important design principle of Remotr is that **_you should never do cross-partition commands_**.  
       1) The obvious issue with cross-partition commands is that they won’t happen transactionally, one could succeed even though the other fails.  
-      2) Another issue is that cross-partition commands cannot be interleaved (with no exceptions), which means that grain partitions can have deadlocks among each other if they attempt to use commands amongst themselves.   
+      2) Another issue is that cross-partition commands cannot be interleaved (with no exceptions), which means that grain partitions can have deadlocks among each other if they attempt to use commands amongst themselves.
+      3) [Other bad practices](#BAD-PRACTICES) 
 
-   3. Alternatively, cross-partition queries are not only safe but even encouraged.   
+   3. **Cross-Partition Queries:** Unlike the previous point, cross-partition queries are not only safe but even encouraged.   
 
-   4. As a means of circumventing the restriction on cross-partition commands, any necessary transactions that must span partitions should be decoupled with an orchestration or choreography system. We recommend using Temporal to handle these with the durable execution model of long-running transactions.  
+   4. **Alternative to Cross-Partition Commands:** As a means of circumventing the restriction on cross-partition commands, any necessary transactions that must span partitions should be decoupled with an orchestration or choreography system. We recommend using Temporal to handle these with the durable execution model of long-running transactions.  
 
-   5. If cross-partition commands are always avoided, it should only be possible to create cyclical deadlocks with Remotr where a request causes an infinite call chain. These are much more difficult to cause on accident than the deadlocks which can result from non-interleaving calls happening between multiple grains.
+   5. **Potential for Deadlocks in Remotr:** If cross-partition commands are always avoided, it should only be possible to create cyclical deadlocks with Remotr where a request causes an infinite call chain. These are much more difficult to cause on accident than the deadlocks which can result from non-interleaving calls happening between multiple grains.
 
   
 5. **Performance Improvements with Remotr**  
@@ -216,7 +217,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
       4) Creating Commands and Queries  
          // Any registered services can be DIed into commands and queries
-         1) Extend StatefulCommandHandler to create a command
+         1) **Creating Commands:** Extend StatefulCommandHandler to create a command
             ```csharp
             public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
@@ -237,7 +238,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
             - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
             - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
             - If you do need an input, but do not want to return anything, a best practice is to return a bool the signals success or failure.
-         2) Extend StatefulQueryHandler to create a query
+         2) **Creating Queries:** Extend StatefulQueryHandler to create a query
             - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
             - The only difference is that StatefulQueryHandler cannot update state or call commands.
 
