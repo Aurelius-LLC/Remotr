@@ -7,6 +7,10 @@
     <PackageReference Include="Microsoft.Orleans.Server" Version="9.0.1" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
   <ItemGroup>
     <Using Include="Orleans" />
   </ItemGroup>
@@ -21,6 +25,7 @@
     <Description>A CQRS actor framework that wraps .Net Orleans to provide a different API that reduces deadlocks and allows for complex transactional state management.</Description>
     <PackageTags>cqrs, actors, orleans, transactions, distributed, deadlocks, actor deadlocks, grains</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
 </Project>

@@ -97,6 +97,8 @@ public sealed class UseCosmosPersistenceBuilder
 
     internal static JsonSerializerOptions? SerializerOptions { get; private set; }
 
+    public static JsonSerializerOptions? GetSerializerOptions() => SerializerOptions;
+
     internal UseCosmosPersistenceBuilder(IServiceCollection services, CosmosClient client, string databaseId)
     {
         if (_isConstructed)

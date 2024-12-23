@@ -1,6 +1,6 @@
 ﻿namespace Remotr;
 
-internal interface ICosmosPartitionedItem
+public interface ICosmosPartitionedItem
 {
     void SetPartitionKey(string partitionKey);
 }
