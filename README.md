@@ -197,7 +197,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
             public sealed record CustomerState
             {
                 [Id(0)]
-                public string Id { get; set; } = string.Empty;
+                public Guid Id { get; set; }
 
                 [Id(1)]
                 public string FirstName { get; set; } = string.Empty;
@@ -236,11 +236,82 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
                 3) The return value of Execute
             - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
             - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
+            - If you do need an input, but do not want to return anything, a best practice is to return a bool the signals success or failure.
+         2) Extend StatefulQueryHandler to create a query
+            - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
+            - The only difference is that StatefulQueryHandler cannot update state or call commands.
 
       5) Reading and Writing State  
-         1) Only for Child Grains  
+         1) Only for Child Grains
+            ```csharp
+            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            {
+                public override async Task<bool> Execute(UpateCustomerInfoInput input)
+                {
+                    var state = await GetState();
+                    var newState = state with
+                    {
+                        FirstName = input.FirstName,
+                        LastName = input.LastName,
+                        PhoneNumber = input.PhoneNumber,
+                        Address = input.Address
+                    };
+                    await UpdateState(newState);
+                }
+            }
+            ```
+            - Reading state can be done by calling GetState()
+            - Writing state can be done by calling UpdateState with the updated state. Only commands have access to UpdateState.
 
-      6) IExternalCommandFactory and IExternalQueryFactory  
+      6) IExternalCommandFactory and IExternalQueryFactory
+         ```csharp
+         public class Query
+         {
+             private readonly IExternalQueryFactory _queryFactory;
+
+             public Query(IExternalQueryFactory queryFactory)
+             {
+                 _queryFactory = queryFactory;
+             }
+
+             public async Task<CustomerInfo> GetCustomerInfo(Guid customerId)
+             {
+                 return await _queryFactory
+                     .GetManager<ICustomerApiGrain>()
+                     .Ask<RetrieveCustomerInfo, CustomerInfo>()
+                     .Run(customerId);
+             }
+             
+             ...
+         }
+
+         public class Mutation
+         {
+             private readonly IExternalCommandFactory _commandFactory;
+
+             private readonly IExternalQueryFactory _queryFactory;
+
+             public Mutation(IExternalCommandFactory commandFactory, IExternalQueryFactory queryFactory)
+             {
+                 _commandFactory = commandFactory;
+                 _queryFactory = queryFactory;
+             }
+
+             public Task UpdateCustomerInformation(Guid customerId, UpdateCustomerInfoInput input)
+             {
+                 await _commandFactory
+                     .GetManagerGrain<ICustomerApiGrain>()
+                     .Tell<UpdateCustomerInfo, UpdateCustomerInfoInput, bool>(input)
+                     .Run(customerId);
+             }
+
+             ...
+         }
+         ```
+         - External command and query factories should be injected into classes that will call
+           Api/Stateless commands and queries.
+         - They should never be injected into stateful or stateless commands and queries.
+           - If external commands or queries are required, use workflows.
 
       7) The appropriate Query and Command factories are always on the Command and Query handlers.  
          1) Don’t inject external factors into any commands or queries, this is *always* a bad practice and will likely trigger a runtime or build exception in future versions.  
@@ -270,7 +341,26 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 
    7. Extension Methods  
-      1) Extension methods are an extremely useful way to share functionality between different commands or queries that operate on the same Manager or Child Grain.  
+      1) Extension methods are an extremely useful way to share functionality between different commands or queries that operate on the same Manager or Child Grain.
+         ```csharp
+         public static class CustomerCommandExtensions
+         {
+             public static async Task<CustomerInfo> GetCustomerInfo(this BaseStatefulCommandHandler<CustomerState> target)
+             {
+                 var state = await target.GetState();
+                 return new CustomerInfo
+                 {
+                     FirstName = state.FirstName,
+                     LastName = state.LastName,
+                     PhoneNumber = state.PhoneNumber,
+                     Address = state.Address
+                 };
+             }
+         }
+         ```
+         - Extension methods can be added for queries and commands of a specific type.
+         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands.
+
 
 
    8. Other Useful Methods  
