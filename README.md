@@ -118,27 +118,40 @@ Remotr was created to simplify 3 common scenarios:</p>
    1. Child grain ids can be reused safely because of grain partitioning, meaning that there will only be one instance per partition of a child grain state with a particular id  
       1) Singleton id pattern within a partition.  
    2. Child grains can treat other children grains as “dependencies” that together form composite and/or hierarchical states which behave transactionally (commands all succeed or fail together across the grain partition).
+
  
 2. **Database Structure and Domain Driven Design**
    1. TODO
 
+
 3. **Deadlocking Solved by Remotr** 
-   1. In Remotr, much like “async” is in many languages, CQRS is an infectious programming model. This means that once something is made as a query, not only can it not execute commands itself, but any downstream queries that it calls can’t execute commands either. This gives you a guarantee that executing a query on a Manager Grain will *never* result in any state being updated for the entire grain partition. This can drastically reduce the scope that a developer needs to reason about when considering if a particular method could safely write against state without causing upstream or downstream issues.   
-   2. [Why can’t Remotr queries deadlock?]()  
-   3. That being said, an incredibly important design principle of Remotr is that you should never do cross-partition commands.  
+   1. In Remotr, much like “async” is in many languages, CQRS is an infectious programming model. This means that once something is made as a query, not only can it not execute commands itself, but any downstream queries that it calls can’t execute commands either. This gives you a guarantee that executing a query on a Manager Grain will *never* result in any state being updated for the entire grain partition. This can drastically reduce the scope that a developer needs to reason about when considering if a particular method could safely write against state without causing upstream or downstream issues.
+
+   2. That being said, an incredibly important design principle of Remotr is that you should never do cross-partition commands.  
       1) The obvious issue with cross-partition commands is that they won’t happen transactionally, one could succeed even though the other fails.  
       2) Another issue is that cross-partition commands cannot be interleaved (with no exceptions), which means that grain partitions can have deadlocks among each other if they attempt to use commands amongst themselves.   
-   4. Alternatively, cross-partition queries are not only safe but even encouraged.   
-   5. As a means of circumventing the restriction on cross-partition commands, any necessary transactions that must span partitions should be decoupled with an orchestration or choreography system. We recommend using Temporal to handle these with the durable execution model of long-running transactions.  
-   6. If cross-partition commands are always avoided, it should only be possible to create cyclical deadlocks with Remotr where a request causes an infinite call chain. These are much more difficult to cause on accident than the deadlocks which can result from non-interleaving calls happening between multiple grains.
-  
-4. **Performance Improvements with Remotr**  
-   1. Not only can queries safely interleave with both other queries as well as commands, but Remotr introduces safe and straightforward multithreading in the form of having composite states which are formed with multiple grains _(technically, Orleans StatelessWorker grains)_.   
-   2. Again, queries against a Manager Grain can interleave with ongoing commands, even when those commands cause state changes. Because of this, queries executed against Manager Grains simply can't cause non-cyclical deadlocks. Queries are also guaranteed to have a consistent view of the grain partition state throughout all inter-partition calls for the entirety of the query execution due to a timestamp managed state system that creates ephemeral copies of the state which allow transactions to manipulate different versions of the state that what queries are viewing.  
-   3. However, commands can’t be started if there are ongoing query executions, meaning that if a command is queued, it must wait for all active queries to finish before it can start. This is something that could be fixed in the future. It does imply that, for now, there could be write starvation if a partition constantly has interleaving queries, an unlikely scenario.
-   4. **Infinite Cyclical Deadlocks:** These are deadlocks which Remotr can't fix that occur due to an infinite chain of messages that rotates between different grains such as A -> B -> A. It would be fine for a cyclical call to happen as long as the chain is eventually broken; however, if the calls simply go on forever, then there's nothing Remotr will do to fix that.
 
-5. **Child grain placement**\
+   3. Alternatively, cross-partition queries are not only safe but even encouraged.   
+
+   4. As a means of circumventing the restriction on cross-partition commands, any necessary transactions that must span partitions should be decoupled with an orchestration or choreography system. We recommend using Temporal to handle these with the durable execution model of long-running transactions.  
+
+   5. If cross-partition commands are always avoided, it should only be possible to create cyclical deadlocks with Remotr where a request causes an infinite call chain. These are much more difficult to cause on accident than the deadlocks which can result from non-interleaving calls happening between multiple grains.
+
+  
+5. **Performance Improvements with Remotr**  
+
+   1. Not only can queries safely interleave with both other queries as well as commands, but Remotr introduces safe and straightforward multithreading in the form of having composite states which are formed with multiple grains _(technically, Orleans StatelessWorker grains)_.   
+
+   2. Again, queries against a Manager Grain can interleave with ongoing commands, even when those commands cause state changes. Because of this, queries executed against Manager Grains simply can't cause deadlocks that aren't infinite call cycles. Queries are also guaranteed to have a consistent view of the grain partition state throughout all inter-partition calls for the entirety of the query execution due to a timestamp managed state system that creates ephemeral copies of the state which allow transactions to manipulate different versions of the state that what queries are actively viewing. Technically, this implies that queries are eventually consistent; however, the states of queries will ever only be able to lag behind the ongoing manager command. This is almost always innocuous for all purposes.
+
+   3. While queries can interleave with ongoing commands, commands can’t be started if there are ongoing query executions. This means that if a command is queued, it must wait for all active queries to finish before it can start. This is something that could be fixed in the future. It does imply that, for now, there could be write starvation if a partition constantly has interleaving queries, an unlikely scenario.
+  
+   4. **Command Reentrancy:** In Orleans, there are many ways that grain [reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling) can be achieved, one of them is [call chain reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling#call-chain-reentrancy). Remotr uses call chain reentrancy for all inter-partition operations, including commands. This means that commands can't cause deadlocks within a grain partition; however, it also means that data loss could happen if a command writes over another when both are operating on the same state at the same time.
+
+   5. **Infinite Cyclical Deadlocks:** These are deadlocks which Remotr can't solve that occur due to an infinite chain of messages that rotates between different grains such as A -> B -> A. It would be fine for a cyclical call to happen as long as the message chain is eventually stopped; however, if the calls simply go on forever, then there's nothing Remotr will do to fix that.
+
+
+7. **Child grain placement**\
 Because child grains are always technically Stateless Worker Grains (an Orleans feature), they are always co-located with their manager grain, without exception. This means that while a grain partition could theoretically hold many gigabytes of data that isn’t in memory, developers should ensure that a large (many gigabytes in size) grain partition should never be active all at once. Child grains should be instantiated when necessary. If this is unavoidable, then the partition should probably be broken down into more granular parts anyways.
   
 
@@ -174,42 +187,65 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 4. **Remotr API documentation**  
    1. CQRS  
-      1) Creating a Manager Grain  
-      2) Creating a Child Grain  
-      3) Creating Commands and Queries  
+      1) Creating a Manager Grain: Refer to the [Quickstart](#Quickstart) for how to create Manager Grains.
+         - **Note:** never add methods to Manager Grains. Instead, queries and commands should be written separately.
+ 
+      3) Creating a Child Grain  
+
+      4) Creating Commands and Queries  
          1) Any registered services can be DIed into commands and queries  
-      4) Reading and Writing State  
+
+      5) Reading and Writing State  
          1) Only for Child Grains  
-      5) IExternalCommandFactory and IExternalQueryFactory  
-      6) The appropriate Query and Command factories are always on the Command and Query handlers.  
+
+      6) IExternalCommandFactory and IExternalQueryFactory  
+
+      7) The appropriate Query and Command factories are always on the Command and Query handlers.  
          1) Don’t inject external factors into any commands or queries, this is *always* a bad practice and will likely trigger a runtime or build exception in future versions.  
          2) [Other bad practices](#BAD-PRACTICES)  
-      7) Call Chaining  
+
+      8) Call Chaining  
          1) Useful, but perhaps underutilized feature  
          2) Remote execution of method chains  
          3) Reusing methods for common data types  
          4) Note: name originally from this concept of not just RPC, but RCPC (Remotely Chaining Procedural Calls).   
-      8) Future API changes  
+
+      9) Future API changes  
          1) What metaprogramming could enable.  
-      9) Folder Structure  
-   2. Grain Keys  
+
+
+   3. Grain Keys  
+
       1) Manager Grains can be addressed with any of the normal Orleans grain key types (Guids, strings, longs, etc.)  
+
       2) Child Grains are always addressed with a string. This is because Remotr actually uses a JSON string address which combines whatever address you give the Child Grain with the address of the Manager Grain which controls it. This is how different Manager Grains can have Child Grains with identical string keys without any conflicts happening.  
-   3. Persistence  
+
+
+   5. Persistence  
       1) Cosmos is the only supported database right now  
-      2) Setting up Cosmos  
-   4. Extension Methods  
+
+      2) Setting up Cosmos: Refer to the [Quickstart](#Quickstart) for how to set up Cosmos.
+
+
+   7. Extension Methods  
       1) Extension methods are an extremely useful way to share functionality between different commands or queries that operate on the same Manager or Child Grain.  
-   5. Other Useful Methods  
+
+
+   8. Other Useful Methods  
       1) GetManagerId()  
          1) This shouldn’t be used to call the Manager Grain ever, and it should only be used in rare situations anyways, but it is sometimes useful. The downside of using this is that it’s possible to make Child Grains less reusable for other Manager Grain types if they are tightly coupled with a particular Manager Grain type.  
+
       2) GetPrimaryKey()  
          1) Differences between Manager and Child Grain C\&Qs.  
-5. Orleans Feature Differences  
+
+
+6. Orleans Feature Differences  
    1. Summary: While many Orleans features can be used with Remotr, there are some that specifically don’t work within Grain Partitions.  
+
    2. Pitfalls of Remotr  
       1. No possibility for sharing in-memory state between commands and queries other than the state of a Child Grain itself.  
          1) Note: this is something that will most likely be added in the future.  
+
    3. Reminders/Timers (don’t do it)
 
 
