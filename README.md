@@ -191,37 +191,66 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
       1) Creating a Manager Grain: Refer to the [Quickstart](#Quickstart) for how to create Manager Grains.
          - **Note:** never add methods to Manager Grains. Instead, queries and commands should be written separately.
  
-      3) Creating a Child Grain 
+      2) Creating a Child Grain 
          1) Child grains are created by defining the state of the grain.
             ```csharp
             [GenerateSerializer]
             public sealed record CustomerState
             {
                 [Id(0)]
-                public Guid Id { get; set; }
+                public string Id { get; set; } // Same as CustomerId
 
                 [Id(1)]
-                public string FirstName { get; set; } = string.Empty;
+                public Guid CustomerId { get; set; } // Needed to differentiate between customer partitions
 
                 [Id(2)]
-                public string LastName { get; set; } = string.Empty;
+                public string FirstName { get; set; } = string.Empty;
 
                 [Id(3)]
-                public string PhoneNumber {get; set; } = string.Empty;
+                public string LastName { get; set; } = string.Empty;
 
                 [Id(4)]
+                public string PhoneNumber {get; set; } = string.Empty;
+
+                [Id(5)]
                 public string Address { get; set; } = string.Empty;
             }
             ```
             **IMPORTANT: Always add the GenerateSerializer attribute to child grain states.**
+            **IMPORTANT: States should always have a string Id as well as another Id to differentiate parititions**
+              - 
 
-      4) Creating Commands and Queries  
-         // Any registered services can be DIed into commands and queries
+      3) Creating Commands and Queries  
          1) **Creating Commands:** Extend StatefulCommandHandler to create a command
             ```csharp
+
+            // StatefulCommandHandler Generic Forms:
+            // 1) StatefulCommandHandler<TState>
+            // 2) StatefulCommandHandler<TState, TOuput>
+            // 3) StatefulCommandHandler<TState, TInput, TOutput>
+            //
+            // - TState is the state of the child grain the command is acting on.
+            // - TOutput is return value from executing the command.
+            // - TInput is what is passed to the command.
+            //
+            // Because updating customer info requires input, we are using the third
+            // generic form.
             public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
-                public override async Task<bool> Execute(UpateCustomerInfoInput input) { ... }
+                private readonly ILogger _logger;
+
+                // Any registered services can be DIed into commands and queries
+                public UpdateCustomerInfo(ILogger logger)
+                {
+                  _logger = logger;
+                }
+                public override async Task<bool> Execute(UpateCustomerInfoInput input)
+                {
+                  _logger.LogInformation("Updating user info for customer with ID: {}", this.GetManagerId());
+
+                  // Update customer info
+                  ...
+                }
             }
             
             [GenerateSerializer]
@@ -231,10 +260,6 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
                 string PhoneNumber,
                 string Address);
             ```
-            - The StatefulCommandHandler has three generic type parameters:
-                1) The state of the child grain the command is acting on
-                2) The input to the command
-                3) The return value of Execute
             - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
             - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
             - If you do need an input, but do not want to return anything, a best practice is to return a bool the signals success or failure.
@@ -242,7 +267,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
             - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
             - The only difference is that StatefulQueryHandler cannot update state or call commands.
 
-      5) Reading and Writing State  
+      4) Reading and Writing State  
          1) Only for Child Grains
             ```csharp
             public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
@@ -264,9 +289,9 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
             - Reading state can be done by calling GetState()
             - Writing state can be done by calling UpdateState with the updated state. Only commands have access to UpdateState.
 
-      6) IExternalCommandFactory and IExternalQueryFactory
+      5) IExternalCommandFactory and IExternalQueryFactory
          ```csharp
-         public class Query
+         public class ApiCustomerRetrievalRouteHandler
          {
              private readonly IExternalQueryFactory _queryFactory;
 
@@ -286,7 +311,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
              ...
          }
 
-         public class Mutation
+         public class ApiCustomerUpdateRouteHandler
          {
              private readonly IExternalCommandFactory _commandFactory;
 
@@ -314,17 +339,18 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
          - They should never be injected into stateful or stateless commands and queries.
            - If external commands or queries are required, use workflows.
 
-      7) The appropriate Query and Command factories are always on the Command and Query handlers.  
+      6) The appropriate Query and Command factories are always on the Command and Query handlers.  
          1) Don’t inject external factors into any commands or queries, this is *always* a bad practice and will likely trigger a runtime or build exception in future versions.  
-         2) [Other bad practices](#BAD-PRACTICES)  
-
-      8) Call Chaining  
+         2) [Other bad practices](#BAD-PRACTICES)    
+      
+      <!-- Add back in when API is simplified -->
+      <!-- 7) Call Chaining  
          1) Useful, but perhaps underutilized feature  
          2) Remote execution of method chains  
          3) Reusing methods for common data types  
-         4) Note: name originally from this concept of not just RPC, but RCPC (Remotely Chaining Procedural Calls).   
+         4) Note: name originally from this concept of not just RPC, but RCPC (Remotely Chaining Procedural Calls). -->
 
-      9) Future API changes  
+      7) Future API changes  
          1) What metaprogramming could enable.  
 
 
@@ -397,7 +423,23 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 
 ## Common Useful Remotr Patterns  
-1. **Singleton Child Grain IDs:** TODO
+1. **Singleton Child Grain IDs:**
+  ```csharp
+  public sealed class ApiUpdateCustomerInfo : StatelessCommandHandler<ICustomerApiGrain, UpdateCustomerInfoInput, bool>
+  {
+      public override async Task<Post?> Execute(SaveStreaksInput input)
+      {
+         var customerId = this.GetManagerId(); // This will be the the manager grain's Id.
+          return await CommandFactory
+              .GetChild<CustomerState>()
+              .Tell<UpdateCustomerInof, UpdateCustomerInfoInput, bool>(input)
+              .Run("Customer"); // Customer will be the Id of all CustomerState objects.
+      }
+  }
+  ```
+  - The actual Orleans Grain Id for a child grain is a combinaton of the manager grain Id and the child grain Id.
+  - In the above example, itt was okay to have a child grain with Id of "Customer" because each customer should only
+    ever have one child grain maintaing CustomerState.
 2. **Empty Commands:** TODO
 
 
