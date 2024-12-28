@@ -6,7 +6,7 @@ Remotr was created to simplify 3 common scenarios:</p>
 
 1. You want to use a database which allows for querying data using a rich SQL-like syntax.
 2. You want transactions that can span different grains without compromising on the previous point.
-3. You want to eliminate all actor deadlocks which aren't infinite cyclical deadlocks.
+3. You want to eliminate *most* actor deadlocks which aren't infinite cyclical deadlocks.
 
 ---
 
@@ -147,13 +147,13 @@ Remotr was created to simplify 3 common scenarios:</p>
 
    3. While queries can interleave with ongoing commands, commands can’t be started if there are ongoing query executions. This means that if a command is queued, it must wait for all active queries to finish before it can start. This is something that could be fixed in the future. It does imply that, for now, there could be write starvation if a partition constantly has interleaving queries, an unlikely scenario.
   
-   4. **Command Reentrancy:** In Orleans, there are many ways that grain [reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling) can be achieved, one of them is [call chain reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling#call-chain-reentrancy). Remotr uses call chain reentrancy for all inter-partition operations, including commands. This means that commands can't cause deadlocks within a grain partition; however, it also means that data loss could happen if a command writes over another when both are operating on the same state at the same time.
+   4. **Command Reentrancy:** In *.Net Orleans*, there are many ways that grain [reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling) can be achieved, one of them is [call chain reentrancy](https://learn.microsoft.com/en-us/dotnet/orleans/grains/request-scheduling#call-chain-reentrancy). Remotr uses Orleans call chain reentrancy for all inter-partition operations, including commands. This means that commands can't cause deadlocks within a grain partition; however, it also means that data loss could happen if a stateful command writes over another when both are operating on the same state at the same time. 
 
    5. **Infinite Cyclical Deadlocks:** These are deadlocks which Remotr can't solve that occur due to an infinite chain of messages that rotates between different grains such as A -> B -> A. It would be fine for a cyclical call to happen as long as the message chain is eventually stopped; however, if the calls simply go on forever, then there's nothing Remotr will do to fix that.
 
 
 7. **Child grain placement**\
-Because child grains are always technically Stateless Worker Grains (an Orleans feature), they are always co-located with their manager grain, without exception. This means that while a grain partition could theoretically hold many gigabytes of data that isn’t in memory, developers should ensure that a large (many gigabytes in size) grain partition should never be active all at once. Child grains should be instantiated when necessary. If this is unavoidable, then the partition should probably be broken down into more granular parts anyways.
+Because child grains are always technically StatelessWorker Grains (an Orleans feature), they are always co-located on a silo with their Manager Grain, without exception. This means that while a grain partition could theoretically hold many gigabytes of data that isn’t in memory, developers should ensure that a large (many gigabytes in size) grain partition should never be active all at once. Child grains should be instantiated only when needed. If it's impossible to keep the in-memory portion of the grain partition relatively small (relative to the amount of available memory in a given cluster node), then the partition should probably be broken down into more granular parts anyways.
   
 
 
@@ -166,14 +166,21 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
       2) Regular Orleans grains, as well as other Orleans features, can be used alongside Remotr grains. It’s important to understand what a regular grain is before creating Remotr grains.  
 
+   2. **CQRS Differences**
+
+      1) **Not Event Sourced:** CQRS is often used alongside event sourcing where queries are optimized by using a separate read-only cache or database. Remotr does use CQRS as a means of optimizing Manager Grain queries by allowing them to interleave with other queries as well as commands, but it does not use a separate cache or database for this as the state is held in-memory with the grains.
+
+      2) **Commands can (and should) Run Queries:** If a query is run from a command, the state that the query accesses will be consistent with any modifications that any preceding commands in the transaction caused. Commands can even call queries on other Grain Partitions; however, as is stated in other locations, commands should never cause cross-partition commands. Read more about that in [Bad Practices](#Bad-Practices)
+
    3. **Grain partitions**  
 
-      1) **Definition:** A grain partition is group of grains, all co-located on the same silo, which correspond to an actual database partition, such as a Cosmos partition. This allows commands across a grain partition to happen transactionally.  
+      1) **Definition:** A grain partition is group of grains, all co-located on the same silo, which correspond to an actual database partition, such as a Cosmos partition. The co-location of a grain partition, along with a few other Remotr specific features, allows commands across a grain partition to happen transactionally without any sort of middle tier 2PC/2PL transaction system.  
 
       2) **Manager Grains:** each grain partition has a singular Manager Grain, also known as an API Grain, which serves as the only entry point to the partition for all requests. It also manages the transactions which affect the partition as well. While this may *seem* like a bottleneck, it’s important to remember that [all queries against an API grain can be interleaved](?tab=t.0#bookmark=id.dkjyddi41ox7), and grain partitions are also multithreaded since they are composed of many grains working together with each Child Grain in charge of managing its own state.  
-      3) **Child Grains:** Also known as Stateful Grains, grain partitions can have a potentially infinite number of child grains associated with them. The only restriction to the number of child grains is how large a grain partition can become which is imposed by the underlying datastore. And as implied by the alternative name “Stateful Grains”, Child Grains are unlike Manager Grains in that they can *only* be accessed by their own Manager Grain and they also can hold and manage state.  
+
+      3) **Child Grains:** Also known as Stateful Grains, grain partitions can have a potentially infinite number of child grains associated with them. The only restriction to the number of child grains is how large a grain partition can become which is imposed by the underlying datastore. And as implied by the alternative name “Stateful Grains”, Child Grains are unlike Manager Grains in that they hold and manage state. They are also different from Manager Grains in that a Child Grain can *only* be accessed via queries or commands from its own Manager Grain or another Child Grain within its partition. 
          1) **Important Takeaways:**   
-            1) Child Grains can only be accessed by their Manager Grain.  
+            1) Child Grains can only be accessed by other grains within their partition, including the Manager Grain and other Child Grains.  
             2) Two Child Grains with the same type and Id can exist in different grain partitions, and there aren’t any problems with that. The Child Grains are unique per Manager Grain.  
 
    4. **Designing a Grain Partition**  
@@ -187,22 +194,27 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 
 4. **Remotr API documentation**  
-   1. CQRS  
+   1. **CQRS** (but not event sourcing)
       1) Creating a Manager Grain: Refer to the [Quickstart](#Quickstart) for how to create Manager Grains.
          - **Note:** never add methods to Manager Grains. Instead, queries and commands should be written separately.
  
       2) Creating a Child Grain 
          1) Child grains are created by defining the state of the grain.
             ```csharp
+            // Don't forget the GenerateSerializer attribute.
             [GenerateSerializer]
             public sealed record CustomerState
             {
+                // An Id property is required for Cosmos Items. 
+                // Child Grains are unique by Id.
                 [Id(0)]
-                public string Id { get; set; } // Same as CustomerId
-
+                public string Id { get; set; } 
+                
+                // Needed to differentiate partitions (depends on the Cosmos Container).
                 [Id(1)]
-                public Guid CustomerId { get; set; } // Needed to differentiate between customer partitions
+                public Guid CustomerId { get; set; } 
 
+                // Always add the "Id" attribute to state properties (an Orleans requirement).
                 [Id(2)]
                 public string FirstName { get; set; } = string.Empty;
 
@@ -216,11 +228,12 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
                 public string Address { get; set; } = string.Empty;
             }
             ```
-            **IMPORTANT: Always add the GenerateSerializer attribute to child grain states.**
-            **IMPORTANT: States should always have a string Id as well as another Id to differentiate parititions**
-              - 
+            ## **IMPORTANT NOTES:** 
+            - Always add the GenerateSerializer attribute to child grain states.
+            - States should always have a string Id as well as another Id to differentiate partitions
+              
 
-      3) Creating Commands and Queries  
+      3) **Creating Commands and Queries** 
          1) **Creating Commands:** Extend StatefulCommandHandler to create a command
             ```csharp
 
@@ -267,7 +280,7 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
             - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
             - The only difference is that StatefulQueryHandler cannot update state or call commands.
 
-      4) Reading and Writing State  
+      4) **Reading and Writing State**
          1) Only for Child Grains
             ```csharp
             public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
@@ -354,21 +367,21 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
          1) What metaprogramming could enable.  
 
 
-   3. Grain Keys  
+   2. Grain Keys  
 
-      1) Manager Grains can be addressed with any of the normal Orleans grain key types (Guids, strings, longs, etc.)  
+      1) **Manager Grains** can be addressed with any of the normal Orleans grain key types (Guids, strings, longs, etc.)  
 
-      2) Child Grains are always addressed with a string. This is because Remotr actually uses a JSON string address which combines whatever address you give the Child Grain with the address of the Manager Grain which controls it. This is how different Manager Grains can have Child Grains with identical string keys without any conflicts happening.  
+      2) **Child Grains** must always addressed with a string.
 
 
-   5. Persistence  
+   3. Persistence  
       1) Cosmos is the only supported database right now  
 
       2) Setting up Cosmos: Refer to the [Quickstart](#Quickstart) for how to set up Cosmos.
 
 
-   7. Extension Methods  
-      1) Extension methods are an extremely useful way to share functionality between different commands or queries that operate on the same Manager or Child Grain.
+   4. Extension Methods  
+      Extension methods are an extremely useful way to share functionality between different commands or queries that operate on the same Manager or Child Grain.
          ```csharp
          public static class CustomerCommandExtensions
          {
@@ -386,26 +399,34 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
          }
          ```
          - Extension methods can be added for queries and commands of a specific type.
-         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands.
+         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands; however, because it extends the `BaseStatefulCommandHandler<TState>`, it can only be used by commands. Extensions on `BaseStatefulQueryHandler<TState>` can be used by both commands and queries.
 
 
 
    8. Other Useful Methods  
-      1) GetManagerId()  
-         1) This shouldn’t be used to call the Manager Grain ever, and it should only be used in rare situations anyways, but it is sometimes useful. The downside of using this is that it’s possible to make Child Grains less reusable for other Manager Grain types if they are tightly coupled with a particular Manager Grain type.  
+      1) **GetManagerId() on Child Grains**\
+         **This shouldn’t be used to call the Manager Grain ever**, and it should only be used in rare situations anyways, but it is sometimes useful. The downside of this method being accessible is that it’s possible to make Child Grains less reusable for other Manager Grain types if they are tightly coupled with a particular Manager Grain type.  
 
-      2) GetPrimaryKey()  
-         1) Differences between Manager and Child Grain C\&Qs.  
-
+      2) **`String GetPrimaryKey()` for Child Grains**\
+         Similar to Orleans' `GetPrimaryKey()`, `GetPrimaryKey()` for Child Grains will always return their String key address
+      
+      3) **Getting the key(s) for Manager Grains**\
+         Because Manager Grains have more flexibility in their address, there are more methods just like in Orleans:
+         - `Guid GetPrimaryKey()`
+         - `Guid GetPrimaryKey(out string keyExt)`
+         - `long GetPrimaryKeyLong()`
+         - `long GetPrimaryKeyLong(out string keyExt)`
+         - `string GetPrimaryKeyString()`
 
 6. Orleans Feature Differences  
-   1. Summary: While many Orleans features can be used with Remotr, there are some that specifically don’t work within Grain Partitions.  
+   1. **Summary:** While many Orleans features can be used with Remotr, there are some that specifically don’t work within Grain Partitions.  
 
-   2. Pitfalls of Remotr  
-      1. No possibility for sharing in-memory state between commands and queries other than the state of a Child Grain itself.  
-         1) Note: this is something that will most likely be added in the future.  
+   2. **Sharing State Between Commands and Queries of a Manager or Child Grain**
+      - As of now, there is no possibility for sharing in-memory state between commands and queries other than the state of a Child Grain itself.<br />
+      **Note:** this is something that will most likely be added in the future.  
 
-   3. Reminders/Timers (don’t do it)
+   3. **Reminders/Timers (don’t do it)**\
+      Even if you could use Reminders or Timers within grain partitions, the problem is that if you don't call Manager Grains via Commands or Queries, then transactions will no longer work and state won't be loaded properly even for queries. The only way that Reminders or Timers can work is if they are used outside the grain partition and then they call a command or query on the grain partition from their callbacks.
 
 
 
@@ -415,9 +436,11 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
 
 2. **Cross Partition Commands:** NEVER run cross-partition commands. This shouldn’t even be possible without injecting the ExternalCommandFactory into a Command or Query.  
 
-3. **Child to Self-Manager Calls:** Calling the Manager Grain of a Child Grain from the Child Grain itself. This is an inversion of the expected control flow, and usually makes it impossible to reuse Child Grains for other types of Manager Grains. It will also cause a deadlock (on itself) if you run a command against the Manager Grain from one of that Manager Grain’s Child Grains.
+3. **Not Awaiting Child Commands:** It's okay to fan out (and then await) child command calls as long as they won't cause deadlocks, but if you don't await a Child Grain command, then the state most likely won't be updated transactionally and it will cause an exception.
 
-4. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having ChildGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
+4. **Child to Self-Manager Calls:** Calling the Manager Grain of a Child Grain from the Child Grain itself. This is an inversion of the expected control flow, and usually makes it impossible to reuse Child Grains for other types of Manager Grains. It will also cause a deadlock (on itself) if you run a command against the Manager Grain from one of that Manager Grain’s Child Grains.
+
+5. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having ChildGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
    - **Example:** The IoT security sensors for an entire building should most likely not go directly through a single grain partition, even if it would be convenient for them to do so. This is assuming that they are constantly feeding data, which would slow the grain partition to a halt given hundreds of commands per second. That’s not to say that Remotr couldn’t be utilized, but it’s important to design the grain partitions with this in mind.  
 
 
@@ -434,12 +457,12 @@ Because child grains are always technically Stateless Worker Grains (an Orleans 
               .GetChild<CustomerState>()
               .Tell<UpdateCustomerInof, UpdateCustomerInfoInput, bool>(input)
               .Run("Customer"); // Customer will be the Id of all CustomerState objects.
+              // This is a singleton on a per-grain-partition basis.
       }
   }
   ```
   - The actual Orleans Grain Id for a child grain is a combinaton of the manager grain Id and the child grain Id.
-  - In the above example, itt was okay to have a child grain with Id of "Customer" because each customer should only
-    ever have one child grain maintaing CustomerState.
+  - In the above example, it was okay to have a child grain with Id of "Customer" because each customer should only ever have one child grain maintaining CustomerState.
 2. **Empty Commands:** TODO
 
 
