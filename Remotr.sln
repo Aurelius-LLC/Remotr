@@ -1,11 +1,10 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Remotr", "Remotr.csproj", "{DF65C596-E4F0-4B40-B9C3-02170099917F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Remotr", "src/Remotr.csproj", "{DF65C596-E4F0-4B40-B9C3-02170099917F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotrExample", "..\RemotrExample\RemotrExample.csproj", "{6E696F84-3B2B-41CD-A57E-7CAAB5CD8E2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{C17FEBB4-623A-4076-93A2-8DCD520E3BF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +16,10 @@ Global
 		{DF65C596-E4F0-4B40-B9C3-02170099917F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF65C596-E4F0-4B40-B9C3-02170099917F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF65C596-E4F0-4B40-B9C3-02170099917F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E696F84-3B2B-41CD-A57E-7CAAB5CD8E2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E696F84-3B2B-41CD-A57E-7CAAB5CD8E2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E696F84-3B2B-41CD-A57E-7CAAB5CD8E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E696F84-3B2B-41CD-A57E-7CAAB5CD8E2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C17FEBB4-623A-4076-93A2-8DCD520E3BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C17FEBB4-623A-4076-93A2-8DCD520E3BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C17FEBB4-623A-4076-93A2-8DCD520E3BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C17FEBB4-623A-4076-93A2-8DCD520E3BF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
