@@ -64,7 +64,7 @@ public sealed record CosmosDbPersistentStore : IPersistentStore
                 }
                 return newT;
             }
-            var itemJson = await (new StreamReader(response.Content)).ReadToEndAsync();
+            var itemJson = await new StreamReader(response.Content).ReadToEndAsync();
             return JsonSerializer.Deserialize<T>(itemJson, _jsonSerializerOptions)!;
         }
         catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
