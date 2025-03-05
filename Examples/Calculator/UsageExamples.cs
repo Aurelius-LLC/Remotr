@@ -132,12 +132,12 @@ public static class ExtensionsStatelessQuery3Types
 
 public static class ExtensionsStatefulCommand1Types
 {
-    public static IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> SetValueState(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
+    public static IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> SetValueState1Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
     {
         return builder.Tell<SetValueState1Type>();
     }
 
-    public static IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> SetValueState<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) {
+    public static IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> SetValueState1Type<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) {
         return builder.Tell<SetValueState1Type>();
     }
 }
@@ -145,12 +145,12 @@ public static class ExtensionsStatefulCommand1Types
 
 public static class ExtensionsStatefulCommand2Types
 {
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState2Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
     {
         return builder.Tell<SetValueState2Type, double>();
     }
 
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) {
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState2Type<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) {
         return builder.Tell<SetValueState2Type, double>();
     }
 }
@@ -158,28 +158,73 @@ public static class ExtensionsStatefulCommand2Types
 
 public static class ExtensionsStatefulCommand3Types
 {
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder, int input) 
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState3Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder, int input) 
     {
         return builder.Tell<SetValueState3Type, int, double>(input);
     }
 
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder, int input) {
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState3Type<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder, int input) {
         return builder.Tell<SetValueState3Type, int, double>(input);
     }
 
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> ThenSetValueState(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, int> builder) {
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> ThenSetValueState3Type(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, int> builder) {
         return builder.ThenTell<SetValueState3Type, double>();
     }
 }
 
 public static class ExtensionsStatefulQuery2Types
 {
-    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState(this IGrainQueryBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
+    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainQueryBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
     {
         return builder.Ask<GetValueState2Type, double>();
     }
 
-    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> SetValueState<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) {
-        return builder.Tell<SetValueState2Type, double>();
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder) 
+    {
+        return builder.Ask<GetValueState2Type, double>();
+    }
+
+    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type<T>(this IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) 
+    {
+        return builder.Ask<GetValueState2Type, double>();
+    }
+
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder) 
+    {
+        return builder.Ask<GetValueState2Type, double>();
+    }
+}
+
+
+public static class ExtensionsStatefulQuery3Types
+{
+    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainQueryBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder, int input) 
+    {
+        return builder.Ask<GetValueState3Type, int, double>(input);
+    }
+
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>> builder, int input) 
+    {
+        return builder.Ask<GetValueState3Type, int, double>(input);
+    }
+
+    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type<T>(this IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder, int input) 
+    {
+        return builder.Ask<GetValueState3Type, int, double>(input);
+    }
+    
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type<T>(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, T> builder, int input) 
+    {
+        return builder.Ask<GetValueState3Type, int, double>(input);
+    }
+
+    public static IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainQueryBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, int> builder) 
+    {
+        return builder.ThenAsk<GetValueState3Type, double>();
+    }
+    
+    public static IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, double> GetValueState2Type(this IGrainCommandBuilder<ITransactionChildGrain<CalculatorState>, BaseStatefulCommandHandler<CalculatorState>, BaseStatefulQueryHandler<CalculatorState>, int> builder) 
+    {
+        return builder.ThenAsk<GetValueState3Type, double>();
     }
 }

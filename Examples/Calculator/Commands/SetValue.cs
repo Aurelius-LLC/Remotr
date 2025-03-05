@@ -7,7 +7,7 @@ public class SetValue3Type : StatelessCommandHandler<ICalculatorManagerGrain, in
         var x = CommandFactory.GetChild<CalculatorState>();
             //.Tell<SetValueState, double, double>(input);
         return await CommandFactory.GetChild<CalculatorState>()
-            .SetValueState(input)
+            .SetValueState3Type(input)
             .Run(GetPrimaryKey().ToString());
     }
 }
