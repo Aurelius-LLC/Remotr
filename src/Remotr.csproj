@@ -26,6 +26,13 @@
     <PackageTags>cqrs, actors, orleans, transactions, distributed, deadlocks, actor deadlocks, grains</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.3</Version>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Remotr.SourceGen/Remotr.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
 </Project>

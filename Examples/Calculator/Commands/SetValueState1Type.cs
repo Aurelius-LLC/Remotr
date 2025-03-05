@@ -1,5 +1,7 @@
 
 namespace Remotr.Example.Calculator;
+
+[RemotrGen]
 public class SetValueState1Type : StatefulCommandHandler<CalculatorState>
 {
     public override async Task Execute()

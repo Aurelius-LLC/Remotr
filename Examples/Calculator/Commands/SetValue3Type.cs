@@ -1,10 +1,16 @@
 
-
 namespace Remotr.Example.Calculator;
-public class SetValue2Type : StatelessCommandHandler<ICalculatorManagerGrain, double>
+
+[RemotrGen]
+public class SetValue3Type : StatelessCommandHandler<ICalculatorManagerGrain, int, double>
 {
-    public override Task<double> Execute()
+    public override async Task<double> Execute(int input)
     {
-        throw new NotImplementedException();
+        var x = CommandFactory.GetChild<CalculatorState>();
+            //.Tell<SetValueState, double, double>(input);
+        return await CommandFactory.GetChild<CalculatorState>()
+            .SetValueState3Type(input)
+            .Run(GetPrimaryKey().ToString());
     }
 }
+
