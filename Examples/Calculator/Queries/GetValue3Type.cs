@@ -1,9 +1,9 @@
 
 namespace Remotr.Example.Calculator;
 
-public class GetValue2Type : StatelessQueryHandler<ICalculatorManagerGrain, double>
+public class GetValue3Type : StatelessQueryHandler<ICalculatorManagerGrain, int, double>
 {
-    public override Task<double> Execute()
+    public override Task<double> Execute(int input)
     {
         return QueryFactory.GetChild<CalculatorState>()
             .Ask<GetValueState2Type, double>()

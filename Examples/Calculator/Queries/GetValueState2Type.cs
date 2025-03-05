@@ -1,7 +1,7 @@
 
 namespace Remotr.Example.Calculator;
 
-public class GetValueState1Type : StatefulQueryHandler<CalculatorState, double>
+public class GetValueState2Type : StatefulQueryHandler<CalculatorState, double>
 {
     public override async Task<double> Execute()
     {

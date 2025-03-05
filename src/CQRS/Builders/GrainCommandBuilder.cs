@@ -55,6 +55,15 @@ public class GrainCommandBuilder<T, C, Q, K> : IGrainCommandBuilder<T, C, Q, K> 
         );
     }
 
+    public IGrainCommandBuilder<T, C,Q, Y> ThenAsk<X, Y>() where X : IAsyncQueryHandler<T, K, Y>, Q
+    {
+        return new GrainCommandBuilder<T, C, Q, Y>(
+            grainFactory,
+            resolveChildGrain,
+            _builder.ThenAsk<X, Y>()
+        );
+    }
+
     public IGrainCommandBaseBuilder<T, C, Q> Tell<X>() where X : IAsyncCommandHandler<T>, C
     {
         return new GrainCommandBaseBuilder<T, C, Q>(

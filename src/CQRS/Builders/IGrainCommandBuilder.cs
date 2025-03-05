@@ -6,6 +6,8 @@ public interface IGrainCommandBuilder<T, C, Q, K> : IProduceUniversalBuilder<T, 
 
     public IGrainCommandBuilder<T, C, Q, Z> Ask<X, Y, Z>(Y dto) where X : IAsyncQueryHandler<T, Y, Z>, Q;
 
+    public IGrainCommandBuilder<T, C, Q, Y> ThenAsk<X, Y>() where X : IAsyncQueryHandler<T, K, Y>, Q;
+
     public IGrainCommandBuilder<T, C, Q, Y> Map<X, Y>() where X : IMapInput<K, Y>;
 
     public IGrainCommandBaseBuilder<T, C, Q> Tell<X>() where X : IAsyncCommandHandler<T>, C;

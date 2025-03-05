@@ -1,10 +1,9 @@
 
-
 namespace Remotr.Example.Calculator;
-public class SetValue2Type : StatelessCommandHandler<ICalculatorManagerGrain, double>
+public class SetValue1Type : StatelessCommandHandler<ICalculatorManagerGrain>
 {
-    public override Task<double> Execute()
+    public override Task Execute()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }
