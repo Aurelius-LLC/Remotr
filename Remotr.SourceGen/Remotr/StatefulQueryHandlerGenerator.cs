@@ -7,7 +7,7 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Generator for StatefulQueryHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulQueryHandlerGenerator : BaseHandlerGenerator
+public class StatefulQueryHandlerGenerator : BaseExtensionGenerator
 {
     /// <inheritdoc/>
     protected override string HandlerBaseTypeName => "StatefulQueryHandler";

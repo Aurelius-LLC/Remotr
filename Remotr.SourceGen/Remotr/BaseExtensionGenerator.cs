@@ -14,6 +14,17 @@ public abstract class BaseExtensionGenerator : IExtensionGenerator
     /// </summary>
     protected abstract string HandlerBaseTypeName { get; }
 
+    /// <inheritdoc/>
+    public bool CanHandle(string baseTypeName)
+    {
+        return baseTypeName == HandlerBaseTypeName;
+    }
+
+    /// <inheritdoc/>
+    public abstract void GenerateExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments);
+
+
+
     /// <summary>
     /// Validates that the number of type arguments is within the expected range.
     /// </summary>
@@ -24,14 +35,5 @@ public abstract class BaseExtensionGenerator : IExtensionGenerator
     protected bool ValidateTypeArgumentCount(SeparatedSyntaxList<TypeSyntax> typeArguments, int minCount, int maxCount)
     {
         return typeArguments.Count >= minCount && typeArguments.Count <= maxCount;
-    }
-
-    /// <inheritdoc/>
-    public abstract void GenerateExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments);
-
-    /// <inheritdoc/>
-    public bool CanHandle(string baseTypeName)
-    {
-        return baseTypeName == HandlerBaseTypeName;
     }
 } 

@@ -7,7 +7,7 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Generator for StatefulCommandHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulCommandHandlerGenerator : BaseHandlerGenerator
+public class StatefulCommandHandlerGenerator : BaseExtensionGenerator
 {
     /// <inheritdoc/>
     protected override string HandlerBaseTypeName => "StatefulCommandHandler";

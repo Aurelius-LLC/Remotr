@@ -163,11 +163,8 @@ public class StatelessHandlerGenerator
     {
         switch (genericTypeArgs.Count)
         {
-            case 1: // StatefulQueryHandler<TState>
-                _queryHandlerGenerator.GenerateNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType);
-                break;
             case 2: // StatefulQueryHandler<TState, TOutput>
-                _queryHandlerGenerator.GenerateWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
+                _queryHandlerGenerator.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
                 break;
             case 3: // StatefulQueryHandler<TState, TInput, TOutput>
                 _queryHandlerGenerator.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString());

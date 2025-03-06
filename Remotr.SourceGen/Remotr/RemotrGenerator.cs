@@ -17,11 +17,11 @@ namespace Remotr.SourceGen.Remotr;
 [Generator]
 public class RemotrGenerator : IIncrementalGenerator
 {
-    private readonly IReadOnlyList<IHandlerGenerator> _handlerGenerators;
+    private readonly IReadOnlyList<IExtensionGenerator> _handlerGenerators;
 
     public RemotrGenerator()
     {
-        _handlerGenerators = new List<IHandlerGenerator>
+        _handlerGenerators = new List<IExtensionGenerator>
         {
             new StatelessCommandHandlerGenerator(),
             new StatelessQueryHandlerGenerator(),
