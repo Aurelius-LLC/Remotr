@@ -3,13 +3,27 @@ using System.Text;
 namespace Remotr.SourceGen.CqrsCollection.Generators;
 
 /// <summary>
-/// Generates code for query handlers.
+/// Generator for query handlers
 /// </summary>
-public class QueryHandlerGenerator
+public class QueryHandlerGenerator : IStatelessHandlerGenerator
 {
+    private readonly StatelessHandlerGeneratorComponent _component;
+
+    public QueryHandlerGenerator()
+    {
+        _component = new StatelessHandlerGeneratorComponent();
+    }
 
     /// <summary>
-    /// Generates a stateless query handler with output.
+    /// This shouldn't be called as query handlers can't have no input and no output.
+    /// </summary>
+    public void GenerateNoInputNoOutput(StringBuilder sb, string interfaceName, string className, string statefulHandlerName, string stateType)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Generates a stateless query handler with no input but with output.
     /// </summary>
     /// <param name="sb">The string builder to append to</param>
     /// <param name="interfaceName">The interface name</param>
@@ -25,15 +39,16 @@ public class QueryHandlerGenerator
         string stateType,
         string outputType)
     {
-        sb.AppendLine($"public class {className} : StatelessQueryHandler<{interfaceName}, {outputType}>");
-        sb.AppendLine("{");
-        sb.AppendLine($"    public override async Task<{outputType}> Execute()");
-        sb.AppendLine("    {");
-        sb.AppendLine($"        return await QueryFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Ask<{statefulHandlerName}, {outputType}>()");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        _component.GenerateNoInputWithOutput(
+            sb,
+            interfaceName,
+            className,
+            statefulHandlerName,
+            stateType,
+            outputType,
+            "Query",
+            "Query",
+            "Ask");
     }
 
     /// <summary>
@@ -55,14 +70,16 @@ public class QueryHandlerGenerator
         string inputType,
         string outputType)
     {
-        sb.AppendLine($"public class {className} : StatelessQueryHandler<{interfaceName}, {inputType}, {outputType}>");
-        sb.AppendLine("{");
-        sb.AppendLine($"    public override async Task<{outputType}> Execute({inputType} input)");
-        sb.AppendLine("    {");
-        sb.AppendLine($"        return await QueryFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Ask<{statefulHandlerName}, {inputType}, {outputType}>(input)");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        _component.GenerateWithInputAndOutput(
+            sb,
+            interfaceName,
+            className,
+            statefulHandlerName,
+            stateType,
+            inputType,
+            outputType,
+            "Query",
+            "Query",
+            "Ask");
     }
 } 

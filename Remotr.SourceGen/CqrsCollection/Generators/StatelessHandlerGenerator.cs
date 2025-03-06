@@ -16,8 +16,7 @@ namespace Remotr.SourceGen.CqrsCollection.Generators;
 /// </summary>
 public class StatelessHandlerGenerator
 {
-    private readonly CommandHandlerGenerator _commandHandlerGenerator;
-    private readonly QueryHandlerGenerator _queryHandlerGenerator;
+    private IStatelessHandlerGenerator? _handlerGenerator;
     private readonly HandlerTypeValidator _handlerTypeValidator;
     private readonly IReadOnlyList<IExtensionGenerator> _extensionGenerators;
 
@@ -26,8 +25,6 @@ public class StatelessHandlerGenerator
     /// </summary>
     public StatelessHandlerGenerator()
     {
-        _commandHandlerGenerator = new CommandHandlerGenerator();
-        _queryHandlerGenerator = new QueryHandlerGenerator();
         _handlerTypeValidator = new HandlerTypeValidator();
         _extensionGenerators = new List<IExtensionGenerator>
         {
@@ -48,7 +45,6 @@ public class StatelessHandlerGenerator
         InterfaceDeclarationSyntax interfaceDeclaration, 
         ITypeSymbol handlerTypeSymbol, 
         string alias,
-        Compilation compilation,
         SourceProductionContext context)
     {
         var handlerName = handlerTypeSymbol.Name;
@@ -93,16 +89,12 @@ public class StatelessHandlerGenerator
         // First generic parameter is the state type
         var stateType = genericTypeArgs[0].ToString();
         var interfaceType = $"{namespaceName}.{interfaceName}";
+
+        // Initialize the appropriate handler generator
+        _handlerGenerator = isCommandHandler ? new CommandHandlerGenerator() : new QueryHandlerGenerator();
         
-        // Create the appropriate stateless handler class
-        if (isCommandHandler)
-        {
-            GenerateCommandHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs);
-        }
-        else // QueryHandler
-        {
-            GenerateQueryHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs);
-        }
+        // Generate the handler based on the number of generic type arguments
+        GenerateHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs);
 
         // Generate extensions using RemotrGen generators
         var extensionsBuilder = new StringBuilder();
@@ -131,7 +123,7 @@ public class StatelessHandlerGenerator
         context.AddSource($"{alias}.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
     }
 
-    private void GenerateCommandHandler(
+    private void GenerateHandler(
         StringBuilder sourceBuilder, 
         string interfaceName, 
         string className, 
@@ -141,33 +133,14 @@ public class StatelessHandlerGenerator
     {
         switch (genericTypeArgs.Count)
         {
-            case 1: // StatefulCommandHandler<TState>
-                _commandHandlerGenerator.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType);
+            case 1: // ex StatefulCommandHandler<TState>
+                _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType);
                 break;
-            case 2: // StatefulCommandHandler<TState, TOutput>
-                _commandHandlerGenerator.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
+            case 2: // ex StatefulCommandHandler<TState, TOutput>
+                _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
                 break;
-            case 3: // StatefulCommandHandler<TState, TInput, TOutput>
-                _commandHandlerGenerator.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString());
-                break;
-        }
-    }
-
-    private void GenerateQueryHandler(
-        StringBuilder sourceBuilder, 
-        string interfaceName, 
-        string className, 
-        string statefulHandlerName, 
-        string stateType, 
-        List<ITypeSymbol> genericTypeArgs)
-    {
-        switch (genericTypeArgs.Count)
-        {
-            case 2: // StatefulQueryHandler<TState, TOutput>
-                _queryHandlerGenerator.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
-                break;
-            case 3: // StatefulQueryHandler<TState, TInput, TOutput>
-                _queryHandlerGenerator.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString());
+            case 3: // ex StatefulCommandHandler<TState, TInput, TOutput>
+                _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString());
                 break;
         }
     }

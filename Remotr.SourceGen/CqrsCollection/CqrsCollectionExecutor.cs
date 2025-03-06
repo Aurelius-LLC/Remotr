@@ -86,6 +86,6 @@ public class CqrsCollectionExecutor
         }
 
         // Generate the stateless command/query handler
-        _statelessHandlerGenerator.Generate(interfaceDeclaration, handlerTypeSymbol, alias, compilation, context);
+        _statelessHandlerGenerator.Generate(interfaceDeclaration, handlerTypeSymbol, alias, context);
     }
 } 

@@ -3,10 +3,17 @@ using System.Text;
 namespace Remotr.SourceGen.CqrsCollection.Generators;
 
 /// <summary>
-/// Generates code for command handlers.
+/// Generator for command handlers
 /// </summary>
-public class CommandHandlerGenerator
+public class CommandHandlerGenerator : IStatelessHandlerGenerator
 {
+    private readonly StatelessHandlerGeneratorComponent _component;
+
+    public CommandHandlerGenerator()
+    {
+        _component = new StatelessHandlerGeneratorComponent();
+    }
+
     /// <summary>
     /// Generates a stateless command handler with no input and no output.
     /// </summary>
@@ -50,15 +57,16 @@ public class CommandHandlerGenerator
         string stateType,
         string outputType)
     {
-        sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}, {outputType}>");
-        sb.AppendLine("{");
-        sb.AppendLine($"    public override async Task<{outputType}> Execute()");
-        sb.AppendLine("    {");
-        sb.AppendLine($"        return await CommandFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Tell<{statefulHandlerName}, {outputType}>()");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        _component.GenerateNoInputWithOutput(
+            sb,
+            interfaceName,
+            className,
+            statefulHandlerName,
+            stateType,
+            outputType,
+            "Command",
+            "Command",
+            "Tell");
     }
 
     /// <summary>
@@ -80,14 +88,16 @@ public class CommandHandlerGenerator
         string inputType,
         string outputType)
     {
-        sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}, {inputType}, {outputType}>");
-        sb.AppendLine("{");
-        sb.AppendLine($"    public override async Task<{outputType}> Execute({inputType} input)");
-        sb.AppendLine("    {");
-        sb.AppendLine($"        return await CommandFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Tell<{statefulHandlerName}, {inputType}, {outputType}>(input)");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        _component.GenerateWithInputAndOutput(
+            sb,
+            interfaceName,
+            className,
+            statefulHandlerName,
+            stateType,
+            inputType,
+            outputType,
+            "Command",
+            "Command",
+            "Tell");
     }
 } 
