@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
 
-namespace Remotr.SourceGen;
+namespace Remotr.SourceGen.Remotr;
 
 /// <summary>
 /// Base abstract class providing common functionality for handler generators.

@@ -2,8 +2,8 @@ using Remotr;
 
 namespace Remotr.Example.Calculator;
 
-// Example of using the CqrsCollection attribute to generate stateless commands/queries from stateful ones
 [CqrsCollection(typeof(DivideState), "Divide")]
+[CqrsCollection(typeof(SetValueState1Type), "SetValue1Type")]
 public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
 {
 }

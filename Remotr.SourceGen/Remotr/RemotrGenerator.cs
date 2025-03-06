@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Linq;
 
-namespace Remotr.SourceGen;
+namespace Remotr.SourceGen.Remotr;
 
 /// <summary>
 /// Source generator for Remotr that generates extension methods for various handler types.

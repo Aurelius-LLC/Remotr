@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
 
-namespace Remotr.SourceGen;
+namespace Remotr.SourceGen.Remotr;
 
 /// <summary>
 /// Generator for StatefulQueryHandler types that generates appropriate extension methods.
