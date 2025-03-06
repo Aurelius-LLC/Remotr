@@ -8,9 +8,9 @@ public class Example1(IExternalCommandFactory factory)
     public async Task Multiply() {
 
         var x = factory.GetManager<ICalculatorManagerGrain>()
-            .Tell<SetValue1Type>()
-            .Tell<Divide, double, double>(2.0)
-            .Ask<GetValue3Type, int, double>(1)
+            .SetValue1Type()
+            .Divide(2.0)
+            .GetValue3Type(1)
             .ForEach(
                 [2.0, 4.0],
                 (builder) => builder.Multiply(2.0)

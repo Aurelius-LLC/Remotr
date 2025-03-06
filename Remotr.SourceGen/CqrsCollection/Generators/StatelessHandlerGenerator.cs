@@ -1,9 +1,12 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Remotr.SourceGen.CqrsCollection.Utils;
 using Remotr.SourceGen.CqrsCollection.Validators;
+using Remotr.SourceGen.Remotr;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Remotr.SourceGen.CqrsCollection.Generators;
@@ -16,6 +19,7 @@ public class StatelessHandlerGenerator
     private readonly CommandHandlerGenerator _commandHandlerGenerator;
     private readonly QueryHandlerGenerator _queryHandlerGenerator;
     private readonly HandlerTypeValidator _handlerTypeValidator;
+    private readonly IReadOnlyList<IExtensionGenerator> _extensionGenerators;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatelessHandlerGenerator"/> class.
@@ -25,6 +29,11 @@ public class StatelessHandlerGenerator
         _commandHandlerGenerator = new CommandHandlerGenerator();
         _queryHandlerGenerator = new QueryHandlerGenerator();
         _handlerTypeValidator = new HandlerTypeValidator();
+        _extensionGenerators = new List<IExtensionGenerator>
+        {
+            new StatelessCommandHandlerGenerator(),
+            new StatelessQueryHandlerGenerator()
+        };
     }
 
     /// <summary>
@@ -81,8 +90,9 @@ public class StatelessHandlerGenerator
             sourceBuilder.AppendLine();
         }
 
-        // First generic parameter is the state type, we need to extract the others
+        // First generic parameter is the state type
         var stateType = genericTypeArgs[0].ToString();
+        var interfaceType = $"{namespaceName}.{interfaceName}";
         
         // Create the appropriate stateless handler class
         if (isCommandHandler)
@@ -93,6 +103,30 @@ public class StatelessHandlerGenerator
         {
             GenerateQueryHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs);
         }
+
+        // Generate extensions using RemotrGen generators
+        var extensionsBuilder = new StringBuilder();
+        extensionsBuilder.AppendLine();
+        extensionsBuilder.AppendLine($"public static class {interfaceName}{alias}Extensions");
+        extensionsBuilder.AppendLine("{");
+
+        var baseTypeName = isCommandHandler ? "StatelessCommandHandler" : "StatelessQueryHandler";
+        var generator = _extensionGenerators.FirstOrDefault(g => g.CanHandle(baseTypeName));
+        if (generator != null)
+        {
+            var typeArgList = new SeparatedSyntaxList<TypeSyntax>();
+            // Replace first generic argument (state type) with interface type
+            typeArgList = typeArgList.Add(SyntaxFactory.ParseTypeName(interfaceType));
+            // Add remaining type arguments
+            for (int i = 1; i < genericTypeArgs.Count; i++)
+            {
+                typeArgList = typeArgList.Add(SyntaxFactory.ParseTypeName(genericTypeArgs[i].ToString()));
+            }
+            generator.GenerateExtensions(extensionsBuilder, alias, typeArgList);
+        }
+
+        extensionsBuilder.AppendLine("}");
+        sourceBuilder.Append(extensionsBuilder);
 
         context.AddSource($"{alias}.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
     }
