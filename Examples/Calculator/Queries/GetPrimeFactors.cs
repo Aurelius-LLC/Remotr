@@ -1,11 +1,12 @@
 namespace Remotr.Example.Calculator;
 
+[RemotrGen]
 public class GetPrimeFactors : StatelessQueryHandler<ICalculatorManagerGrain, IEnumerable<double>>
 {
     public override Task<IEnumerable<double>> Execute()
     {
         return QueryFactory.GetChild<CalculatorState>()
-            .Ask<GetPrimeFactorsState,  IEnumerable<double>>()
+            .GetPrimeFactorsState()
             .Run(GetPrimaryKey().ToString());
     }
 }

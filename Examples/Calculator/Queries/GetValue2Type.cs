@@ -8,7 +8,7 @@ public class GetValue2Type : StatelessQueryHandler<ICalculatorManagerGrain, doub
     public override Task<double> Execute()
     {
         return QueryFactory.GetChild<CalculatorState>()
-            .Ask<GetValueState2Type, double>()
+            .GetValueState2Type()
             .Run(GetPrimaryKey().ToString());
     }
 }

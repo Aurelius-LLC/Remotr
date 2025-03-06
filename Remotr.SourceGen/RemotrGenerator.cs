@@ -2,15 +2,38 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using System.Linq;
 
 namespace Remotr.SourceGen;
 
+/// <summary>
+/// Source generator for Remotr that generates extension methods for various handler types.
+/// This generator processes classes marked with the RemotrGen attribute and generates
+/// appropriate extension methods based on the handler type.
+/// </summary>
 [Generator]
 public class RemotrGenerator : IIncrementalGenerator
 {
+    private readonly IReadOnlyList<IHandlerGenerator> _handlerGenerators;
+
+    public RemotrGenerator()
+    {
+        _handlerGenerators = new List<IHandlerGenerator>
+        {
+            new StatelessCommandHandlerGenerator(),
+            new StatelessQueryHandlerGenerator(),
+            new StatefulCommandHandlerGenerator(),
+            new StatefulQueryHandlerGenerator()
+        };
+    }
+
+    /// <summary>
+    /// Initializes the generator and registers the necessary syntax providers and outputs.
+    /// </summary>
+    /// <param name="context">The generator initialization context</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Register the attribute source
@@ -36,12 +59,22 @@ namespace Remotr
 
         // Register the source output
         context.RegisterSourceOutput(classDeclarations,
-            static (spc, source) => Execute(source, spc));
+            (spc, source) => Execute(source, spc));
     }
 
+    /// <summary>
+    /// Determines if a syntax node should be considered for code generation.
+    /// </summary>
+    /// <param name="node">The syntax node to check</param>
+    /// <returns>True if the node is a class declaration with attributes</returns>
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
         => node is ClassDeclarationSyntax { AttributeLists: { Count: > 0 } };
 
+    /// <summary>
+    /// Gets the semantic model target for code generation.
+    /// </summary>
+    /// <param name="context">The generator syntax context</param>
+    /// <returns>The class declaration if it has the RemotrGen attribute, null otherwise</returns>
     private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
@@ -68,7 +101,12 @@ namespace Remotr
         return null;
     }
 
-    private static void Execute(ClassDeclarationSyntax classDeclaration, SourceProductionContext context)
+    /// <summary>
+    /// Executes the code generation for a class declaration.
+    /// </summary>
+    /// <param name="classDeclaration">The class declaration to process</param>
+    /// <param name="context">The source production context</param>
+    private void Execute(ClassDeclarationSyntax classDeclaration, SourceProductionContext context)
     {
         var className = classDeclaration.Identifier.Text;
         var baseType = classDeclaration.BaseList?.Types.FirstOrDefault()?.Type;
@@ -80,21 +118,10 @@ namespace Remotr
 
         var baseTypeName = genericBase.Identifier.Text;
         var typeArguments = genericBase.TypeArgumentList.Arguments;
-        var typeArgumentCount = typeArguments.Count;
-
-        if (typeArgumentCount < 1 || typeArgumentCount > 3)
-        {
-            return;
-        }
-
-        if ((baseTypeName == "StatelessQueryHandler" || baseTypeName == "StatefulQueryHandler") && typeArgumentCount < 2)
-        {
-            return;
-        }
 
         // Get the namespace from the source file
         var namespaceDecl = classDeclaration.Ancestors().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
-        var namespaceName = namespaceDecl?.Name.ToString() ?? "Remotr.Example.Calculator";
+        var namespaceName = namespaceDecl?.Name.ToString()!;
 
         var sourceBuilder = new StringBuilder();
         sourceBuilder.AppendLine("using System;");
@@ -110,306 +137,11 @@ namespace Remotr
         sourceBuilder.AppendLine($"public static class {extensionClassName}");
         sourceBuilder.AppendLine("{");
 
-        switch (baseTypeName)
-        {
-            case "StatelessCommandHandler":
-                GenerateStatelessCommandHandlerExtensions(sourceBuilder, className, typeArguments);
-                break;
-            case "StatelessQueryHandler":
-                GenerateStatelessQueryHandlerExtensions(sourceBuilder, className, typeArguments);
-                break;
-            case "StatefulCommandHandler":
-                GenerateStatefulCommandHandlerExtensions(sourceBuilder, className, typeArguments);
-                break;
-            case "StatefulQueryHandler":
-                GenerateStatefulQueryHandlerExtensions(sourceBuilder, className, typeArguments);
-                break;
-        }
+        var handlerGenerator = _handlerGenerators.FirstOrDefault(g => g.CanHandle(baseTypeName));
+        handlerGenerator?.GenerateExtensions(sourceBuilder, className, typeArguments);
 
         sourceBuilder.AppendLine("}");
 
         context.AddSource($"{extensionClassName}.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
-    }
-
-    private static void GenerateStatelessCommandHandlerExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments)
-    {
-        var t1 = typeArguments[0].ToString();
-        
-        if (typeArguments.Count == 1)
-        {
-            sb.AppendLine($@"        public static IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
-        }
-        else if (typeArguments.Count == 2)
-        {
-            var t2 = typeArguments[1].ToString();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
-        }
-        else if (typeArguments.Count == 3)
-        {
-            var t2 = typeArguments[1].ToString();
-            var t3 = typeArguments[2].ToString();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> Then{className}(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenTell<{className}, {t3}>();
-        }}");
-        }
-    }
-
-    private static void GenerateStatelessQueryHandlerExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments)
-    {
-        var t1 = typeArguments[0].ToString();
-        
-        if (typeArguments.Count == 2)
-        {
-            var t2 = typeArguments[1].ToString();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t2}> {className}(this IGrainQueryBaseBuilder<{t1}, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-        }
-        else if (typeArguments.Count == 3)
-        {
-            var t2 = typeArguments[1].ToString();
-            var t3 = typeArguments[2].ToString();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t3}> {className}(this IGrainQueryBaseBuilder<{t1}, BaseStatelessQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t3}> Then{className}(this IGrainQueryBuilder<{t1}, BaseStatelessQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenAsk<{className}, {t3}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> Then{className}(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenAsk<{className}, {t3}>();
-        }}");
-        }
-    }
-
-    private static void GenerateStatefulCommandHandlerExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments)
-    {
-        var t1 = typeArguments[0].ToString();
-        
-        if (typeArguments.Count == 1)
-        {
-            sb.AppendLine($@"        public static IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
-        }
-        else if (typeArguments.Count == 2)
-        {
-            var t2 = typeArguments[1].ToString();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
-        }
-        else if (typeArguments.Count == 3)
-        {
-            var t2 = typeArguments[1].ToString();
-            var t3 = typeArguments[2].ToString();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> Then{className}(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenTell<{className}, {t3}>();
-        }}");
-        }
-    }
-
-    private static void GenerateStatefulQueryHandlerExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments)
-    {
-        var t1 = typeArguments[0].ToString();
-        
-        if (typeArguments.Count == 2)
-        {
-            var t2 = typeArguments[1].ToString();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}(this IGrainQueryBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Ask<{className}, {t2}>();
-        }}");
-        }
-        else if (typeArguments.Count == 3)
-        {
-            var t2 = typeArguments[1].ToString();
-            var t3 = typeArguments[2].ToString();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}(this IGrainQueryBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Ask<{className}, {t2}, {t3}>(input);
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> Then{className}(this IGrainQueryBuilder<ITransactionChildGrain<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenAsk<{className}, {t3}>();
-        }}");
-
-            sb.AppendLine();
-
-            sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t3}> Then{className}(this IGrainCommandBuilder<ITransactionChildGrain<{t1}>, BaseStatefulCommandHandler<{t1}>, BaseStatefulQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenAsk<{className}, {t3}>();
-        }}");
-        }
     }
 } 

@@ -8,6 +8,10 @@ public class Example1(IExternalCommandFactory factory)
     public async Task Multiply() {
 
         var x = factory.GetManager<ICalculatorManagerGrain>()
+            .ForEach(
+                [2.0, 4.0],
+                (builder) => builder.Multiply(2.0)
+            )
             .SetValue3Type(30)
             .MergeSplit(
                 (builder) => builder.ForEach(
@@ -24,9 +28,9 @@ public class Example1(IExternalCommandFactory factory)
             .SetValue3Type(30)
             .ForEach(
                 [1, 2],
-                (builder) => builder.ThenSetValue3Type()
+                (builder) => builder.GetValue2Type()
             )
-            .Tell<Multiply, double, double>(5.0)
+            .Multiply(5.0)
             .Run("a");
     }
 }
