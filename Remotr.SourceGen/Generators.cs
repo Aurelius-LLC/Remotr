@@ -13,8 +13,8 @@ public static class Generators
     /// <summary>
     /// Gets the CqrsCollectionGenerator instance.
     /// </summary>
-    /// <returns>A new instance of the CqrsCollectionGenerator.</returns>
-    public static IIncrementalGenerator GetCqrsCollectionGenerator() => new CqrsCollectionGenerator();
+    /// <returns>A new instance of the CqrsCollectionIncrementalGenerator.</returns>
+    public static IIncrementalGenerator GetCqrsCollectionGenerator() => new CqrsCollectionIncrementalGenerator();
 
     /// <summary>
     /// Gets the RemotrGenerator instance.

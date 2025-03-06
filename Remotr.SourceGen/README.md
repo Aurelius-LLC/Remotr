@@ -71,4 +71,40 @@ To add new handler types:
 
 ## Contributing
 
-Contributions are welcome! Please follow the existing code style and add appropriate documentation comments. 
+Contributions are welcome! Please follow the existing code style and add appropriate documentation comments.
+
+## CqrsCollection Source Generator
+
+The CqrsCollection source generator is responsible for generating stateless handler classes for CQRS operations. It has been refactored to follow SOLID principles with a clear separation of concerns.
+
+### Architecture
+
+The generator is organized into the following components:
+
+1. **Entry Point**
+   - `CqrsCollectionIncrementalGenerator`: The main entry point that implements `IIncrementalGenerator`.
+   - `CqrsCollectionExecutor`: Orchestrates the validation and generation process.
+
+2. **Validators**
+   - `InterfaceValidator`: Validates that interfaces implement required base interfaces.
+   - `AttributeValidator`: Validates attribute arguments.
+   - `HandlerTypeValidator`: Validates handler types.
+
+3. **Generators**
+   - `AttributeGenerator`: Generates the CqrsCollectionAttribute.
+   - `StatelessHandlerGenerator`: Coordinates the generation of stateless handlers.
+   - `CommandHandlerGenerator`: Generates command handler code.
+   - `QueryHandlerGenerator`: Generates query handler code.
+
+4. **Utilities**
+   - `SyntaxTargetIdentifier`: Identifies syntax targets for generation.
+   - `SemanticTargetIdentifier`: Identifies semantic targets for generation.
+   - `TypeUtils`: Utility methods for working with types.
+
+### Flow
+
+1. The `CqrsCollectionIncrementalGenerator` initializes the generator and registers the attribute source.
+2. It identifies interfaces with the CqrsCollection attribute.
+3. For each interface, it calls the `CqrsCollectionExecutor` to validate and generate code.
+4. The executor validates the interface, attribute arguments, and handler type.
+5. If all validations pass, it generates the stateless handler code. 
