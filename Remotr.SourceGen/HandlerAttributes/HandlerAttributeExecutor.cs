@@ -73,18 +73,20 @@ public class HandlerAttributeExecutor
         }
 
         // Check if the handler type extends StatefulCommandHandler or StatefulQueryHandler
-        if (!_handlerTypeValidator.IsValidHandlerType(handlerTypeSymbol, compilation))
+        if (!_handlerTypeValidator.IsValidHandlerType(attributeName == "UseCommandAttribute", handlerTypeSymbol, compilation))
         {
+            var queryOrCommand = attributeName == "UseCommandAttribute" ? "StatefulCommandHandler" : "StatefulQueryHandler";
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     new DiagnosticDescriptor(
                         "REMOTR006",
-                        "Handler type must extend StatefulCommandHandler or StatefulQueryHandler",
-                        "The handler type '{0}' in {1} attribute must extend StatefulCommandHandler or StatefulQueryHandler",
+                        "Handler type must extend {0}",
+                        "The handler type '{1}' in {2} attribute must extend {0}",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     attribute.GetLocation(),
+                    queryOrCommand,
                     handlerTypeSymbol.Name,
                     attributeName));
             return;

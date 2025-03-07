@@ -10,15 +10,16 @@ public class HandlerTypeValidator
     /// <summary>
     /// Checks if the handler type is valid (extends StatefulCommandHandler or StatefulQueryHandler).
     /// </summary>
+    /// <param name="isCommandHandler">Whether this is validating a command handler or query handler</param>
     /// <param name="handlerTypeSymbol">The handler type symbol to check</param>
     /// <param name="compilation">The current compilation</param>
     /// <returns>True if the handler type is valid</returns>
-    public bool IsValidHandlerType(ITypeSymbol handlerTypeSymbol, Compilation compilation)
+    public bool IsValidHandlerType(bool isCommandHandler, ITypeSymbol handlerTypeSymbol, Compilation compilation)
     {
         // Try different namespace possibilities
         string[] possibleNamespaces = new[] { "Remotr" };
-        INamedTypeSymbol statefulCommandHandlerSymbol = null;
-        INamedTypeSymbol statefulQueryHandlerSymbol = null;
+        INamedTypeSymbol? statefulCommandHandlerSymbol = null;
+        INamedTypeSymbol? statefulQueryHandlerSymbol = null;
 
         foreach (var ns in possibleNamespaces)
         {
@@ -47,7 +48,7 @@ public class HandlerTypeValidator
             var currentName = current.Name;
             
             // Check if the name contains the expected string (simplified check)
-            if (currentName.Contains("StatefulCommandHandler") || currentName.Contains("StatefulQueryHandler"))
+            if ((currentName == "StatefulCommandHandler" && isCommandHandler) || (currentName == "StatefulQueryHandler" && !isCommandHandler))
                 return true;
                 
             current = current.BaseType;
@@ -57,13 +58,13 @@ public class HandlerTypeValidator
         if (statefulCommandHandlerSymbol == null && statefulQueryHandlerSymbol == null)
             return false;
 
-        bool isCommandHandler = statefulCommandHandlerSymbol != null && 
+        bool isCommandHandlerType = statefulCommandHandlerSymbol != null && 
                               IsSubtypeOfOpenGeneric(handlerTypeSymbol, statefulCommandHandlerSymbol);
                               
-        bool isQueryHandler = statefulQueryHandlerSymbol != null && 
+        bool isQueryHandlerType = statefulQueryHandlerSymbol != null && 
                             IsSubtypeOfOpenGeneric(handlerTypeSymbol, statefulQueryHandlerSymbol);
                             
-        return isCommandHandler || isQueryHandler;
+        return (isCommandHandlerType && isCommandHandler) || (isQueryHandlerType && !isCommandHandler);
     }
 
     /// <summary>
@@ -72,7 +73,7 @@ public class HandlerTypeValidator
     /// <param name="type">The type to check</param>
     /// <param name="openGenericType">The open generic type</param>
     /// <returns>True if the type is a subtype of the open generic type</returns>
-    public bool IsSubtypeOfOpenGeneric(ITypeSymbol type, INamedTypeSymbol openGenericType)
+    public bool IsSubtypeOfOpenGeneric(ITypeSymbol type, INamedTypeSymbol? openGenericType)
     {
         if (openGenericType == null)
             return false;

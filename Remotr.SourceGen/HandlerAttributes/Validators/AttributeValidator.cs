@@ -40,8 +40,8 @@ public class AttributeValidator
         InterfaceDeclarationSyntax interfaceDeclaration, 
         Compilation compilation,
         SourceProductionContext context,
-        out ITypeSymbol handlerTypeSymbol,
-        out string alias)
+        out ITypeSymbol? handlerTypeSymbol,
+        out string? alias)
     {
         handlerTypeSymbol = null;
         alias = null;
