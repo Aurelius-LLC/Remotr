@@ -1,11 +1,12 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
+using Remotr.SourceGen.HandlerAttributes.Utils;
 
-namespace Remotr.SourceGen.CqrsCollection;
+namespace Remotr.SourceGen.HandlerAttributes;
 
 [Generator]
-public class CqrsCollectionIncrementalGenerator : IIncrementalGenerator
+public class HandlerAttributeIncrementalGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -13,7 +14,7 @@ public class CqrsCollectionIncrementalGenerator : IIncrementalGenerator
         var attributeGenerator = new AttributeGenerator();
         attributeGenerator.RegisterAttributeSource(context);
 
-        // Get all interface declarations with the CqrsCollection attribute
+        // Get all interface declarations with the UseCommand or UseQuery attributes
         IncrementalValueProvider<Compilation> compilationProvider = context.CompilationProvider;
 
         IncrementalValuesProvider<(InterfaceDeclarationSyntax Interface, AttributeSyntax Attribute, Compilation Compilation)> interfaceDeclarations = 
@@ -32,6 +33,6 @@ public class CqrsCollectionIncrementalGenerator : IIncrementalGenerator
 
         // Register the source output
         context.RegisterSourceOutput(interfaceDeclarations,
-            (spc, source) => new CqrsCollectionExecutor().Execute(source.Interface, source.Attribute, source.Compilation, spc));
+            (spc, source) => new HandlerAttributeExecutor().Execute(source.Interface, source.Attribute, source.Compilation, spc));
     }
 } 

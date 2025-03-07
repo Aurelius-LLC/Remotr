@@ -1,7 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Linq;
 
-namespace Remotr.SourceGen.CqrsCollection.Validators;
+namespace Remotr.SourceGen.HandlerAttributes.Validators;
 
 /// <summary>
 /// Validates interface declarations for code generation.
@@ -9,7 +10,7 @@ namespace Remotr.SourceGen.CqrsCollection.Validators;
 public class InterfaceValidator
 {
     /// <summary>
-    /// Checks if the interface implements ITransactionManagerGrain.
+    /// Checks if an interface implements ITransactionManagerGrain.
     /// </summary>
     /// <param name="interfaceDeclaration">The interface declaration to check</param>
     /// <param name="compilation">The current compilation</param>
@@ -22,11 +23,20 @@ public class InterfaceValidator
         if (interfaceSymbol == null)
             return false;
 
-        var iTransactionManagerGrainSymbol = compilation.GetTypeByMetadataName("Remotr.ITransactionManagerGrain");
+        // Try different namespace possibilities
+        string[] possibleNamespaces = new[] { "Remotr", "Remotr.Interfaces" };
         
-        if (iTransactionManagerGrainSymbol == null)
-            return false;
-
-        return interfaceSymbol.AllInterfaces.Contains(iTransactionManagerGrainSymbol, SymbolEqualityComparer.Default);
+        foreach (var ns in possibleNamespaces)
+        {
+            var transactionManagerGrainSymbol = compilation.GetTypeByMetadataName($"{ns}.ITransactionManagerGrain");
+            
+            if (transactionManagerGrainSymbol != null && 
+                interfaceSymbol.AllInterfaces.Any(i => i.Equals(transactionManagerGrainSymbol, SymbolEqualityComparer.Default)))
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 } 

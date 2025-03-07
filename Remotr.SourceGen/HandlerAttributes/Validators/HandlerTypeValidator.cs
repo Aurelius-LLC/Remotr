@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace Remotr.SourceGen.CqrsCollection.Validators;
+namespace Remotr.SourceGen.HandlerAttributes.Validators;
 
 /// <summary>
 /// Validates handler types for code generation.

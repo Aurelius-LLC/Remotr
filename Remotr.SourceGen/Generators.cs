@@ -1,5 +1,5 @@
 using Microsoft.CodeAnalysis;
-using Remotr.SourceGen.CqrsCollection;
+using Remotr.SourceGen.HandlerAttributes;
 using Remotr.SourceGen.Remotr;
 
 namespace Remotr.SourceGen;
@@ -14,7 +14,7 @@ public static class Generators
     /// Gets the CqrsCollectionGenerator instance.
     /// </summary>
     /// <returns>A new instance of the CqrsCollectionIncrementalGenerator.</returns>
-    public static IIncrementalGenerator GetCqrsCollectionGenerator() => new CqrsCollectionIncrementalGenerator();
+    public static IIncrementalGenerator GetCqrsCollectionGenerator() => new HandlerAttributeIncrementalGenerator();
 
     /// <summary>
     /// Gets the RemotrGenerator instance.

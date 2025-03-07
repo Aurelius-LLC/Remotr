@@ -1,14 +1,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Remotr.SourceGen.CqrsCollection.Generators;
-using Remotr.SourceGen.CqrsCollection.Validators;
+using Remotr.SourceGen.HandlerAttributes.Generators;
+using Remotr.SourceGen.HandlerAttributes.Validators;
 
-namespace Remotr.SourceGen.CqrsCollection;
+namespace Remotr.SourceGen.HandlerAttributes;
 
 /// <summary>
-/// Executes the code generation for CqrsCollection attributes.
+/// Executes the code generation for UseCommand and UseQuery attributes.
 /// </summary>
-public class CqrsCollectionExecutor
+public class HandlerAttributeExecutor
 {
     private readonly InterfaceValidator _interfaceValidator;
     private readonly AttributeValidator _attributeValidator;
@@ -16,9 +16,9 @@ public class CqrsCollectionExecutor
     private readonly StatelessHandlerGenerator _statelessHandlerGenerator;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CqrsCollectionExecutor"/> class.
+    /// Initializes a new instance of the <see cref="HandlerAttributeExecutor"/> class.
     /// </summary>
-    public CqrsCollectionExecutor()
+    public HandlerAttributeExecutor()
     {
         _interfaceValidator = new InterfaceValidator();
         _attributeValidator = new AttributeValidator();
@@ -27,10 +27,10 @@ public class CqrsCollectionExecutor
     }
 
     /// <summary>
-    /// Executes the code generation for an interface declaration with a CqrsCollection attribute.
+    /// Executes the code generation for an interface declaration with a UseCommand or UseQuery attribute.
     /// </summary>
     /// <param name="interfaceDeclaration">The interface declaration to process</param>
-    /// <param name="attribute">The CqrsCollection attribute</param>
+    /// <param name="attribute">The attribute (UseCommand or UseQuery)</param>
     /// <param name="compilation">The current compilation</param>
     /// <param name="context">The source production context</param>
     public void Execute(
@@ -39,6 +39,9 @@ public class CqrsCollectionExecutor
         Compilation compilation,
         SourceProductionContext context)
     {
+        // Get attribute name for error messages
+        string attributeName = _attributeValidator.GetAttributeTypeName(attribute, compilation);
+        
         // Check if the interface implements ITransactionManagerGrain
         if (!_interfaceValidator.ImplementsITransactionManagerGrain(interfaceDeclaration, compilation))
         {
@@ -47,12 +50,13 @@ public class CqrsCollectionExecutor
                     new DiagnosticDescriptor(
                         "REMOTR001",
                         "Interface must implement ITransactionManagerGrain",
-                        "The interface '{0}' with CqrsCollection attribute must implement ITransactionManagerGrain",
+                        "The interface '{0}' with {1} attribute must implement ITransactionManagerGrain",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     interfaceDeclaration.GetLocation(),
-                    interfaceDeclaration.Identifier.Text));
+                    interfaceDeclaration.Identifier.Text, 
+                    attributeName));
             return;
         }
 
@@ -76,12 +80,13 @@ public class CqrsCollectionExecutor
                     new DiagnosticDescriptor(
                         "REMOTR006",
                         "Handler type must extend StatefulCommandHandler or StatefulQueryHandler",
-                        "The handler type '{0}' in CqrsCollection attribute must extend StatefulCommandHandler or StatefulQueryHandler",
+                        "The handler type '{0}' in {1} attribute must extend StatefulCommandHandler or StatefulQueryHandler",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     attribute.GetLocation(),
-                    handlerTypeSymbol.Name));
+                    handlerTypeSymbol.Name,
+                    attributeName));
             return;
         }
 

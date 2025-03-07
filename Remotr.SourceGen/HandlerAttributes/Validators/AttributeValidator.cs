@@ -2,13 +2,29 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Remotr.SourceGen.CqrsCollection.Validators;
+namespace Remotr.SourceGen.HandlerAttributes.Validators;
 
 /// <summary>
 /// Validates attribute arguments for code generation.
 /// </summary>
 public class AttributeValidator
 {
+    /// <summary>
+    /// Gets the attribute type name.
+    /// </summary>
+    /// <param name="attribute">The attribute to check</param>
+    /// <param name="compilation">The current compilation</param>
+    /// <returns>The attribute type name</returns>
+    public string GetAttributeTypeName(AttributeSyntax attribute, Compilation compilation)
+    {
+        var semanticModel = compilation.GetSemanticModel(attribute.SyntaxTree);
+        if (semanticModel.GetSymbolInfo(attribute).Symbol is IMethodSymbol attributeSymbol)
+        {
+            return attributeSymbol.ContainingType.Name;
+        }
+        return string.Empty;
+    }
+
     /// <summary>
     /// Validates the attribute arguments and extracts the handler type and alias.
     /// </summary>
@@ -30,6 +46,13 @@ public class AttributeValidator
         handlerTypeSymbol = null;
         alias = null;
 
+        // Get attribute name for error messages
+        string attributeName = GetAttributeTypeName(attribute, compilation);
+        if (string.IsNullOrEmpty(attributeName))
+        {
+            attributeName = "attribute";
+        }
+
         // Check if the attribute has the correct number of arguments
         if (attribute.ArgumentList == null || attribute.ArgumentList.Arguments.Count != 2)
         {
@@ -37,12 +60,13 @@ public class AttributeValidator
                 Diagnostic.Create(
                     new DiagnosticDescriptor(
                         "REMOTR002",
-                        "CqrsCollection attribute must have two arguments",
-                        "The CqrsCollection attribute on interface '{0}' must have two arguments: Type handlerType and string alias",
+                        $"{attributeName} must have two arguments",
+                        "The {0} attribute on interface '{1}' must have two arguments: Type handlerType and string alias",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     attribute.GetLocation(),
+                    attributeName,
                     interfaceDeclaration.Identifier.Text));
             return false;
         }
@@ -59,11 +83,12 @@ public class AttributeValidator
                     new DiagnosticDescriptor(
                         "REMOTR003",
                         "First argument must be a type",
-                        "The first argument of CqrsCollection attribute on interface '{0}' must be a type expression (typeof(...))",
+                        "The first argument of {0} attribute on interface '{1}' must be a type expression (typeof(...))",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     handlerTypeArgument.GetLocation(),
+                    attributeName,
                     interfaceDeclaration.Identifier.Text));
             return false;
         }
@@ -77,11 +102,12 @@ public class AttributeValidator
                     new DiagnosticDescriptor(
                         "REMOTR004",
                         "Second argument must be a string",
-                        "The second argument of CqrsCollection attribute on interface '{0}' must be a string literal",
+                        "The second argument of {0} attribute on interface '{1}' must be a string literal",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     aliasArgument.GetLocation(),
+                    attributeName,
                     interfaceDeclaration.Identifier.Text));
             return false;
         }
@@ -97,11 +123,12 @@ public class AttributeValidator
                     new DiagnosticDescriptor(
                         "REMOTR005",
                         "Handler type not found",
-                        "The handler type in CqrsCollection attribute on interface '{0}' could not be resolved",
+                        "The handler type in {0} attribute on interface '{1}' could not be resolved",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     typeOfExpression.GetLocation(),
+                    attributeName,
                     interfaceDeclaration.Identifier.Text));
             return false;
         }
@@ -117,12 +144,13 @@ public class AttributeValidator
                     new DiagnosticDescriptor(
                         "REMOTR007",
                         "Alias must be different from handler type name",
-                        "The alias '{0}' in CqrsCollection attribute must be different from the handler type name",
+                        "The alias '{0}' in {1} attribute must be different from the handler type name",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),
                     aliasArgument.GetLocation(),
-                    alias));
+                    alias,
+                    attributeName));
             return false;
         }
 

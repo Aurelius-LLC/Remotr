@@ -1,3 +1,4 @@
+using Orleans.Runtime.GrainDirectory;
 
 namespace Remotr.Example.Calculator;
 
@@ -8,6 +9,7 @@ public class Example1(IExternalCommandFactory factory)
     public async Task Multiply() {
 
         var x = factory.GetManager<ICalculatorManagerGrain>()
+            .Divide(2.0)
             .SetValue1Type()
             .Divide(2.0)
             .GetValue3Type(1)

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Remotr.SourceGen.CqrsCollection.Generators
+namespace Remotr.SourceGen.HandlerAttributes.Generators
 {
     /// <summary>
     /// Component class that handles the generation of stateless handlers

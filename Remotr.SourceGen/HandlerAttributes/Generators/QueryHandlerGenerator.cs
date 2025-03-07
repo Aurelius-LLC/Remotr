@@ -1,47 +1,30 @@
+using System;
 using System.Text;
 
-namespace Remotr.SourceGen.CqrsCollection.Generators;
+namespace Remotr.SourceGen.HandlerAttributes.Generators;
 
 /// <summary>
-/// Generator for command handlers
+/// Generator for query handlers
 /// </summary>
-public class CommandHandlerGenerator : IStatelessHandlerGenerator
+public class QueryHandlerGenerator : IStatelessHandlerGenerator
 {
     private readonly StatelessHandlerGeneratorComponent _component;
 
-    public CommandHandlerGenerator()
+    public QueryHandlerGenerator()
     {
         _component = new StatelessHandlerGeneratorComponent();
     }
 
     /// <summary>
-    /// Generates a stateless command handler with no input and no output.
+    /// This shouldn't be called as query handlers can't have no input and no output.
     /// </summary>
-    /// <param name="sb">The string builder to append to</param>
-    /// <param name="interfaceName">The interface name</param>
-    /// <param name="className">The class name</param>
-    /// <param name="statefulHandlerName">The stateful handler name</param>
-    /// <param name="stateType">The state type</param>
-    public void GenerateNoInputNoOutput(
-        StringBuilder sb, 
-        string interfaceName, 
-        string className, 
-        string statefulHandlerName,
-        string stateType)
+    public void GenerateNoInputNoOutput(StringBuilder sb, string interfaceName, string className, string statefulHandlerName, string stateType)
     {
-        sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}>");
-        sb.AppendLine("{");
-        sb.AppendLine("    public override async Task Execute()");
-        sb.AppendLine("    {");
-        sb.AppendLine($"        await CommandFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Tell<{statefulHandlerName}>()");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+        throw new NotImplementedException("Query handlers must have at least an output.");
     }
 
     /// <summary>
-    /// Generates a stateless command handler with no input but with output.
+    /// Generates a stateless query handler with no input but with output.
     /// </summary>
     /// <param name="sb">The string builder to append to</param>
     /// <param name="interfaceName">The interface name</param>
@@ -64,13 +47,13 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             statefulHandlerName,
             stateType,
             outputType,
-            "Command",
-            "Command",
-            "Tell");
+            "Query",
+            "Query",
+            "Ask");
     }
 
     /// <summary>
-    /// Generates a stateless command handler with input and output.
+    /// Generates a stateless query handler with input and output.
     /// </summary>
     /// <param name="sb">The string builder to append to</param>
     /// <param name="interfaceName">The interface name</param>
@@ -96,8 +79,8 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             stateType,
             inputType,
             outputType,
-            "Command",
-            "Command",
-            "Tell");
+            "Query",
+            "Query",
+            "Ask");
     }
 } 

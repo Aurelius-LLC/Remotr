@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 
-namespace Remotr.SourceGen.CqrsCollection;
+namespace Remotr.SourceGen.HandlerAttributes.Utils;
 
 /// <summary>
 /// Identifies semantic targets for code generation.
@@ -13,11 +13,11 @@ public static class SemanticTargetIdentifier
     /// Gets the semantic model targets for code generation.
     /// </summary>
     /// <param name="context">The generator syntax context</param>
-    /// <returns>The interface declaration and all CqrsCollection attributes on it</returns>
+    /// <returns>The interface declaration and attributes on it</returns>
     public static (InterfaceDeclarationSyntax Interface, List<AttributeSyntax> Attributes) GetSemanticTargetsForGeneration(GeneratorSyntaxContext context)
     {
         var interfaceDeclaration = (InterfaceDeclarationSyntax)context.Node;
-        var cqrsCollectionAttributes = new List<AttributeSyntax>();
+        var attributes = new List<AttributeSyntax>();
         
         foreach (var attributeList in interfaceDeclaration.AttributeLists)
         {
@@ -31,13 +31,13 @@ public static class SemanticTargetIdentifier
                 var attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 var fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                if (fullName == "Remotr.CqrsCollectionAttribute")
+                if (fullName == "Remotr.UseCommandAttribute" || fullName == "Remotr.UseQueryAttribute")
                 {
-                    cqrsCollectionAttributes.Add(attribute);
+                    attributes.Add(attribute);
                 }
             }
         }
 
-        return (interfaceDeclaration, cqrsCollectionAttributes);
+        return (interfaceDeclaration, attributes);
     }
 } 

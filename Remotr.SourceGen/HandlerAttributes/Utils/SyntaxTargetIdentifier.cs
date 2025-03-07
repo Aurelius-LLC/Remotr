@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Remotr.SourceGen.CqrsCollection;
+namespace Remotr.SourceGen.HandlerAttributes.Utils;
 
 /// <summary>
 /// Identifies syntax nodes that are potential targets for code generation.
