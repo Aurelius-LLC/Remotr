@@ -1,3 +1,4 @@
+using Remotr.SourceGen.HandlerAttributes.KeyStrategy;
 using System;
 using System.Text;
 
@@ -18,7 +19,13 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
     /// <summary>
     /// This shouldn't be called as query handlers can't have no input and no output.
     /// </summary>
-    public void GenerateNoInputNoOutput(StringBuilder sb, string interfaceName, string className, string statefulHandlerName, string stateType)
+    public void GenerateNoInputNoOutput(
+        StringBuilder sb, 
+        string interfaceName, 
+        string className, 
+        string statefulHandlerName, 
+        string stateType, 
+        IHandlerKeyStrategy keyStrategy)
     {
         throw new NotImplementedException("Query handlers must have at least an output.");
     }
@@ -32,13 +39,15 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
     /// <param name="statefulHandlerName">The stateful handler name</param>
     /// <param name="stateType">The state type</param>
     /// <param name="outputType">The output type</param>
+    /// <param name="keyStrategy">The key generation strategy</param>
     public void GenerateNoInputWithOutput(
         StringBuilder sb, 
         string interfaceName, 
         string className, 
         string statefulHandlerName,
         string stateType,
-        string outputType)
+        string outputType,
+        IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateNoInputWithOutput(
             sb,
@@ -49,7 +58,8 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
             outputType,
             "Query",
             "Query",
-            "Ask");
+            "Ask",
+            keyStrategy);
     }
 
     /// <summary>
@@ -62,6 +72,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
     /// <param name="stateType">The state type</param>
     /// <param name="inputType">The input type</param>
     /// <param name="outputType">The output type</param>
+    /// <param name="keyStrategy">The key generation strategy</param>
     public void GenerateWithInputAndOutput(
         StringBuilder sb, 
         string interfaceName, 
@@ -69,7 +80,8 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
         string statefulHandlerName,
         string stateType,
         string inputType,
-        string outputType)
+        string outputType,
+        IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateWithInputAndOutput(
             sb,
@@ -81,6 +93,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
             outputType,
             "Query",
             "Query",
-            "Ask");
+            "Ask",
+            keyStrategy);
     }
 } 

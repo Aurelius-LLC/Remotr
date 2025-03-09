@@ -9,6 +9,7 @@ public class Example1(IExternalCommandFactory factory)
     public async Task Multiply() {
 
         var x = factory.GetManager<ICalculatorManagerGrain>()
+            .Tell<Divide, double, double>(3)
             .Divide(2.0)
             .SetValue1Type()
             .Divide(2.0)
