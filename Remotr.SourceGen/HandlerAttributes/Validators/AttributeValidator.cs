@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Remotr.SourceGen.HandlerAttributes.Utils;
 
 namespace Remotr.SourceGen.HandlerAttributes.Validators;
 
@@ -115,7 +116,7 @@ public class AttributeValidator
         {
             return false;
         }
-
+        
         return true;
     }
 
@@ -644,8 +645,9 @@ public class AttributeValidator
         Compilation compilation, 
         SourceProductionContext context)
     {
-        // Determine if the handler has an input based on the number of generic arguments
-        var genericArgs = GetGenericTypeArguments(handlerTypeSymbol);
+        // Use TypeUtils to find the StatefulQueryHandler or StatefulCommandHandler base class
+        // and determine if the handler has an input
+        var genericArgs = TypeUtils.GetGenericTypeArguments(handlerTypeSymbol);
         bool hasInput = genericArgs.Count > 2; // Input is present if there are 3 generic arguments
         string? inputType = hasInput ? genericArgs[1].ToString() : null;
 
@@ -656,22 +658,6 @@ public class AttributeValidator
             inputType, 
             compilation, 
             context);
-    }
-
-    /// <summary>
-    /// Gets the generic type arguments of a type symbol.
-    /// </summary>
-    /// <param name="typeSymbol">The type symbol.</param>
-    /// <returns>The list of generic type arguments.</returns>
-    private System.Collections.Generic.List<ITypeSymbol> GetGenericTypeArguments(ITypeSymbol typeSymbol)
-    {
-        var namedTypeSymbol = typeSymbol as INamedTypeSymbol;
-        if (namedTypeSymbol == null || !namedTypeSymbol.IsGenericType)
-        {
-            return new System.Collections.Generic.List<ITypeSymbol>();
-        }
-
-        return namedTypeSymbol.TypeArguments.ToList();
     }
 
     /// <summary>
@@ -699,5 +685,21 @@ public class AttributeValidator
             out fixedKey, 
             out findMethod, 
             out usePrimaryKey);
+    }
+
+    /// <summary>
+    /// Gets the generic type arguments of a type symbol.
+    /// </summary>
+    /// <param name="typeSymbol">The type symbol.</param>
+    /// <returns>The list of generic type arguments.</returns>
+    private System.Collections.Generic.List<ITypeSymbol> GetGenericTypeArguments(ITypeSymbol typeSymbol)
+    {
+        var namedTypeSymbol = typeSymbol as INamedTypeSymbol;
+        if (namedTypeSymbol == null || !namedTypeSymbol.IsGenericType)
+        {
+            return new System.Collections.Generic.List<ITypeSymbol>();
+        }
+
+        return namedTypeSymbol.TypeArguments.ToList();
     }
 } 

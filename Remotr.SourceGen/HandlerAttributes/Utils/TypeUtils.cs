@@ -21,7 +21,7 @@ public static class TypeUtils
         while (current != null)
         {
             if (current is INamedTypeSymbol namedType && 
-                (current.Name.Contains("StatefulCommandHandler") || current.Name.Contains("StatefulQueryHandler")))
+                (current.Name == "StatefulCommandHandler" || current.Name == "StatefulQueryHandler"))
             {
                 return namedType.TypeArguments.ToList();
             }
