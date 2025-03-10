@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Remotr;
 using Remotr.SourceGen.HandlerAttributes;
 using System;
+using System.Collections.Immutable;
+using System.Reflection;
 using System.Threading.Tasks;
 using VerifyXunit;
 
@@ -11,8 +13,6 @@ namespace SourceGen;
 [UsesVerify]
 public class SourceGeneratorTests
 {
-
-
     private static readonly VerifySettings Settings;
     
     static SourceGeneratorTests()
@@ -20,7 +20,19 @@ public class SourceGeneratorTests
         Settings = new VerifySettings();
         Settings.UseDirectory("snapshots");
     }
-    
+
+    private static IEnumerable<MetadataReference> GetMetadataReferences()
+    {
+        var assemblies = new[]
+        {
+            typeof(object).Assembly, // System.Private.CoreLib
+            typeof(ITransactionManagerGrain).Assembly, // Remotr
+            Assembly.Load("netstandard"),
+            Assembly.Load("System.Runtime"),
+        };
+
+        return assemblies.Select(assembly => MetadataReference.CreateFromFile(assembly.Location));
+    }
 
     [Fact]
     public async Task BasicTest()
@@ -54,10 +66,7 @@ public record CalculatorState
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
         // Create a Roslyn compilation for the syntax tree
-        var references = new[]
-        {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
-        };
+        var references = GetMetadataReferences();
 
         CSharpCompilation compilation = CSharpCompilation.Create(
             assemblyName: "Tests",
@@ -71,10 +80,8 @@ public record CalculatorState
         // Create the driver that will run our generator
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
         
-
         // Run the source generator
         driver = driver.RunGenerators(compilation);
-
 
         // Verify the output
         await Verify(() => Task.FromResult(driver), settings: Settings);
