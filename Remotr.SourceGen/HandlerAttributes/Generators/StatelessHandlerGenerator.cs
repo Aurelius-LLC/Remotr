@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Remotr.SourceGen.HandlerAttributes.KeyStrategy;
 using Remotr.SourceGen.HandlerAttributes.Utils;
 using Remotr.SourceGen.HandlerAttributes.Validators;
 using Remotr.SourceGen.Remotr;
@@ -39,13 +40,37 @@ public class StatelessHandlerGenerator
     /// <param name="interfaceDeclaration">The interface declaration</param>
     /// <param name="handlerTypeSymbol">The handler type symbol</param>
     /// <param name="alias">The alias</param>
+    /// <param name="fixedKey">The fixed key, if specified</param>
+    /// <param name="findMethod">The find method name, if specified</param>
+    /// <param name="usePrimaryKey">Whether to use the primary key</param>
     /// <param name="context">The source production context</param>
     public void Generate(
         InterfaceDeclarationSyntax interfaceDeclaration, 
         ITypeSymbol handlerTypeSymbol, 
         string alias,
+        string? fixedKey,
+        string? findMethod,
+        bool usePrimaryKey,
         SourceProductionContext context)
     {
+        // Add diagnostic to log the input parameters
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                new DiagnosticDescriptor(
+                    "INFO022",
+                    "StatelessHandlerGenerator.Generate input parameters",
+                    "Generate called for handler '{0}', interface '{1}', alias='{2}', fixedKey='{3}', findMethod='{4}', usePrimaryKey={5}",
+                    "Remotr",
+                    DiagnosticSeverity.Info,
+                    isEnabledByDefault: true),
+                interfaceDeclaration.GetLocation(),
+                handlerTypeSymbol.Name,
+                interfaceDeclaration.Identifier.Text,
+                alias,
+                fixedKey ?? "null",
+                findMethod ?? "null", 
+                usePrimaryKey));
+                
         var handlerName = handlerTypeSymbol.Name;
         var isCommandHandler = _handlerTypeValidator.IsCommandHandler(handlerTypeSymbol);
         var genericTypeArgs = TypeUtils.GetGenericTypeArguments(handlerTypeSymbol);
@@ -93,7 +118,7 @@ public class StatelessHandlerGenerator
         _handlerGenerator = isCommandHandler ? new CommandHandlerGenerator() : new QueryHandlerGenerator();
         
         // Generate the handler based on the number of generic type arguments
-        GenerateHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs);
+        GenerateHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgs, fixedKey, findMethod, usePrimaryKey, namespaceName);
 
         // Generate extensions using RemotrGen generators
         var extensionsBuilder = new StringBuilder();
@@ -128,18 +153,56 @@ public class StatelessHandlerGenerator
         string className, 
         string statefulHandlerName, 
         string stateType, 
-        List<ITypeSymbol> genericTypeArgs)
+        List<ITypeSymbol> genericTypeArgs,
+        string? fixedKey,
+        string? findMethod,
+        bool usePrimaryKey,
+        string? namespaceName)
     {
+        // Add more detailed debug info for key strategy parameters
+        sourceBuilder.AppendLine($"// Debug: fixedKey is null? {string.IsNullOrEmpty(fixedKey)}");
+        sourceBuilder.AppendLine($"// Debug: findMethod is null? {string.IsNullOrEmpty(findMethod)}");
+        sourceBuilder.AppendLine($"// Debug: findMethod value: '{findMethod}'");
+        sourceBuilder.AppendLine($"// Debug: usePrimaryKey value: {usePrimaryKey}");
+        
+        // Add a comment to the generated code to show key strategy parameters
+        sourceBuilder.AppendLine($"// Key strategy parameters: fixedKey={fixedKey ?? "null"}, findMethod={findMethod ?? "null"}, usePrimaryKey={usePrimaryKey}");
+
+        // Determine the key strategy
+        IHandlerKeyStrategy keyStrategy;
+        if (!string.IsNullOrEmpty(fixedKey))
+        {
+            keyStrategy = new FixedKeyStrategy(fixedKey);
+            sourceBuilder.AppendLine($"// Using fixed key strategy: {fixedKey}");
+        }
+        else if (!string.IsNullOrEmpty(findMethod))
+        {
+            bool hasInput = genericTypeArgs.Count > 2; // For handlers with input
+            string inputName = hasInput ? "input" : "";
+            var fullInterfaceName = !string.IsNullOrEmpty(namespaceName) ? $"{namespaceName}.{interfaceName}" : interfaceName;
+            keyStrategy = new StaticMethodKeyStrategy(fullInterfaceName, findMethod, hasInput, inputName);
+            sourceBuilder.AppendLine($"// Using static method key strategy: {fullInterfaceName}.{findMethod}({(hasInput ? "input" : "")})");
+        }
+        else
+        {
+            // Default or explicit primary key
+            keyStrategy = new PrimaryKeyStrategy();
+            sourceBuilder.AppendLine($"// Using primary key strategy");
+        }
+
+        // Add diagnostic for key strategy
+        sourceBuilder.AppendLine($"// Generated key strategy: {keyStrategy.GenerateKeyStrategy()}");
+
         switch (genericTypeArgs.Count)
         {
             case 1: // ex StatefulCommandHandler<TState>
-                _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType);
+                _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, keyStrategy);
                 break;
             case 2: // ex StatefulCommandHandler<TState, TOutput>
-                _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString());
+                _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), keyStrategy);
                 break;
             case 3: // ex StatefulCommandHandler<TState, TInput, TOutput>
-                _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString());
+                _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgs[1].ToString(), genericTypeArgs[2].ToString(), keyStrategy);
                 break;
         }
     }

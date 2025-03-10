@@ -1,3 +1,4 @@
+using Remotr.SourceGen.HandlerAttributes.KeyStrategy;
 using System.Text;
 
 namespace Remotr.SourceGen.HandlerAttributes.Generators;
@@ -22,12 +23,14 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
     /// <param name="className">The class name</param>
     /// <param name="statefulHandlerName">The stateful handler name</param>
     /// <param name="stateType">The state type</param>
+    /// <param name="keyStrategy">The key generation strategy</param>
     public void GenerateNoInputNoOutput(
         StringBuilder sb, 
         string interfaceName, 
         string className, 
         string statefulHandlerName,
-        string stateType)
+        string stateType,
+        IHandlerKeyStrategy keyStrategy)
     {
         sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}>");
         sb.AppendLine("{");
@@ -35,7 +38,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         sb.AppendLine("    {");
         sb.AppendLine($"        await CommandFactory.GetChild<{stateType}>()");
         sb.AppendLine($"            .Tell<{statefulHandlerName}>()");
-        sb.AppendLine("            .Run(GetPrimaryKeyString());");
+        sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
         sb.AppendLine("    }");
         sb.AppendLine("}");
     }
@@ -49,13 +52,15 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
     /// <param name="statefulHandlerName">The stateful handler name</param>
     /// <param name="stateType">The state type</param>
     /// <param name="outputType">The output type</param>
+    /// <param name="keyStrategy">The key generation strategy</param>
     public void GenerateNoInputWithOutput(
         StringBuilder sb, 
         string interfaceName, 
         string className, 
         string statefulHandlerName,
         string stateType,
-        string outputType)
+        string outputType,
+        IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateNoInputWithOutput(
             sb,
@@ -66,7 +71,8 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             outputType,
             "Command",
             "Command",
-            "Tell");
+            "Tell",
+            keyStrategy);
     }
 
     /// <summary>
@@ -79,6 +85,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
     /// <param name="stateType">The state type</param>
     /// <param name="inputType">The input type</param>
     /// <param name="outputType">The output type</param>
+    /// <param name="keyStrategy">The key generation strategy</param>
     public void GenerateWithInputAndOutput(
         StringBuilder sb, 
         string interfaceName, 
@@ -86,7 +93,8 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         string statefulHandlerName,
         string stateType,
         string inputType,
-        string outputType)
+        string outputType,
+        IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateWithInputAndOutput(
             sb,
@@ -98,6 +106,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             outputType,
             "Command",
             "Command",
-            "Tell");
+            "Tell",
+            keyStrategy);
     }
 } 

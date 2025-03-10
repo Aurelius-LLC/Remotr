@@ -1,3 +1,4 @@
+using Remotr.SourceGen.HandlerAttributes.KeyStrategy;
 using System.Text;
 
 namespace Remotr.SourceGen.HandlerAttributes.Generators
@@ -19,7 +20,8 @@ namespace Remotr.SourceGen.HandlerAttributes.Generators
             string outputType,
             string handlerType,
             string factoryType,
-            string actionMethod)
+            string actionMethod,
+            IHandlerKeyStrategy keyStrategy)
         {
             sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {outputType}>");
             sb.AppendLine("{");
@@ -27,7 +29,7 @@ namespace Remotr.SourceGen.HandlerAttributes.Generators
             sb.AppendLine("    {");
             sb.AppendLine($"        return await {factoryType}Factory.GetChild<{stateType}>()");
             sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}, {outputType}>()");
-            sb.AppendLine("            .Run(GetPrimaryKeyString());");
+            sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
             sb.AppendLine("    }");
             sb.AppendLine("}");
         }
@@ -45,7 +47,8 @@ namespace Remotr.SourceGen.HandlerAttributes.Generators
             string outputType,
             string handlerType,
             string factoryType,
-            string actionMethod)
+            string actionMethod,
+            IHandlerKeyStrategy keyStrategy)
         {
             sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {inputType}, {outputType}>");
             sb.AppendLine("{");
@@ -53,7 +56,7 @@ namespace Remotr.SourceGen.HandlerAttributes.Generators
             sb.AppendLine("    {");
             sb.AppendLine($"        return await {factoryType}Factory.GetChild<{stateType}>()");
             sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}, {inputType}, {outputType}>(input)");
-            sb.AppendLine("            .Run(GetPrimaryKeyString());");
+            sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
             sb.AppendLine("    }");
             sb.AppendLine("}");
         }
