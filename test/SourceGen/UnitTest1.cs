@@ -14,12 +14,11 @@ namespace SourceGen;
 [UsesVerify]
 public class SourceGeneratorTests
 {
-    private static readonly VerifySettings Settings;
-    
-    static SourceGeneratorTests()
+    private static VerifySettings GetVerifySettings(string testName)
     {
-        Settings = new VerifySettings();
-        Settings.UseDirectory("snapshots");
+        VerifySettings settings = new();
+        settings.UseDirectory("snapshots/" + testName);
+        return settings;
     }
 
     private static IEnumerable<MetadataReference> GetMetadataReferences()
@@ -134,7 +133,7 @@ public record TestState
         var driver = CreateTestDriver(source);
 
         // Verify the output
-        await Verify(() => Task.FromResult(driver), settings: Settings);
+        await Verify(() => Task.FromResult(driver), settings: GetVerifySettings(nameof(SimpleCommandsAndQueriesGenerationTest)));
     }
 }
 
