@@ -370,36 +370,12 @@ public class AttributeValidator
         IMethodSymbol attributeConstructor,
         SourceProductionContext context)
     {
-        // Debug: Log the argument being processed
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "REMOTR102",
-                    "Processing argument",
-                    "Processing argument: hasNameEquals={0}, expression='{1}'",
-                    "Remotr",
-                    DiagnosticSeverity.Warning,
-                    isEnabledByDefault: true),
-                arg.GetLocation(),
-                arg.NameEquals != null,
-                arg.Expression.ToString()));
+        // Debug: Log the argument bein
 
         // If the argument has an explicit name, use that first (highest priority)
         if (arg.NameColon != null)
         {
-            var name = arg.NameColon.Name.Identifier.Text;
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    new DiagnosticDescriptor(
-                        "REMOTR103",
-                        "Found explicit name",
-                        "Found explicit name: '{0}'",
-                        "Remotr",
-                        DiagnosticSeverity.Warning,
-                        isEnabledByDefault: true),
-                    arg.GetLocation(),
-                    name));
-            return name;
+            return arg.NameColon.Name.Identifier.Text;
         }
         
         // Try to get the parameter name from the semantic model
@@ -499,37 +475,12 @@ public class AttributeValidator
         ref string? findMethod,
         ref bool usePrimaryKey)
     {
-        // Debug: Log the parameter being processed
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "REMOTR100",
-                    "Processing parameter",
-                    "Processing parameter: name='{0}', expression='{1}'",
-                    "Remotr",
-                    DiagnosticSeverity.Warning,
-                    isEnabledByDefault: true),
-                arg.GetLocation(),
-                paramName,
-                arg.Expression.ToString()));
 
         if (paramName.Equals("fixedKey", StringComparison.OrdinalIgnoreCase) && 
             arg.Expression is LiteralExpressionSyntax fixedLiteral && 
             fixedLiteral.Kind() == SyntaxKind.StringLiteralExpression)
         {
             fixedKey = fixedLiteral.Token.ValueText;
-            // Debug: Log when fixedKey is set
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    new DiagnosticDescriptor(
-                        "REMOTR101",
-                        "Fixed key set",
-                        "Fixed key set to: '{0}'",
-                        "Remotr",
-                        DiagnosticSeverity.Warning,
-                        isEnabledByDefault: true),
-                    arg.GetLocation(),
-                    fixedKey));
         }
         else if (paramName.Equals("findMethod", StringComparison.OrdinalIgnoreCase))
         {
@@ -590,7 +541,7 @@ public class AttributeValidator
         if (invocation.Expression is IdentifierNameSyntax identifierName && 
             identifierName.Identifier.ValueText == "nameof")
         {
-            ProcessNameofExpression(invocation, arg, context, ref findMethod);
+            ProcessNameofExpression(invocation, ref findMethod);
         }
         else
         {
@@ -612,9 +563,7 @@ public class AttributeValidator
     /// <param name="context">The source production context.</param>
     /// <param name="findMethod">The find method name.</param>
     private void ProcessNameofExpression(
-        InvocationExpressionSyntax invocation, 
-        AttributeArgumentSyntax arg,
-        SourceProductionContext context,
+        InvocationExpressionSyntax invocation,
         ref string? findMethod)
     {
         // Extract the argument of the nameof expression

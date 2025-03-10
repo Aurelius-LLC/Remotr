@@ -47,22 +47,6 @@ public class KeyStrategyValidator
             return false;
         }
 
-        // Add diagnostic for validation result
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "INFO006",
-                    "Key strategy validation",
-                    "Key strategy validation: fixedKey='{0}', findMethod='{1}', usePrimaryKey={2}, optionsSpecified={3}",
-                    "Remotr",
-                    DiagnosticSeverity.Info,
-                    isEnabledByDefault: true),
-                location,
-                @fixed ?? "null",
-                find ?? "null",
-                usePrimaryKey,
-                optionsSpecified));
-
         return true;
     }
 

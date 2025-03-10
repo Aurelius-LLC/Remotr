@@ -53,23 +53,6 @@ public class StatelessHandlerGenerator
         bool usePrimaryKey,
         SourceProductionContext context)
     {
-        // Add diagnostic to log the input parameters
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "INFO022",
-                    "StatelessHandlerGenerator.Generate input parameters",
-                    "Generate called for handler '{0}', interface '{1}', alias='{2}', fixedKey='{3}', findMethod='{4}', usePrimaryKey={5}",
-                    "Remotr",
-                    DiagnosticSeverity.Info,
-                    isEnabledByDefault: true),
-                interfaceDeclaration.GetLocation(),
-                handlerTypeSymbol.Name,
-                interfaceDeclaration.Identifier.Text,
-                alias,
-                fixedKey ?? "null",
-                findMethod ?? "null", 
-                usePrimaryKey));
                 
         var handlerName = handlerTypeSymbol.Name;
         var isCommandHandler = _handlerTypeValidator.IsCommandHandler(handlerTypeSymbol);

@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR001,
+      Title: Interface must implement ITransactionManagerGrain,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (3,0)-(10,1),
+      MessageFormat: The interface '{0}' with {1} attribute must implement ITransactionManagerGrain,
+      Message: The interface 'ICalculatorManagerGrain' with UseQueryAttribute attribute must implement ITransactionManagerGrain,
+      Category: Remotr
+    }
+  ]
+}

@@ -95,40 +95,6 @@ public class HandlerAttributeExecutor
             return;
         }
 
-        // Add diagnostic for the attribute arguments
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "INFO007",
-                    "Attribute arguments",
-                    "Attribute arguments for {0}: alias='{1}', fixedKey='{2}', findMethod='{3}', usePrimaryKey={4}",
-                    "Remotr",
-                    DiagnosticSeverity.Info,
-                    isEnabledByDefault: true),
-                attribute.GetLocation(),
-                handlerTypeSymbol.Name,
-                alias ?? "null",
-                fixedKey ?? "null",
-                findMethod ?? "null",
-                usePrimaryKey));
-
-        // Add diagnostic for the detailed parameters being passed to the generator
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                new DiagnosticDescriptor(
-                    "INFO023",
-                    "Parameters being passed to StatelessHandlerGenerator",
-                    "Parameters for StatelessHandlerGenerator: handlerTypeSymbol='{0}', alias='{1}', fixedKey='{2}', findMethod='{3}', usePrimaryKey={4}",
-                    "Remotr",
-                    DiagnosticSeverity.Info,
-                    isEnabledByDefault: true),
-                attribute.GetLocation(),
-                handlerTypeSymbol?.Name ?? "null",
-                alias ?? "null",
-                fixedKey ?? "null",
-                findMethod ?? "null",
-                usePrimaryKey));
-
         // Generate the stateless command/query handler
         _statelessHandlerGenerator.Generate(interfaceDeclaration, handlerTypeSymbol, alias, fixedKey, findMethod, usePrimaryKey, context);
     }
