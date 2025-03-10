@@ -142,21 +142,11 @@ public class StatelessHandlerGenerator
         bool usePrimaryKey,
         string? namespaceName)
     {
-        // Add more detailed debug info for key strategy parameters
-        sourceBuilder.AppendLine($"// Debug: fixedKey is null? {string.IsNullOrEmpty(fixedKey)}");
-        sourceBuilder.AppendLine($"// Debug: findMethod is null? {string.IsNullOrEmpty(findMethod)}");
-        sourceBuilder.AppendLine($"// Debug: findMethod value: '{findMethod}'");
-        sourceBuilder.AppendLine($"// Debug: usePrimaryKey value: {usePrimaryKey}");
-        
-        // Add a comment to the generated code to show key strategy parameters
-        sourceBuilder.AppendLine($"// Key strategy parameters: fixedKey={fixedKey ?? "null"}, findMethod={findMethod ?? "null"}, usePrimaryKey={usePrimaryKey}");
-
         // Determine the key strategy
         IHandlerKeyStrategy keyStrategy;
         if (!string.IsNullOrEmpty(fixedKey))
         {
             keyStrategy = new FixedKeyStrategy(fixedKey);
-            sourceBuilder.AppendLine($"// Using fixed key strategy: {fixedKey}");
         }
         else if (!string.IsNullOrEmpty(findMethod))
         {
@@ -164,17 +154,12 @@ public class StatelessHandlerGenerator
             string inputName = hasInput ? "input" : "";
             var fullInterfaceName = !string.IsNullOrEmpty(namespaceName) ? $"{namespaceName}.{interfaceName}" : interfaceName;
             keyStrategy = new StaticMethodKeyStrategy(fullInterfaceName, findMethod, hasInput, inputName);
-            sourceBuilder.AppendLine($"// Using static method key strategy: {fullInterfaceName}.{findMethod}({(hasInput ? "input" : "")})");
         }
         else
         {
             // Default or explicit primary key
             keyStrategy = new PrimaryKeyStrategy();
-            sourceBuilder.AppendLine($"// Using primary key strategy");
         }
-
-        // Add diagnostic for key strategy
-        sourceBuilder.AppendLine($"// Generated key strategy: {keyStrategy.GenerateKeyStrategy()}");
 
         switch (genericTypeArgs.Count)
         {

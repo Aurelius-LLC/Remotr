@@ -370,7 +370,6 @@ public class AttributeValidator
         IMethodSymbol attributeConstructor,
         SourceProductionContext context)
     {
-        // Debug: Log the argument bein
 
         // If the argument has an explicit name, use that first (highest priority)
         if (arg.NameColon != null)

@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Remotr;
+using Remotr.SourceGen;
 using Remotr.SourceGen.HandlerAttributes;
 using System;
 using System.Collections.Immutable;
@@ -34,34 +35,8 @@ public class SourceGeneratorTests
         return assemblies.Select(assembly => MetadataReference.CreateFromFile(assembly.Location));
     }
 
-    [Fact]
-    public async Task BasicTest()
+    private static GeneratorDriver CreateTestDriver(string source)
     {
-        // Simple test case
-        const string source = @"
-namespace Test1;
-
-[Remotr.UseQuery(typeof(GetValueState3Type), ""GetValue3Type"", findMethod: nameof(GetValueState3TypeKey))]
-public interface ICalculatorManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
-{
-    public static string GetValueState3TypeKey(int input) 
-    {
-        return ""Calculator"";
-    }
-}
-public class GetValueState3Type : StatefulQueryHandler<CalculatorState, int, double>
-{
-    public override async Task<double> Execute(int input)
-    {
-        return (await GetState()).Value;
-    }
-}
-public record CalculatorState
-{
-    public double Value { get; set; }
-}
-";
-
         // Parse the provided string into a C# syntax tree
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
@@ -74,14 +49,89 @@ public record CalculatorState
             references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        // Create an instance of our generator
-        var generator = new HandlerAttributeIncrementalGenerator();
+        // Create instances of our generators
+        var handlerGenerator = new HandlerAttributeIncrementalGenerator();
+        var remotrGenerator = Generators.GetRemotrGenerator();
         
-        // Create the driver that will run our generator
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        // Create the driver that will run our generators
+        GeneratorDriver driver = CSharpGeneratorDriver.Create([handlerGenerator, remotrGenerator]);
         
-        // Run the source generator
+        // Run the source generators
         driver = driver.RunGenerators(compilation);
+
+        return driver;
+    }
+
+    [Fact]
+    public async Task SimpleCommandsAndQueriesGenerationTest()
+    {
+        // Simple test case
+        const string source = @"
+using Remotr;
+namespace SimpleCommandsAndQueriesTest;
+
+[UseCommand(typeof(TestCommand1Type), ""TestC1"")]
+[UseCommand(typeof(TestCommand2Type), ""TestC2"")]
+[UseCommand(typeof(TestCommand3Type), ""TestC3"")]
+[UseQuery(typeof(TestQuery2Type), ""TestQ2"")]
+[UseQuery(typeof(TestQuery3Type), ""TestQ3"")]
+public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+{
+}
+
+[RemotrGen]
+public class TestCommand1Type : StatefulCommandHandler<TestState>
+{
+    public override Task Execute()
+    {
+        return Task.CompletedTask;
+    }
+}
+
+[RemotrGen]
+public class TestCommand2Type : StatefulCommandHandler<TestState, double>
+{
+    public override async Task<double> Execute()
+    {
+        return (await GetState()).Value;
+    }
+}
+
+[RemotrGen]
+public class TestCommand3Type : StatefulCommandHandler<TestState, int, double>
+{
+    public override async Task<double> Execute(int input)
+    {
+        return (await GetState()).Value;
+    }
+}
+
+[RemotrGen]
+public class TestQuery2Type : StatefulQueryHandler<TestState, double>
+{
+    public override async Task<double> Execute()
+    {
+        return (await GetState()).Value;
+    }
+}
+
+[RemotrGen]
+public class TestQuery3Type : StatefulQueryHandler<TestState, int, double>
+{
+    public override async Task<double> Execute(int input)
+    {
+        return (await GetState()).Value;
+    }
+}
+
+
+public record TestState
+{
+    public double Value { get; set; }
+}
+";
+
+        var driver = CreateTestDriver(source);
 
         // Verify the output
         await Verify(() => Task.FromResult(driver), settings: Settings);
