@@ -18,6 +18,13 @@ namespace Remotr.SourceGen.Remotr;
 public class RemotrGenerator : IIncrementalGenerator
 {
     private readonly IReadOnlyList<IExtensionGenerator> _handlerGenerators;
+    private static readonly DiagnosticDescriptor InvalidTargetDiagnostic = new(
+        id: "REMOTR020",
+        title: "Invalid RemotrGen target",
+        messageFormat: "The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler",
+        category: "Remotr",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
 
     public RemotrGenerator()
     {
@@ -51,15 +58,22 @@ namespace Remotr
 }", Encoding.UTF8)));
 
         // Get all class declarations with the RemotrGen attribute
-        IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
+        IncrementalValuesProvider<(ClassDeclarationSyntax ClassDeclaration, bool IsValid)> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-            .Where(static m => m is not null)!;
+            .Where(static m => m.ClassDeclaration is not null)!;
 
         // Register the source output
         context.RegisterSourceOutput(classDeclarations,
-            (spc, source) => Execute(source, spc));
+            (spc, source) => {
+                if (!source.IsValid)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(InvalidTargetDiagnostic, source.ClassDeclaration.GetLocation()));
+                    return;
+                }
+                Execute(source.ClassDeclaration, spc);
+            });
     }
 
     /// <summary>
@@ -74,10 +88,11 @@ namespace Remotr
     /// Gets the semantic model target for code generation.
     /// </summary>
     /// <param name="context">The generator syntax context</param>
-    /// <returns>The class declaration if it has the RemotrGen attribute, null otherwise</returns>
-    private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    /// <returns>The class declaration if it has the RemotrGen attribute and is valid, null otherwise</returns>
+    private static (ClassDeclarationSyntax? ClassDeclaration, bool IsValid) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        bool hasRemotrGenAttribute = false;
 
         foreach (var attributeList in classDeclaration.AttributeLists)
         {
@@ -93,12 +108,29 @@ namespace Remotr
 
                 if (fullName == "Remotr.RemotrGenAttribute")
                 {
-                    return classDeclaration;
+                    hasRemotrGenAttribute = true;
+                    break;
                 }
             }
         }
 
-        return null;
+        if (!hasRemotrGenAttribute)
+        {
+            return (null, false);
+        }
+
+        // Check if the class extends one of the valid handler types
+        var baseType = classDeclaration.BaseList?.Types.FirstOrDefault()?.Type;
+        if (baseType is not GenericNameSyntax genericBase)
+        {
+            return (classDeclaration, false);
+        }
+
+        var baseTypeName = genericBase.Identifier.Text;
+        bool isValidHandler = baseTypeName is "StatelessQueryHandler" or "StatelessCommandHandler" 
+                            or "StatefulQueryHandler" or "StatefulCommandHandler";
+
+        return (classDeclaration, isValidHandler);
     }
 
     /// <summary>
