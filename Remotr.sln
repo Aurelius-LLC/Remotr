@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Remotr.SourceGen", "Remotr.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{63B095CE-2E7F-427F-8F13-7D8348E7C1E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGen", "test\SourceGen\SourceGen.csproj", "{670FAD2A-0E83-4729-AE62-3336F61752CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenTests", "test\SourceGen\SourceGenTests.csproj", "{670FAD2A-0E83-4729-AE62-3336F61752CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

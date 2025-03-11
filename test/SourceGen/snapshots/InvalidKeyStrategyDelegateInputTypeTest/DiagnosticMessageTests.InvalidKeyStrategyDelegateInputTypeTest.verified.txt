@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR017,
+      Title: Parameter type mismatch,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(11,1),
+      MessageFormat: The type of the method parameter '{0}' does not match the handler input type '{1}',
+      Message: The type of the method parameter 'string' does not match the handler input type 'double',
+      Category: Remotr
+    }
+  ]
+}
