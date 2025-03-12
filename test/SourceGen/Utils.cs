@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Remotr;
 using Remotr.SourceGen;
-using Remotr.SourceGen.HandlerAttributes;
+using Remotr.SourceGen.UseHandlerAttributes;
 using System.Reflection;
 
 namespace SourceGen;
