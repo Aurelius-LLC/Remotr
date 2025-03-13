@@ -11,6 +11,8 @@ namespace Remotr.SourceGen.Remotr;
 public class StatefulQueryHandlerGenerator : BaseExtensionGenerator, IStatefulHandlerGenerator
 {
     private readonly StatefulHandlerGeneratorComponent _component;
+    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _queryConfig;
+    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _commandToQueryConfig;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatefulQueryHandlerGenerator"/> class.
@@ -18,6 +20,25 @@ public class StatefulQueryHandlerGenerator : BaseExtensionGenerator, IStatefulHa
     public StatefulQueryHandlerGenerator()
     {
         _component = new StatefulHandlerGeneratorComponent();
+        
+        // Configuration for query-specific extensions
+        _queryConfig = new StatefulHandlerGeneratorComponent.HandlerConfig
+        {
+            BaseBuilderType = "IGrainQueryBaseBuilder",
+            BuilderType = "IGrainQueryBuilder",
+            HandlerType = "Query",
+            IncludeOtherHandler = false
+        };
+
+        // Configuration for command-to-query extensions
+        _commandToQueryConfig = new StatefulHandlerGeneratorComponent.HandlerConfig
+        {
+            BaseBuilderType = "IGrainCommandBaseBuilder",
+            BuilderType = "IGrainCommandBuilder",
+            HandlerType = "Command",
+            OtherHandlerType = "Query",
+            IncludeOtherHandler = true
+        };
     }
 
     /// <inheritdoc/>
@@ -62,73 +83,23 @@ public class StatefulQueryHandlerGenerator : BaseExtensionGenerator, IStatefulHa
 
     private void GenerateNoInput(StringBuilder sb, string className, string stateType, string outputType)
     {
-        sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}(this IGrainQueryBaseBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>> builder)
-        {{
-            return builder.Ask<{className}, {outputType}>();
-        }}");
-
+        // Generate query-specific extension
+        _component.GenerateNoInputWithOutput(sb, className, stateType, outputType, _queryConfig, "Ask");
+        
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>> builder)
-        {{
-            return builder.Ask<{className}, {outputType}>();
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}<T>(this IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, T> builder)
-        {{
-            return builder.Ask<{className}, {outputType}>();
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, T> builder)
-        {{
-            return builder.Ask<{className}, {outputType}>();
-        }}");
+        // Generate command-to-query extension
+        _component.GenerateNoInputWithOutput(sb, className, stateType, outputType, _commandToQueryConfig, "Ask");
     }
 
     private void GenerateWithInput(StringBuilder sb, string className, string stateType, string inputType, string outputType)
     {
-        sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}(this IGrainQueryBaseBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>> builder, {inputType} input)
-        {{
-            return builder.Ask<{className}, {inputType}, {outputType}>(input);
-        }}");
+        // Generate query-specific extension
+        _component.GenerateWithInputAndOutput(sb, className, stateType, inputType, outputType, _queryConfig, "Ask", "ThenAsk");
 
         sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}(this IGrainCommandBaseBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>> builder, {inputType} input)
-        {{
-            return builder.Ask<{className}, {inputType}, {outputType}>(input);
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}<T>(this IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, T> builder, {inputType} input)
-        {{
-            return builder.Ask<{className}, {inputType}, {outputType}>(input);
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> {className}<T>(this IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, T> builder, {inputType} input)
-        {{
-            return builder.Ask<{className}, {inputType}, {outputType}>(input);
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> Then{className}(this IGrainQueryBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {inputType}> builder)
-        {{
-            return builder.ThenAsk<{className}, {outputType}>();
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {outputType}> Then{className}(this IGrainCommandBuilder<ITransactionChildGrain<{stateType}>, BaseStatefulCommandHandler<{stateType}>, BaseStatefulQueryHandler<{stateType}>, {inputType}> builder)
-        {{
-            return builder.ThenAsk<{className}, {outputType}>();
-        }}");
+        
+        // Generate command-to-query extension
+        _component.GenerateWithInputAndOutput(sb, className, stateType, inputType, outputType, _commandToQueryConfig, "Ask", "ThenAsk");
     }
 } 

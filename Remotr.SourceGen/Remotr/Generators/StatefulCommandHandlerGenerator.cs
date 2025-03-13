@@ -11,6 +11,7 @@ namespace Remotr.SourceGen.Remotr;
 public class StatefulCommandHandlerGenerator : BaseExtensionGenerator, IStatefulHandlerGenerator
 {
     private readonly StatefulHandlerGeneratorComponent _component;
+    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _config;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatefulCommandHandlerGenerator"/> class.
@@ -18,6 +19,14 @@ public class StatefulCommandHandlerGenerator : BaseExtensionGenerator, IStateful
     public StatefulCommandHandlerGenerator()
     {
         _component = new StatefulHandlerGeneratorComponent();
+        _config = new StatefulHandlerGeneratorComponent.HandlerConfig
+        {
+            BaseBuilderType = "IGrainCommandBaseBuilder",
+            BuilderType = "IGrainCommandBuilder",
+            HandlerType = "Command",
+            OtherHandlerType = "Query",
+            IncludeOtherHandler = true
+        };
     }
 
     /// <inheritdoc/>
@@ -48,18 +57,18 @@ public class StatefulCommandHandlerGenerator : BaseExtensionGenerator, IStateful
     /// <inheritdoc/>
     public void GenerateNoInputNoOutput(StringBuilder sb, string className, string stateType)
     {
-        _component.GenerateNoInputNoOutput(sb, className, stateType, "Command");
+        _component.GenerateNoInputNoOutput(sb, className, stateType, _config, "Tell");
     }
 
     /// <inheritdoc/>
     public void GenerateNoInputWithOutput(StringBuilder sb, string className, string stateType, string outputType)
     {
-        _component.GenerateNoInputWithOutput(sb, className, stateType, outputType, "Command", "Tell");
+        _component.GenerateNoInputWithOutput(sb, className, stateType, outputType, _config, "Tell");
     }
 
     /// <inheritdoc/>
     public void GenerateWithInputAndOutput(StringBuilder sb, string className, string stateType, string inputType, string outputType)
     {
-        _component.GenerateWithInputAndOutput(sb, className, stateType, inputType, outputType, "Command", "Tell", "ThenTell");
+        _component.GenerateWithInputAndOutput(sb, className, stateType, inputType, outputType, _config, "Tell", "ThenTell");
     }
 } 

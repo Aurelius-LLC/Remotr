@@ -12,12 +12,12 @@ public static class TestStateTestQuery2Type
             return builder.Ask<TestQuery2Type, double>();
         }
 
-        public static IGrainCommandBuilder<ITransactionChildGrain<TestState>, BaseStatefulCommandHandler<TestState>, BaseStatefulQueryHandler<TestState>, double> TestQuery2Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<TestState>, BaseStatefulCommandHandler<TestState>, BaseStatefulQueryHandler<TestState>> builder)
+        public static IGrainQueryBuilder<ITransactionChildGrain<TestState>, BaseStatefulQueryHandler<TestState>, double> TestQuery2Type<T>(this IGrainQueryBuilder<ITransactionChildGrain<TestState>, BaseStatefulQueryHandler<TestState>, T> builder)
         {
             return builder.Ask<TestQuery2Type, double>();
         }
 
-        public static IGrainQueryBuilder<ITransactionChildGrain<TestState>, BaseStatefulQueryHandler<TestState>, double> TestQuery2Type<T>(this IGrainQueryBuilder<ITransactionChildGrain<TestState>, BaseStatefulQueryHandler<TestState>, T> builder)
+        public static IGrainCommandBuilder<ITransactionChildGrain<TestState>, BaseStatefulCommandHandler<TestState>, BaseStatefulQueryHandler<TestState>, double> TestQuery2Type(this IGrainCommandBaseBuilder<ITransactionChildGrain<TestState>, BaseStatefulCommandHandler<TestState>, BaseStatefulQueryHandler<TestState>> builder)
         {
             return builder.Ask<TestQuery2Type, double>();
         }
