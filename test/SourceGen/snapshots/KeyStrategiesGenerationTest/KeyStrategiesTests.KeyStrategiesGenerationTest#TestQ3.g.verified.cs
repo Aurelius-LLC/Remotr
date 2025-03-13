@@ -29,6 +29,11 @@ public static class ITestManagerGrainTestQ3Extensions
             return builder.Ask<TestQ3, double, double>(input);
         }
 
+        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> ThenTestQ3(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> builder)
+        {
+            return builder.ThenAsk<TestQ3, double>();
+        }
+
         public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ3(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>> builder, double input)
         {
             return builder.Ask<TestQ3, double, double>(input);
@@ -37,11 +42,6 @@ public static class ITestManagerGrainTestQ3Extensions
         public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ3<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, T> builder, double input)
         {
             return builder.Ask<TestQ3, double, double>(input);
-        }
-
-        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> ThenTestQ3(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> builder)
-        {
-            return builder.ThenAsk<TestQ3, double>();
         }
 
         public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> ThenTestQ3(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> builder)

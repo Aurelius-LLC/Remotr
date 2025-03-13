@@ -8,8 +8,27 @@ namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 /// <summary>
 /// Generator for StatelessCommandHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatelessCommandExtensionGenerator : BaseExtensionGenerator, IExtensionGenerator
+public class StatelessCommandExtensionGenerator : BaseExtensionGenerator, IStatelessExtensionGenerator
 {
+    private readonly StatelessExtensionGeneratorComponent _component;
+    private readonly StatelessExtensionGeneratorComponent.HandlerConfig _config;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StatelessCommandExtensionGenerator"/> class.
+    /// </summary>
+    public StatelessCommandExtensionGenerator()
+    {
+        _component = new StatelessExtensionGeneratorComponent();
+        _config = new StatelessExtensionGeneratorComponent.HandlerConfig
+        {
+            BaseBuilderType = "IGrainCommandBaseBuilder",
+            BuilderType = "IGrainCommandBuilder",
+            HandlerType = "Command",
+            OtherHandlerType = "Query",
+            IncludeOtherHandler = true
+        };
+    }
+
     /// <inheritdoc/>
     protected override string HandlerBaseTypeName => "StatelessCommandHandler";
 
@@ -35,55 +54,21 @@ public class StatelessCommandExtensionGenerator : BaseExtensionGenerator, IExten
         }
     }
 
-    private void GenerateNoInputNoOutput(StringBuilder sb, string className, string t1)
+    /// <inheritdoc/>
+    public void GenerateNoInputNoOutput(StringBuilder sb, string className, string stateType)
     {
-        sb.AppendLine($@"        public static IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}>();
-        }}");
+        _component.GenerateNoInputNoOutput(sb, className, stateType, _config, "Tell");
     }
 
-    private void GenerateNoInputWithOutput(StringBuilder sb, string className, string t1, string t2)
+    /// <inheritdoc/>
+    public void GenerateNoInputWithOutput(StringBuilder sb, string className, string stateType, string outputType)
     {
-        sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder)
-        {{
-            return builder.Tell<{className}, {t2}>();
-        }}");
+        _component.GenerateNoInputWithOutput(sb, className, stateType, outputType, _config, "Tell");
     }
 
-    private void GenerateWithInputAndOutput(StringBuilder sb, string className, string t1, string t2, string t3)
+    /// <inheritdoc/>
+    public void GenerateWithInputAndOutput(StringBuilder sb, string className, string stateType, string inputType, string outputType)
     {
-        sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}(this IGrainCommandBaseBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> {className}<T>(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, T> builder, {t2} input)
-        {{
-            return builder.Tell<{className}, {t2}, {t3}>(input);
-        }}");
-
-        sb.AppendLine();
-
-        sb.AppendLine($@"        public static IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t3}> Then{className}(this IGrainCommandBuilder<{t1}, BaseStatelessCommandHandler<{t1}>, BaseStatelessQueryHandler<{t1}>, {t2}> builder)
-        {{
-            return builder.ThenTell<{className}, {t3}>();
-        }}");
+        _component.GenerateWithInputAndOutput(sb, className, stateType, inputType, outputType, _config, "Tell", "ThenTell");
     }
 } 

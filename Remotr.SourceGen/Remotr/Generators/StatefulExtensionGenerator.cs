@@ -11,7 +11,7 @@ namespace Remotr.SourceGen.Remotr;
 /// </summary>
 public class StatefulHandlerGenerator
 {
-    private IStatefulHandlerGenerator? _handlerGenerator;
+    private IStatefulExtensionGenerator? _handlerGenerator;
     private readonly IReadOnlyList<IExtensionGenerator> _extensionGenerators;
 
     /// <summary>
@@ -21,8 +21,8 @@ public class StatefulHandlerGenerator
     {
         _extensionGenerators = new List<IExtensionGenerator>
         {
-            new StatefulCommandHandlerGenerator(),
-            new StatefulQueryHandlerGenerator()
+            new StatefulCommandExtensionGenerator(),
+            new StatefulQueryExtensionGenerator()
         };
     }
 

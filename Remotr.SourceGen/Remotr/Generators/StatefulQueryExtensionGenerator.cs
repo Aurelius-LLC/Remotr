@@ -8,21 +8,21 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Generator for StatefulQueryHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulQueryHandlerGenerator : BaseExtensionGenerator, IStatefulHandlerGenerator
+public class StatefulQueryExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
 {
-    private readonly StatefulHandlerGeneratorComponent _component;
-    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _queryConfig;
-    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _commandToQueryConfig;
+    private readonly StatefulExtensionGeneratorComponent _component;
+    private readonly StatefulExtensionGeneratorComponent.HandlerConfig _queryConfig;
+    private readonly StatefulExtensionGeneratorComponent.HandlerConfig _commandToQueryConfig;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatefulQueryHandlerGenerator"/> class.
+    /// Initializes a new instance of the <see cref="StatefulQueryExtensionGenerator"/> class.
     /// </summary>
-    public StatefulQueryHandlerGenerator()
+    public StatefulQueryExtensionGenerator()
     {
-        _component = new StatefulHandlerGeneratorComponent();
+        _component = new StatefulExtensionGeneratorComponent();
         
         // Configuration for query-specific extensions
-        _queryConfig = new StatefulHandlerGeneratorComponent.HandlerConfig
+        _queryConfig = new StatefulExtensionGeneratorComponent.HandlerConfig
         {
             BaseBuilderType = "IGrainQueryBaseBuilder",
             BuilderType = "IGrainQueryBuilder",
@@ -31,7 +31,7 @@ public class StatefulQueryHandlerGenerator : BaseExtensionGenerator, IStatefulHa
         };
 
         // Configuration for command-to-query extensions
-        _commandToQueryConfig = new StatefulHandlerGeneratorComponent.HandlerConfig
+        _commandToQueryConfig = new StatefulExtensionGeneratorComponent.HandlerConfig
         {
             BaseBuilderType = "IGrainCommandBaseBuilder",
             BuilderType = "IGrainCommandBuilder",

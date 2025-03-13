@@ -5,7 +5,7 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Component class that handles the generation of stateful handlers
 /// </summary>
-public class StatefulHandlerGeneratorComponent
+public class StatefulExtensionGeneratorComponent
 {
     /// <summary>
     /// Configuration for generating handler extensions

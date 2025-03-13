@@ -29,6 +29,11 @@ public static class ITestManagerGrainTestQ3Extensions
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
         }
 
+        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
+        {
+            return builder.ThenAsk<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>();
+        }
+
         public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3(this IGrainCommandBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
@@ -37,11 +42,6 @@ public static class ITestManagerGrainTestQ3Extensions
         public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3<T>(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
-        }
-
-        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
-        {
-            return builder.ThenAsk<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>();
         }
 
         public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)

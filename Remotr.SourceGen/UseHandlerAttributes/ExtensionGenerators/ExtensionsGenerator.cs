@@ -11,14 +11,14 @@ namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 /// </summary>
 public class ExtensionsGenerator
 {
-    private readonly IReadOnlyList<IExtensionGenerator> _extensionGenerators;
+    private readonly IReadOnlyList<IStatelessExtensionGenerator> _extensionGenerators;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExtensionsGenerator"/> class.
     /// </summary>
     public ExtensionsGenerator()
     {
-        _extensionGenerators = new List<IExtensionGenerator>
+        _extensionGenerators = new List<IStatelessExtensionGenerator>
         {
             new StatelessCommandExtensionGenerator(),
             new StatelessQueryExtensionGenerator()

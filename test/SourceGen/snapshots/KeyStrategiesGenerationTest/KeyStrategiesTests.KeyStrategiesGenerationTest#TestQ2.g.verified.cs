@@ -24,12 +24,12 @@ public static class ITestManagerGrainTestQ2Extensions
             return builder.Ask<TestQ2, double>();
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ2<T>(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, T> builder)
         {
             return builder.Ask<TestQ2, double>();
         }
 
-        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ2<T>(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestQ2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>> builder)
         {
             return builder.Ask<TestQ2, double>();
         }

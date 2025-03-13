@@ -13,3 +13,17 @@ public class DivideState : StatefulCommandHandler<CalculatorState, double, doubl
         return input;
     }
 }
+
+[RemotrGen]
+public class AddState : StatefulCommandHandler<CalculatorState, int, double>
+{
+    public override async Task<double> Execute(int input)
+    {
+        await UpdateState(
+            new() {
+                Value = (await GetState()).Value + input 
+            }
+        );
+        return input;
+    }
+}

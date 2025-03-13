@@ -8,18 +8,18 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Generator for StatefulCommandHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulCommandHandlerGenerator : BaseExtensionGenerator, IStatefulHandlerGenerator
+public class StatefulCommandExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
 {
-    private readonly StatefulHandlerGeneratorComponent _component;
-    private readonly StatefulHandlerGeneratorComponent.HandlerConfig _config;
+    private readonly StatefulExtensionGeneratorComponent _component;
+    private readonly StatefulExtensionGeneratorComponent.HandlerConfig _config;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatefulCommandHandlerGenerator"/> class.
+    /// Initializes a new instance of the <see cref="StatefulCommandExtensionGenerator"/> class.
     /// </summary>
-    public StatefulCommandHandlerGenerator()
+    public StatefulCommandExtensionGenerator()
     {
-        _component = new StatefulHandlerGeneratorComponent();
-        _config = new StatefulHandlerGeneratorComponent.HandlerConfig
+        _component = new StatefulExtensionGeneratorComponent();
+        _config = new StatefulExtensionGeneratorComponent.HandlerConfig
         {
             BaseBuilderType = "IGrainCommandBaseBuilder",
             BuilderType = "IGrainCommandBuilder",

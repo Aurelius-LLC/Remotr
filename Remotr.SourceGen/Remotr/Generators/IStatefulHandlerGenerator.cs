@@ -6,7 +6,7 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Interface for stateful handler generators.
 /// </summary>
-public interface IStatefulHandlerGenerator
+public interface IStatefulExtensionGenerator
 {
     /// <summary>
     /// Generates a stateful handler with no input and no output.
