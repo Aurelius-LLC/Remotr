@@ -9,15 +9,15 @@ namespace Remotr.SourceGen.Remotr;
 /// <summary>
 /// Generates stateful handler code.
 /// </summary>
-public class StatefulHandlerGenerator
+public class StatefulExtensionGenerator
 {
     private IStatefulExtensionGenerator? _handlerGenerator;
     private readonly IReadOnlyList<IExtensionGenerator> _extensionGenerators;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatefulHandlerGenerator"/> class.
+    /// Initializes a new instance of the <see cref="StatefulExtensionGenerator"/> class.
     /// </summary>
-    public StatefulHandlerGenerator()
+    public StatefulExtensionGenerator()
     {
         _extensionGenerators = new List<IExtensionGenerator>
         {

@@ -3,26 +3,75 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
 using Remotr.SourceGen.Shared;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 
 /// <summary>
 /// Generates extensions for handlers.
 /// </summary>
-public class ExtensionsGenerator
+public class StatelessExtensionsGeneratorExecutor
 {
     private readonly IReadOnlyList<IStatelessExtensionGenerator> _extensionGenerators;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExtensionsGenerator"/> class.
+    /// Initializes a new instance of the <see cref="StatelessExtensionsGeneratorExecutor"/> class.
     /// </summary>
-    public ExtensionsGenerator()
+    public StatelessExtensionsGeneratorExecutor()
     {
         _extensionGenerators = new List<IStatelessExtensionGenerator>
         {
             new StatelessCommandExtensionGenerator(),
             new StatelessQueryExtensionGenerator()
         };
+    }
+
+    /// <summary>
+    /// Generates the stateless extensions for the given class declaration.
+    /// </summary>
+    /// <param name="classDeclaration">The class declaration</param>
+    /// <param name="context">The source production context</param>
+    public void Generate(
+        ClassDeclarationSyntax classDeclaration,
+        SourceProductionContext context
+    ) {
+        
+        var className = classDeclaration.Identifier.Text;
+        var baseType = classDeclaration.BaseList?.Types.FirstOrDefault()?.Type;
+        
+        if (baseType is not GenericNameSyntax genericBase)
+        {
+            return;
+        }
+
+        var baseTypeName = genericBase.Identifier.Text;
+        var typeArguments = genericBase.TypeArgumentList.Arguments;
+
+        // Get the namespace from the source file
+        var namespaceDecl = classDeclaration.Ancestors().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
+        var namespaceName = namespaceDecl?.Name.ToString()!;
+
+        var sourceBuilder = new StringBuilder();
+        sourceBuilder.AppendLine("using System;");
+        sourceBuilder.AppendLine("using System.Threading.Tasks;");
+        sourceBuilder.AppendLine("using Remotr;");
+        sourceBuilder.AppendLine();
+        sourceBuilder.AppendLine($"namespace {namespaceName};");
+        sourceBuilder.AppendLine();
+
+        var t1 = typeArguments[0].ToString();
+        var extensionClassName = $"{t1}{className}";
+
+        sourceBuilder.AppendLine($"public static class {extensionClassName}");
+        sourceBuilder.AppendLine("{");
+
+        // Initialize the appropriate handler generator based on the base type name
+        var handlerGenerator = _extensionGenerators.FirstOrDefault(g => g.CanHandle(baseTypeName));
+        handlerGenerator?.GenerateExtensions(sourceBuilder, className, typeArguments);
+
+        sourceBuilder.AppendLine("}");
+
+        context.AddSource($"{extensionClassName}.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
     }
 
     /// <summary>

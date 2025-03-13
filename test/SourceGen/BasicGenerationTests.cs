@@ -143,4 +143,61 @@ public record TestOutputObject
             settings: Utils.GetVerifySettings(nameof(CommandsAndQueriesWithObjectsGenerationTest))
         );
     }
+
+    [Fact]
+    public async Task StatelessHandlerExtensionGenerationTests()
+    {
+        string source = @"
+using Remotr;
+namespace  " + nameof(StatelessHandlerExtensionGenerationTests) + @";
+
+public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+{
+}
+
+[RemotrGen]
+public class TestCommand1Type : StatelessCommandHandler<ITestManagerGrain, TestInputObject, double>
+{
+    public override async Task<double> Execute(TestInputObject input)
+    {
+        return 0.0;
+    }
+}
+
+[RemotrGen]
+public class TestQuery3Type : StatelessQueryHandler<ITestManagerGrain, TestInputObject, TestOutputObject>
+{
+    public override async Task<TestOutputObject> Execute(TestInputObject input)
+    {
+        return new TestOutputObject();
+    }
+}
+
+
+public record TestState
+{
+    public double Value { get; set; }
+}
+
+public record TestInputObject
+{
+    public int Value1 { get; set; }
+    public double Value2 { get; set; }
+}
+
+public record TestOutputObject
+{
+    public string Value1 { get; set; }
+    public string Value2 { get; set; }
+}
+";
+
+        var driver = Utils.CreateTestDriver(source);
+
+        // Verify the output
+        await Verify(
+            () => Task.FromResult(driver), 
+            settings: Utils.GetVerifySettings(nameof(StatelessHandlerExtensionGenerationTests))
+        );
+    }
 }

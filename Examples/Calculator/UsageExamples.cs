@@ -12,6 +12,7 @@ public class Example1(IExternalCommandFactory factory)
             
             // This
             .Tell<Divide, double, double>(3)
+            .Tell<Divide2, double, double>(3)
 
             // is functionally equivalent to
             .Divide(2.0)

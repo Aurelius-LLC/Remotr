@@ -18,7 +18,7 @@ public class HandlerAttributeExecutor
     private readonly AttributeValidator _attributeValidator;
     private readonly HandlerTypeValidator _handlerTypeValidator;
     private readonly HandlersGenerator _handlersGenerator;
-    private readonly ExtensionsGenerator _extensionsGenerator;
+    private readonly StatelessExtensionsGeneratorExecutor _extensionsGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HandlerAttributeExecutor"/> class.
@@ -29,7 +29,7 @@ public class HandlerAttributeExecutor
         _attributeValidator = new AttributeValidator();
         _handlerTypeValidator = new HandlerTypeValidator();
         _handlersGenerator = new HandlersGenerator();
-        _extensionsGenerator = new ExtensionsGenerator();
+        _extensionsGenerator = new StatelessExtensionsGeneratorExecutor();
     }
 
     /// <summary>

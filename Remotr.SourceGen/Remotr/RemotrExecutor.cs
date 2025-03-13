@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 
 namespace Remotr.SourceGen.Remotr;
 
@@ -8,7 +9,8 @@ namespace Remotr.SourceGen.Remotr;
 /// </summary>
 public class RemotrExecutor
 {
-    private readonly StatefulHandlerGenerator _statefulHandlerGenerator;
+    private readonly StatefulExtensionGenerator _statefulExtensionGenerator;
+    private readonly StatelessExtensionsGeneratorExecutor _statelessExtensionGenerator;
     private static readonly DiagnosticDescriptor InvalidTargetDiagnostic = new(
         id: "REMOTR020",
         title: "Invalid RemotrGen target",
@@ -22,7 +24,8 @@ public class RemotrExecutor
     /// </summary>
     public RemotrExecutor()
     {
-        _statefulHandlerGenerator = new StatefulHandlerGenerator();
+        _statefulExtensionGenerator = new StatefulExtensionGenerator();
+        _statelessExtensionGenerator = new StatelessExtensionsGeneratorExecutor();
     }
 
     /// <summary>
@@ -53,7 +56,12 @@ public class RemotrExecutor
         // Process based on the handler type
         if (baseTypeName is "StatefulQueryHandler" or "StatefulCommandHandler")
         {
-            _statefulHandlerGenerator.Generate(classDeclaration, context);
+            _statefulExtensionGenerator.Generate(classDeclaration, context);
+        }
+        else if (baseTypeName is "StatelessQueryHandler" or "StatelessCommandHandler")
+        {
+            _statelessExtensionGenerator.Generate(classDeclaration, context);
+
         }
     }
 } 

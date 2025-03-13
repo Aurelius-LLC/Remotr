@@ -83,4 +83,6 @@ public record TestState : ITest
             settings: Utils.GetVerifySettings(nameof(GenericsGenerationTest))
         );
     }
+
+    // TODO: Test generic input, not output or class, and other variations / edge cases.
 }
