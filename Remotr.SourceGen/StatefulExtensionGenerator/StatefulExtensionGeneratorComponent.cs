@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.StatefulExtensionGenerators;
 
 /// <summary>
 /// Component class that handles the generation of stateful handlers

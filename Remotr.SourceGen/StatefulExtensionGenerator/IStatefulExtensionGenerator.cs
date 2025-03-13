@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.StatefulExtensionGenerators;
 
 /// <summary>
 /// Interface for stateful handler generators.

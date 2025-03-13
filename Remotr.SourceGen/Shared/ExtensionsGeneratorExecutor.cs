@@ -10,21 +10,10 @@ namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 /// <summary>
 /// Generates extensions for handlers.
 /// </summary>
-public class StatelessExtensionsGeneratorExecutor
+public class ExtensionsGeneratorExecutor(List<IExtensionGenerator> extensionGenerators)
 {
-    private readonly IReadOnlyList<IStatelessExtensionGenerator> _extensionGenerators;
+    private readonly List<IExtensionGenerator> _extensionGenerators = extensionGenerators;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StatelessExtensionsGeneratorExecutor"/> class.
-    /// </summary>
-    public StatelessExtensionsGeneratorExecutor()
-    {
-        _extensionGenerators = new List<IStatelessExtensionGenerator>
-        {
-            new StatelessCommandExtensionGenerator(),
-            new StatelessQueryExtensionGenerator()
-        };
-    }
 
     /// <summary>
     /// Generates the stateless extensions for the given class declaration.

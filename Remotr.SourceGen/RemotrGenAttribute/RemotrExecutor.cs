@@ -1,16 +1,18 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
+using Remotr.StatefulExtensionGenerators;
+using Remotr.StatelessExtensionGenerators;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.SourceGen.RemotrGenAttribute;
 
 /// <summary>
 /// Executes the code generation for classes with the RemotrGen attribute.
 /// </summary>
 public class RemotrExecutor
 {
-    private readonly StatefulExtensionGenerator _statefulExtensionGenerator;
-    private readonly StatelessExtensionsGeneratorExecutor _statelessExtensionGenerator;
+    private readonly ExtensionsGeneratorExecutor _statefulExtensionGenerator;
+    private readonly ExtensionsGeneratorExecutor _statelessExtensionGenerator;
     private static readonly DiagnosticDescriptor InvalidTargetDiagnostic = new(
         id: "REMOTR020",
         title: "Invalid RemotrGen target",
@@ -24,8 +26,16 @@ public class RemotrExecutor
     /// </summary>
     public RemotrExecutor()
     {
-        _statefulExtensionGenerator = new StatefulExtensionGenerator();
-        _statelessExtensionGenerator = new StatelessExtensionsGeneratorExecutor();
+        _statefulExtensionGenerator = new ExtensionsGeneratorExecutor(
+        [
+            new StatefulCommandExtensionGenerator(),
+            new StatefulQueryExtensionGenerator()
+        ]);
+        _statelessExtensionGenerator = new ExtensionsGeneratorExecutor(
+        [
+            new StatelessCommandExtensionGenerator(),
+            new StatelessQueryExtensionGenerator()
+        ]);
     }
 
     /// <summary>

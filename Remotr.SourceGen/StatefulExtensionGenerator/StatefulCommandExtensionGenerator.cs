@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
 using Remotr.SourceGen.Shared;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.StatefulExtensionGenerators;
 
 /// <summary>
 /// Generator for StatefulCommandHandler types that generates appropriate extension methods.

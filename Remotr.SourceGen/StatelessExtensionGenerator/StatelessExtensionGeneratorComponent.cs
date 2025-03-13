@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
+namespace Remotr.StatelessExtensionGenerators;
 
 /// <summary>
 /// Component class that handles the generation of stateless handlers

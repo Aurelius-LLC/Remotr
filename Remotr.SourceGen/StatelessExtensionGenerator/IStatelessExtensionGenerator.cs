@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
 using Remotr.SourceGen.Shared;
 
-namespace Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
+namespace Remotr.StatelessExtensionGenerators;
 
 /// <summary>
 /// Interface for stateless extension generators.

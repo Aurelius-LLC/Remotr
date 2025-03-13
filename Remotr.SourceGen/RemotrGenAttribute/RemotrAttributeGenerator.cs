@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.SourceGen.RemotrGenAttribute;
 
 /// <summary>
 /// Generates the RemotrGen attribute source code.

@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Remotr.SourceGen.UseHandlerAttributes;
-using Remotr.SourceGen.Remotr;
+using Remotr.SourceGen.RemotrGenAttribute;
 
 namespace Remotr.SourceGen;
 

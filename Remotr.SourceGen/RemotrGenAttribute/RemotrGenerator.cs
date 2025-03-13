@@ -1,8 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Remotr.SourceGen.Remotr.Utils;
+using Remotr.SourceGen.RemotrGenAttribute.Utils;
 
-namespace Remotr.SourceGen.Remotr;
+namespace Remotr.SourceGen.RemotrGenAttribute;
 
 /// <summary>
 /// Source generator for Remotr that generates extension methods for various handler types.

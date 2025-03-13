@@ -6,6 +6,7 @@ using Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 using Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators;
 using Remotr.SourceGen.UseHandlerAttributes.Utils;
 using Remotr.SourceGen.UseHandlerAttributes.Validators;
+using Remotr.StatelessExtensionGenerators;
 
 namespace Remotr.SourceGen.UseHandlerAttributes;
 
@@ -18,7 +19,7 @@ public class HandlerAttributeExecutor
     private readonly AttributeValidator _attributeValidator;
     private readonly HandlerTypeValidator _handlerTypeValidator;
     private readonly HandlersGenerator _handlersGenerator;
-    private readonly StatelessExtensionsGeneratorExecutor _extensionsGenerator;
+    private readonly ExtensionsGeneratorExecutor _extensionsGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HandlerAttributeExecutor"/> class.
@@ -29,7 +30,11 @@ public class HandlerAttributeExecutor
         _attributeValidator = new AttributeValidator();
         _handlerTypeValidator = new HandlerTypeValidator();
         _handlersGenerator = new HandlersGenerator();
-        _extensionsGenerator = new StatelessExtensionsGeneratorExecutor();
+        _extensionsGenerator = new ExtensionsGeneratorExecutor(
+        [
+            new StatelessCommandExtensionGenerator(),
+            new StatelessQueryExtensionGenerator()
+        ]);
     }
 
     /// <summary>
