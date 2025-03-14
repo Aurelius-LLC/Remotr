@@ -15,7 +15,17 @@ public interface IExtensionGenerator
     /// <param name="sb">StringBuilder to append the generated code to</param>
     /// <param name="className">Name of the class being processed</param>
     /// <param name="typeArguments">Type arguments from the base class</param>
-    void GenerateExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments);
+    /// <param name="implementationGenericTypes">Generic type parameters of the implementation class (e.g. "<T1, T2>")</param>
+    /// <param name="genericConstraints">Generic constraints of the implementation class (e.g. "where T1 : ITest")</param>
+    /// <param name="includesImplementationGenerics">Whether the implementation class has its own generic type parameters</param>
+    void GenerateExtensions(
+        StringBuilder sb, 
+        string className, 
+        SeparatedSyntaxList<TypeSyntax> typeArguments,
+        string implementationGenericTypes = "",
+        string implementationGenericTypesWithOther = "<T>",
+        string genericConstraints = "",
+        string otherGenericType = "T");
 
     /// <summary>
     /// Checks if this generator can handle the given base type name.

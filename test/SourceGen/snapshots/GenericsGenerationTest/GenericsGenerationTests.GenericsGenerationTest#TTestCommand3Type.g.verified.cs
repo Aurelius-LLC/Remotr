@@ -7,18 +7,18 @@ namespace GenericsGenerationTest;
 
 public static class TTestCommand3Type
 {
-        public static IGrainCommandBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>, TOut> TestCommand3Type<TState, TIn, TOut>(this IGrainCommandBaseBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>> builder, TIn input) where TState : ITest
+        public static IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, V> TestCommand3Type<T, K, V>(this IGrainCommandBaseBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> builder, K input) where T : ITest
         {
-            return builder.Tell<TestCommand3Type<TState, TIn, TOut>, TIn, TOut>(input);
+            return builder.Tell<TestCommand3Type<T, K, V>, K, V>(input);
         }
 
-        public static IGrainCommandBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>, TOut> TestCommand3Type<TState, TIn, TOut, T>(this IGrainCommandBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>, dynamic> builder, TIn input) where TState : ITest
+        public static IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, V> TestCommand3Type<T, K, V, TOther>(this IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, dynamic> builder, K input) where T : ITest
         {
-            return builder.Tell<TestCommand3Type<TState, TIn, TOut>, TIn, TOut>(input);
+            return builder.Tell<TestCommand3Type<T, K, V>, K, V>(input);
         }
 
-        public static IGrainCommandBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>, Output> ThenTestCommand3Type<TState, Input, Output>(this IGrainCommandBuilder<ITransactionChildGrain<TState>, BaseStatefulCommandHandler<TState>, BaseStatefulQueryHandler<TState>, Input> builder) where TState : ITest
+        public static IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, V> ThenTestCommand3Type<T, K, V>(this IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, K> builder) where T : ITest
         {
-            return builder.ThenTell<TestCommand3Type<TState, Input, Output>, Output>();
+            return builder.ThenTell<TestCommand3Type<T, K, V>, V>();
         }
 }

@@ -15,9 +15,13 @@ public interface IStatefulExtensionGenerator
     /// <param name="className">The class name</param>
     /// <param name="stateType">The state type</param>
     void GenerateNoInputNoOutput(
-        StringBuilder sourceBuilder, 
+        StringBuilder sourceBuilder,
         string className, 
-        string stateType);
+        string stateType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType);
 
     /// <summary>
     /// Generates a stateful handler with no input and with output.
@@ -30,7 +34,11 @@ public interface IStatefulExtensionGenerator
         StringBuilder sourceBuilder, 
         string className, 
         string stateType, 
-        string outputType);
+        string outputType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType);
 
     /// <summary>
     /// Generates a stateful handler with input and output.
@@ -45,5 +53,9 @@ public interface IStatefulExtensionGenerator
         string className, 
         string stateType, 
         string inputType, 
-        string outputType);
+        string outputType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType = "T");
 } 

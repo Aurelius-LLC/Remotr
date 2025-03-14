@@ -1,4 +1,5 @@
 using System.Text;
+using Remotr.SourceGen.Shared;
 
 namespace Remotr.StatefulExtensionGenerators;
 
@@ -7,17 +8,6 @@ namespace Remotr.StatefulExtensionGenerators;
 /// </summary>
 public class StatefulExtensionGeneratorComponent
 {
-    /// <summary>
-    /// Configuration for generating handler extensions
-    /// </summary>
-    public class HandlerConfig
-    {
-        public string BaseBuilderType { get; set; }
-        public string BuilderType { get; set; }
-        public string HandlerType { get; set; }
-        public string OtherHandlerType { get; set; }
-        public bool IncludeOtherHandler { get; set; } = true;
-    }
 
     /// <summary>
     /// Generates a stateful handler with no input and no output.
@@ -26,21 +16,25 @@ public class StatefulExtensionGeneratorComponent
         StringBuilder sb,
         string className,
         string stateType,
-        HandlerConfig config,
-        string actionMethod)
+        ExtensionConfig config,
+        string actionMethod,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType)
     {
         var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder)
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}>();
+            return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}<T>(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, T> builder)
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}>();
+            return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
     }
 
@@ -52,21 +46,25 @@ public class StatefulExtensionGeneratorComponent
         string className,
         string stateType,
         string outputType,
-        HandlerConfig config,
-        string actionMethod)
+        ExtensionConfig config,
+        string actionMethod,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType)
     {
         var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder)
+        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}, {outputType}>();
+            return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}<T>(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, T> builder)
+        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}, {outputType}>();
+            return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
     }
 
@@ -79,31 +77,35 @@ public class StatefulExtensionGeneratorComponent
         string stateType,
         string inputType,
         string outputType,
-        HandlerConfig config,
+        ExtensionConfig config,
         string actionMethod,
-        string thenActionMethod)
+        string thenActionMethod,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType)
     {
         var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input)
+        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}, {inputType}, {outputType}>(input);
+            return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}<T>(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, T> builder, {inputType} input)
+        sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder, {inputType} input){genericConstraints}
         {{
-            return builder.{actionMethod}<{className}, {inputType}, {outputType}>(input);
+            return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
 
         if (thenActionMethod != null)
         {
             sb.AppendLine();
 
-            sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder)
+            sb.AppendLine($@"        public static {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}{implementationGenericTypes}(this {config.BuilderType}<ITransactionChildGrain<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder){genericConstraints}
         {{
-            return builder.{thenActionMethod}<{className}, {outputType}>();
+            return builder.{thenActionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
         }
     }

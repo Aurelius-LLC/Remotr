@@ -36,6 +36,25 @@ public class ExtensionsGeneratorExecutor(List<IExtensionGenerator> extensionGene
         var baseTypeName = genericBase.Identifier.Text;
         var typeArguments = genericBase.TypeArgumentList.Arguments;
 
+        // Extract implementation generic types if present
+        var implementationGenericTypes = "";
+        var genericConstraints = "";
+        var implementationGenericTypesWithOther = "<T>";
+        var otherGenericType = "T";
+
+        if (classDeclaration.TypeParameterList != null)
+        {
+            implementationGenericTypes = classDeclaration.TypeParameterList.ToString();
+            implementationGenericTypesWithOther = implementationGenericTypes.Substring(0, implementationGenericTypes.Length - 1) + ", TOther>";
+            otherGenericType = "TOther";
+            
+            // Extract constraints if present
+            if (classDeclaration.ConstraintClauses.Any())
+            {
+                genericConstraints = " " + string.Join(" ", classDeclaration.ConstraintClauses.Select(c => c.ToString()));
+            }
+        }
+
         // Get the namespace from the source file
         var namespaceDecl = classDeclaration.Ancestors().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
         var namespaceName = namespaceDecl?.Name.ToString()!;
@@ -56,7 +75,14 @@ public class ExtensionsGeneratorExecutor(List<IExtensionGenerator> extensionGene
 
         // Initialize the appropriate handler generator based on the base type name
         var handlerGenerator = _extensionGenerators.FirstOrDefault(g => g.CanHandle(baseTypeName));
-        handlerGenerator?.GenerateExtensions(sourceBuilder, className, typeArguments);
+        handlerGenerator?.GenerateExtensions(
+            sourceBuilder, 
+            className, 
+            typeArguments,
+            implementationGenericTypes,
+            implementationGenericTypesWithOther,
+            genericConstraints,
+            otherGenericType);
 
         sourceBuilder.AppendLine("}");
 

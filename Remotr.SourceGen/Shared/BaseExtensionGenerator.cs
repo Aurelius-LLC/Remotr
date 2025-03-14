@@ -21,7 +21,14 @@ public abstract class BaseExtensionGenerator : IExtensionGenerator
     }
 
     /// <inheritdoc/>
-    public abstract void GenerateExtensions(StringBuilder sb, string className, SeparatedSyntaxList<TypeSyntax> typeArguments);
+    public abstract void GenerateExtensions(
+        StringBuilder sb, 
+        string className, 
+        SeparatedSyntaxList<TypeSyntax> typeArguments,
+        string implementationGenericTypes = "",
+        string implementationGenericTypesWithOther = "<T>",
+        string genericConstraints = "",
+        string otherGenericType = "T");
 
 
 

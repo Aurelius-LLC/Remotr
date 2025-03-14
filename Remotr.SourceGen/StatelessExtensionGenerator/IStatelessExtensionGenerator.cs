@@ -12,15 +12,39 @@ public interface IStatelessExtensionGenerator : IExtensionGenerator
     /// <summary>
     /// Generates extensions with no input and no output.
     /// </summary>
-    void GenerateNoInputNoOutput(StringBuilder sb, string className, string stateType);
+    void GenerateNoInputNoOutput(
+        StringBuilder sb, 
+        string className, 
+        string stateType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType);
 
     /// <summary>
     /// Generates extensions with no input but with output.
     /// </summary>
-    void GenerateNoInputWithOutput(StringBuilder sb, string className, string stateType, string outputType);
+    void GenerateNoInputWithOutput(
+        StringBuilder sb, 
+        string className, 
+        string stateType, 
+        string outputType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType);
 
     /// <summary>
     /// Generates extensions with input and output.
     /// </summary>
-    void GenerateWithInputAndOutput(StringBuilder sb, string className, string stateType, string inputType, string outputType);
+    void GenerateWithInputAndOutput(
+        StringBuilder sb, 
+        string className, 
+        string stateType, 
+        string inputType, 
+        string outputType,
+        string implementationGenericTypes,
+        string implementationGenericTypesWithOther,
+        string genericConstraints,
+        string otherGenericType);
 } 
