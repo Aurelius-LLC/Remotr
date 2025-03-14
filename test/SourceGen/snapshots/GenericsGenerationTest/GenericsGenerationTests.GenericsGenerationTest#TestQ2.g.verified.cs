@@ -24,12 +24,12 @@ public static class ITestManagerGrainTestQ2Extensions
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }
 
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }

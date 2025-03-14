@@ -30,6 +30,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         string className, 
         string statefulHandlerName,
         string stateType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}>");
@@ -37,7 +38,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         sb.AppendLine("    public override async Task Execute()");
         sb.AppendLine("    {");
         sb.AppendLine($"        await CommandFactory.GetChild<{stateType}>()");
-        sb.AppendLine($"            .Tell<{statefulHandlerName}>()");
+        sb.AppendLine($"            .Tell<{statefulHandlerName}{genericTypeArgsString}>()");
         sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
         sb.AppendLine("    }");
         sb.AppendLine("}");
@@ -60,6 +61,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         string statefulHandlerName,
         string stateType,
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateNoInputWithOutput(
@@ -72,6 +74,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             "Command",
             "Command",
             "Tell",
+            genericTypeArgsString,
             keyStrategy);
     }
 
@@ -94,6 +97,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         string stateType,
         string inputType,
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateWithInputAndOutput(
@@ -107,6 +111,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
             "Command",
             "Command",
             "Tell",
+            genericTypeArgsString,
             keyStrategy);
     }
 } 

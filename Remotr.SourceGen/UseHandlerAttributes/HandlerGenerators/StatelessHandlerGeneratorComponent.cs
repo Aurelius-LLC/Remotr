@@ -21,6 +21,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             string handlerType,
             string factoryType,
             string actionMethod,
+            string genericTypeArgsString,
             IHandlerKeyStrategy keyStrategy)
         {
             sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {outputType}>");
@@ -28,7 +29,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             sb.AppendLine($"    public override async Task<{outputType}> Execute()");
             sb.AppendLine("    {");
             sb.AppendLine($"        return await {factoryType}Factory.GetChild<{stateType}>()");
-            sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}, {outputType}>()");
+            sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}{genericTypeArgsString}, {outputType}>()");
             sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
             sb.AppendLine("    }");
             sb.AppendLine("}");
@@ -48,6 +49,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             string handlerType,
             string factoryType,
             string actionMethod,
+            string genericTypeArgsString,
             IHandlerKeyStrategy keyStrategy)
         {
             sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {inputType}, {outputType}>");
@@ -55,7 +57,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             sb.AppendLine($"    public override async Task<{outputType}> Execute({inputType} input)");
             sb.AppendLine("    {");
             sb.AppendLine($"        return await {factoryType}Factory.GetChild<{stateType}>()");
-            sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}, {inputType}, {outputType}>(input)");
+            sb.AppendLine($"            .{actionMethod}<{statefulHandlerName}{genericTypeArgsString}, {inputType}, {outputType}>(input)");
             sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
             sb.AppendLine("    }");
             sb.AppendLine("}");

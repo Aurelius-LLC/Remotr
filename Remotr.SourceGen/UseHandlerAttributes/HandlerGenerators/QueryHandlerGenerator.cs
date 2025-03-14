@@ -24,6 +24,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
         string className, 
         string statefulHandlerName, 
         string stateType, 
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         throw new NotImplementedException("Query handlers must have at least an output.");
@@ -46,6 +47,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
         string statefulHandlerName,
         string stateType,
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateNoInputWithOutput(
@@ -58,6 +60,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
             "Query",
             "Query",
             "Ask",
+            genericTypeArgsString,
             keyStrategy);
     }
 
@@ -80,6 +83,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
         string stateType,
         string inputType,
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
         _component.GenerateWithInputAndOutput(
@@ -93,6 +97,7 @@ public class QueryHandlerGenerator : IStatelessHandlerGenerator
             "Query",
             "Query",
             "Ask",
+            genericTypeArgsString,
             keyStrategy);
     }
 } 

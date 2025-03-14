@@ -23,6 +23,7 @@ public interface IStatelessHandlerGenerator
         string className, 
         string statefulHandlerName, 
         string stateType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy);
 
     /// <summary>
@@ -42,6 +43,7 @@ public interface IStatelessHandlerGenerator
         string statefulHandlerName, 
         string stateType, 
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy);
 
     /// <summary>
@@ -63,5 +65,6 @@ public interface IStatelessHandlerGenerator
         string stateType, 
         string inputType, 
         string outputType,
+        string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy);
 } 

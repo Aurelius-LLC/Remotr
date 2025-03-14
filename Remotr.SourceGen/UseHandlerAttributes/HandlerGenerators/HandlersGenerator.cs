@@ -44,17 +44,22 @@ public class HandlersGenerator
         string handlerName,
         string stateType,
         string interfaceName,
+        List<ITypeSymbol> genericTypeArgs,
         List<ITypeSymbol> baseGenericTypeArgs,
         bool isCommandHandler,
         string alias,
         string? fixedKey,
         string? findMethod)
     {
+        var genericTypeArgsString =  genericTypeArgs.Any() 
+            ? $"<{string.Join(", ", genericTypeArgs.Select(t => t.ToString()))}>" 
+            : "";
+
         // Initialize the appropriate handler generator
         _handlerGenerator = isCommandHandler ? new CommandHandlerGenerator() : new QueryHandlerGenerator();
         
         // Generate the handler based on the number of generic type arguments
-        GenerateHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, baseGenericTypeArgs, fixedKey, findMethod, namespaceName);
+        GenerateHandler(sourceBuilder, interfaceName, alias, handlerName, stateType, genericTypeArgsString,baseGenericTypeArgs, fixedKey, findMethod, namespaceName);
     }
 
     private void GenerateHandler(
@@ -63,6 +68,7 @@ public class HandlersGenerator
         string className, 
         string statefulHandlerName, 
         string stateType, 
+        string genericTypeArgsString,
         List<ITypeSymbol> baseGenericTypeArgs,
         string? fixedKey,
         string? findMethod,
@@ -90,13 +96,13 @@ public class HandlersGenerator
         switch (baseGenericTypeArgs.Count)
         {
             case 1: // ex StatefulCommandHandler<TState>
-                _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, keyStrategy);
+                _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgsString, keyStrategy);
                 break;
             case 2: // ex StatefulCommandHandler<TState, TOutput>
-                _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), keyStrategy);
+                _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), genericTypeArgsString, keyStrategy);
                 break;
             case 3: // ex StatefulCommandHandler<TState, TInput, TOutput>
-                _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), baseGenericTypeArgs[2].ToString(), keyStrategy);
+                _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), baseGenericTypeArgs[2].ToString(), genericTypeArgsString, keyStrategy);
                 break;
         }
     }

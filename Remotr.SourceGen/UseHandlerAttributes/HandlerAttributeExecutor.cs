@@ -153,7 +153,7 @@ public class HandlerAttributeExecutor
         var interfaceType = $"{namespaceName}.{interfaceName}";
 
         // Generate the stateless command/query handler
-        _handlersGenerator.GenerateHandlers(sourceBuilder, namespaceName, handlerName, stateType, interfaceName, baseGenericTypeArgs, isCommandHandler, alias!, fixedKey, findMethod);
+        _handlersGenerator.GenerateHandlers(sourceBuilder, namespaceName, handlerName, stateType, interfaceName, genericTypeArgs, baseGenericTypeArgs, isCommandHandler, alias!, fixedKey, findMethod);
 
         // Generate the extensions
         _extensionsGenerator.GenerateExtensions(sourceBuilder, interfaceName, alias!, baseGenericTypeArgs, isCommandHandler, interfaceType);
