@@ -11,6 +11,6 @@ public class MultiplyState : StatefulCommandHandler<CalculatorState, double, dou
                 Value = (await GetState()).Value * input 
             }
         );
-        return input;
+        return (await GetState()).Value;
     }
 }

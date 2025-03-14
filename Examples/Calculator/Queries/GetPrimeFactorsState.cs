@@ -22,6 +22,6 @@ public class GetPrimeFactorsState : StatefulQueryHandler<CalculatorState, IEnume
                 number = number / div;
             }
         
-        return primes.Select(p => (double)p);
+        return primes.Select(p => (double)p).ToList();
     }
 }

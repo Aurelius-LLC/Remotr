@@ -1,63 +1,120 @@
 # Remotr.SourceGen
 
-This project contains source generators for the Remotr framework. The generators are organized into the following components:
+This project contains source generators for the Remotr framework. The generators produce boilerplate code for implementing CQRS-based handlers and extensions.
 
 ## Project Structure
 
 ```
 Remotr.SourceGen/
-├── CqrsCollection/                  # CQRS Collection Generator components
-│   ├── CqrsCollectionBase.cs        # Base class with common utilities
-│   ├── CqrsCodeTemplates.cs         # Templates for code generation
-│   ├── CqrsCollectionGenerator.cs   # Main generator implementation
-│   └── StatelessHandlerGenerator.cs # Generator for stateless handlers
-├── Remotr/                          # Remotr Generator components
-│   ├── BaseHandlerGenerator.cs      # Base class for handler generators
-│   ├── IHandlerGenerator.cs         # Interface for handler generators
-│   ├── RemotrGenerator.cs           # Main generator implementation
-│   └── StatelessCommandHandlerGenerator.cs # Example handler generator
-└── Generators.cs                    # Main entry point for all generators
+├── UseHandlerAttributes/               # Handler attributes source generator components
+│   ├── HandlerAttributeIncrementalGenerator.cs # Main generator implementation
+│   ├── HandlerAttributeExecutor.cs     # Orchestrates validation and generation
+│   ├── HandlerGenerators/              # Specific handler code generators
+│   ├── KeyStrategy/                    # Strategies for handling keys
+│   ├── Utils/                          # Utility classes and helpers
+│   └── Validators/                     # Validation components
+├── RemotrGenAttribute/                 # Remotr generator components
+│   ├── RemotrGenerator.cs              # Main generator implementation
+│   ├── RemotrExecutor.cs               # Orchestrates validation and generation
+│   ├── RemotrAttributeGenerator.cs     # Generates attribute code
+│   └── Utils/                          # Utility classes for the Remotr generator
+├── StatelessExtensionGenerator/        # Generates extensions for stateless handlers
+│   ├── IStatelessExtensionGenerator.cs # Interface for extension generators
+│   ├── StatelessExtensionGeneratorComponent.cs # Main component
+│   ├── StatelessCommandExtensionGenerator.cs # Command extensions
+│   └── StatelessQueryExtensionGenerator.cs # Query extensions
+├── StatefulExtensionGenerator/         # Generates extensions for stateful handlers
+│   ├── IStatefulExtensionGenerator.cs  # Interface for extension generators
+│   ├── StatefulExtensionGeneratorComponent.cs # Main component
+│   ├── StatefulCommandExtensionGenerator.cs # Command extensions
+│   └── StatefulQueryExtensionGenerator.cs # Query extensions
+├── Shared/                             # Shared components and utilities
+│   ├── AttributeGenerator.cs           # Base attribute generation
+│   ├── BaseExtensionGenerator.cs       # Base class for extension generators
+│   ├── ExtensionConfig.cs              # Configuration for extensions
+│   ├── ExtensionsGeneratorExecutor.cs  # Executor for extension generators
+│   └── IExtensionGenerator.cs          # Common interface for extension generators
+└── Generators.cs                       # Main entry point for all generators
 ```
 
 ## Generators
 
-### CqrsCollectionGenerator
+### HandlerAttributeIncrementalGenerator (formerly CqrsCollectionGenerator)
 
-The CqrsCollectionGenerator processes interfaces marked with the `[CqrsCollection]` attribute and generates appropriate handler implementations. It has been refactored to follow SOLID principles:
+This generator processes interfaces marked with handler attributes (such as `[UseCommandHandler]`, `[UseQueryHandler]`) and generates appropriate handler implementations.
 
-- **Single Responsibility Principle**: Each class has a single responsibility
-- **Open/Closed Principle**: The generator is open for extension but closed for modification
-- **Liskov Substitution Principle**: Subtypes can be used in place of their base types
-- **Interface Segregation Principle**: Clients only depend on the interfaces they use
-- **Dependency Inversion Principle**: High-level modules depend on abstractions
+The generator is organized into the following components:
+
+1. **Entry Point**
+   - `HandlerAttributeIncrementalGenerator`: The main entry point that implements `IIncrementalGenerator`.
+   - `HandlerAttributeExecutor`: Orchestrates the validation and generation process.
+
+2. **Validators**
+   - Various validator classes to ensure correctness of inputs.
+
+3. **Handler Generators**
+   - Specific generators for different handler types.
 
 ### RemotrGenerator
 
 The RemotrGenerator processes classes marked with the `[RemotrGen]` attribute and generates extension methods for various handler types. It uses a plugin architecture where different handler generators can be registered.
 
+### Extension Generators
+
+The project includes generators for creating extension methods for both stateful and stateless handlers:
+
+1. **StatelessExtensionGenerator**: Generates extension methods for stateless handlers.
+2. **StatefulExtensionGenerator**: Generates extension methods for handlers that maintain state.
+
 ## Usage
 
 To use these generators in your project, add a reference to the Remotr.SourceGen project and mark your interfaces or classes with the appropriate attributes.
 
-### CQRS Collection Example
+### Handler Attribute Example
 
 ```csharp
-[CqrsCollection(typeof(ICommandHandler<MyState>), "MyCommand")]
-public interface IMyCommand
+// Interface with command and query handlers
+[UseCommand(typeof(SetValueState), "SetValue")]
+[UseCommand(typeof(MultiplyState), "Multiply")]
+[UseCommand(typeof(DivideState), "Divide", fixedKey: "fixed-divide-key")]
+[UseQuery(typeof(GetValueState<CalculatorState, string>), "GetValue")]
+[UseQuery(typeof(GetPrimeFactorsState), "GetPrimeFactors", findMethod: nameof(GetPrimeFactorsKey))]
+public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
 {
-    Task Execute(CancellationToken cancellationToken = default);
+    // Optional key resolution method
+    public static string GetPrimeFactorsKey(int input) 
+    {
+        return "Calculator";
+    }
 }
 ```
 
 ### Remotr Example
 
 ```csharp
+// Stateful command handler implementation
 [RemotrGen]
-public class MyHandler : ICommandHandler<MyState>
+public class MultiplyState : StatefulCommandHandler<CalculatorState, double, double>
 {
-    public Task Execute(MyState state, CancellationToken cancellationToken = default)
+    public override async Task<double> Execute(double input)
+    {
+        await UpdateState(
+            new() {
+                Value = (await GetState()).Value * input 
+            }
+        );
+        return input;
+    }
+}
+
+// Stateful query handler implementation
+[RemotrGen]
+public class GetPrimeFactorsState : StatefulQueryHandler<CalculatorState, int, List<int>>
+{
+    public override async Task<List<int>> Execute(int input)
     {
         // Implementation
+        return CalculatePrimeFactors(input);
     }
 }
 ```
@@ -66,45 +123,10 @@ public class MyHandler : ICommandHandler<MyState>
 
 To add new handler types:
 
-1. For CqrsCollectionGenerator, extend the StatelessHandlerGenerator or create a new generator
-2. For RemotrGenerator, implement the IHandlerGenerator interface and register it in the RemotrGenerator constructor
+1. For HandlerAttributeIncrementalGenerator, implement a new handler generator and register it.
+2. For RemotrGenerator, extend the existing generator components or implement new ones.
+3. For extension generators, implement the appropriate interface (IStatelessExtensionGenerator or IStatefulExtensionGenerator).
 
 ## Contributing
 
-Contributions are welcome! Please follow the existing code style and add appropriate documentation comments.
-
-## CqrsCollection Source Generator
-
-The CqrsCollection source generator is responsible for generating stateless handler classes for CQRS operations. It has been refactored to follow SOLID principles with a clear separation of concerns.
-
-### Architecture
-
-The generator is organized into the following components:
-
-1. **Entry Point**
-   - `CqrsCollectionIncrementalGenerator`: The main entry point that implements `IIncrementalGenerator`.
-   - `CqrsCollectionExecutor`: Orchestrates the validation and generation process.
-
-2. **Validators**
-   - `InterfaceValidator`: Validates that interfaces implement required base interfaces.
-   - `AttributeValidator`: Validates attribute arguments.
-   - `HandlerTypeValidator`: Validates handler types.
-
-3. **Generators**
-   - `AttributeGenerator`: Generates the CqrsCollectionAttribute.
-   - `StatelessHandlerGenerator`: Coordinates the generation of stateless handlers.
-   - `CommandHandlerGenerator`: Generates command handler code.
-   - `QueryHandlerGenerator`: Generates query handler code.
-
-4. **Utilities**
-   - `SyntaxTargetIdentifier`: Identifies syntax targets for generation.
-   - `SemanticTargetIdentifier`: Identifies semantic targets for generation.
-   - `TypeUtils`: Utility methods for working with types.
-
-### Flow
-
-1. The `CqrsCollectionIncrementalGenerator` initializes the generator and registers the attribute source.
-2. It identifies interfaces with the CqrsCollection attribute.
-3. For each interface, it calls the `CqrsCollectionExecutor` to validate and generate code.
-4. The executor validates the interface, attribute arguments, and handler type.
-5. If all validations pass, it generates the stateless handler code. 
+Contributions are welcome! Please follow the existing code style and add appropriate documentation comments. 

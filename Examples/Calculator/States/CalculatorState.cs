@@ -6,7 +6,7 @@ namespace Remotr.Example.Calculator;
 public record CalculatorState : IContainValue
 {
     [Id(0)]
-    public double Value { get; set; }
+    public double Value { get; set; } = 0.0;
 
     public double GetValue() => Value;
 }
