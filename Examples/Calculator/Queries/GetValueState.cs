@@ -1,0 +1,13 @@
+
+
+namespace Remotr.Example.Calculator;
+
+[RemotrGen]
+public class GetValueState<T, K> : StatefulQueryHandler<T, double> where T : IContainValue, new()
+{
+    public override async Task<double> Execute()
+    {
+        var state = await GetState();
+        return state.GetValue();
+    }
+}

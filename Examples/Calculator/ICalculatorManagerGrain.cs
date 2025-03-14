@@ -1,5 +1,3 @@
-using Remotr;
-
 namespace Remotr.Example.Calculator;
 
 
@@ -8,6 +6,9 @@ namespace Remotr.Example.Calculator;
 [UseCommand(typeof(SetValueState3Type), "SetValue3Type")]
 [UseCommand(typeof(MultiplyState), "Multiply")]
 [UseCommand(typeof(DivideState), "Divide", fixedKey: "fixed-divide-key")]
+[UseCommand(typeof(DivideState), "Divide2")]
+[UseCommand(typeof(AddState), "Add")]
+[UseQuery(typeof(GetValueState<CalculatorState, string>), "GetValue")]
 [UseQuery(typeof(GetPrimeFactorsState), "GetPrimeFactors")]
 [UseQuery(typeof(GetValueState3Type), "GetValue3Type",  findMethod: nameof(GetValueState3TypeKey))]
 public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey

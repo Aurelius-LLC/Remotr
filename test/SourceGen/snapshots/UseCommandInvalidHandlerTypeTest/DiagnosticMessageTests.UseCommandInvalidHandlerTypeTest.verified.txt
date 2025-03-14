@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR006,
+      Title: Handler type must extend {0},
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,1)-(5,43),
+      MessageFormat: The handler type '{1}' in {2} attribute must extend {0},
+      Message: The handler type 'TestQueryType' in UseCommandAttribute attribute must extend StatefulCommandHandler,
+      Category: Remotr
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR020,
+      Title: Invalid RemotrGen target,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (8,0)-(15,1),
+      MessageFormat: The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler,
+      Message: The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler,
+      Category: Remotr
+    }
+  ]
+}
