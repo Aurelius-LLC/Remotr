@@ -1,7 +1,6 @@
 
 
-using Remotr;
-using Remotr.Example.Calculator;
+namespace Remotr.Example.Calculator;
 
 [RemotrGen]
 public class GetValueState<T, K> : StatefulQueryHandler<T, double> where T : IContainValue, new()

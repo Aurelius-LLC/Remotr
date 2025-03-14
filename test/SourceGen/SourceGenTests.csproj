@@ -27,8 +27,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="../../Remotr.SourceGen/Remotr.SourceGen.csproj" />
-    <ProjectReference Include="../../src/Remotr.csproj" />
+    <ProjectReference Include="../../src/Remotr.SourceGen/Remotr.SourceGen.csproj" />
+    <ProjectReference Include="../../src/Remotr.Server/Remotr.Server.csproj" />
   </ItemGroup>
 
 </Project>
