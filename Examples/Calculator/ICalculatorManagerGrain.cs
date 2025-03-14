@@ -8,6 +8,7 @@ namespace Remotr.Example.Calculator;
 [UseCommand(typeof(DivideState), "Divide", fixedKey: "fixed-divide-key")]
 [UseCommand(typeof(DivideState), "Divide2")]
 [UseCommand(typeof(AddState), "Add")]
+[UseQuery(typeof(GetValueState<CalculatorState, string>), "GetValue")]
 [UseQuery(typeof(GetPrimeFactorsState), "GetPrimeFactors")]
 [UseQuery(typeof(GetValueState3Type), "GetValue3Type",  findMethod: nameof(GetValueState3TypeKey))]
 public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
