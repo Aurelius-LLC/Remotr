@@ -1,9 +1,11 @@
 
 namespace Remotr.Example.Calendar;
 
+
 [GenerateSerializer]
 public record DayState
 {
+    // Day child grains are identified by the date.
     [Id(0)]
     public required DateOnly Date { get; set; }
 

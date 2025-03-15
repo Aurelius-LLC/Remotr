@@ -1,6 +1,4 @@
 
-using System.Drawing;
-
 namespace Remotr.Example.Calendar;
 
 [GenerateSerializer]
@@ -28,13 +26,13 @@ public record EventState
     public string Color { get; set; } = "#000000";
 
     [Id(7)]
-    public Dictionary<string, string> Tags { get; set; } = [];
-
-    [Id(8)]
     public bool IsRecurring { get; set; }
 
-    [Id(9)]
+    [Id(8)]
     public RecurrenceRule? RecurrenceRule { get; set; }
+
+    [Id(9)]
+    public Dictionary<TimeSpan, ScheduledReminder>? Reminders { get; set; }
 }
 
 [GenerateSerializer]
@@ -48,4 +46,14 @@ public record RecurrenceRule
 
     [Id(2)]
     public required DateOnly? Until { get; set; }
+}
+
+[GenerateSerializer]
+public class ScheduledReminder
+{
+    [Id(0)]
+    public bool Sent { get; set; }
+
+    [Id(1)]
+    public int Priority { get; set; }
 }
