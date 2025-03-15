@@ -11,4 +11,7 @@ public record DayState
 
     [Id(1)]
     public List<EventState> OrderedEvents { get; set; } = [];
+
+    [Id(2)]
+    public Dictionary<TimeOnly, List<Guid>> TimesToEventsWithReminders { get; set; } = [];
 }
