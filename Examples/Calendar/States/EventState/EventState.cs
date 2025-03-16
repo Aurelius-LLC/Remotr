@@ -5,22 +5,22 @@ namespace Remotr.Example.Calendar;
 public record EventState
 {
     [Id(0)]
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     [Id(1)]
-    public required string Title { get; set; }
+    public string Title { get; set; }
 
     [Id(2)]
     public string? Description { get; set; }
 
     [Id(3)]
-    public required DateOnly Date { get; set; }
+    public DateOnly Date { get; set; }
 
     [Id(4)]
-    public required TimeOnly StartTime { get; set; }
+    public TimeOnly StartTime { get; set; }
 
     [Id(5)]
-    public required TimeOnly Duration { get; set; }
+    public TimeOnly Duration { get; set; }
 
     [Id(6)]
     public string Color { get; set; } = "#000000";
