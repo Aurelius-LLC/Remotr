@@ -1,7 +1,7 @@
 namespace Remotr.Example.Calendar;
 
 [RemotrGen]
-public class GetEventsOnDay : StatefulQueryHandler<CalendarManagerState, DateOnly, List<EventState>>
+public class CalendarGetEventsOnDay : StatefulQueryHandler<CalendarManagerState, DateOnly, List<EventState>>
 {
     public override async Task<List<EventState>> Execute(DateOnly date)
     {

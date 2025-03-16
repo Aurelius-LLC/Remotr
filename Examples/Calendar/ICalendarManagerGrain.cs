@@ -15,7 +15,8 @@ namespace Remotr.Example.Calendar;
 [UseCommand(typeof(CalendarUpdateEventRecurring), "UpdateEventRecurring", fixedKey: CalendarManagerKey)]
 [UseCommand(typeof(CalendarUpdateEventTime), "UpdateEventTime", fixedKey: CalendarManagerKey)]
 [UseCommand(typeof(CalendarUpdateEventTitle), "UpdateEventTitle", fixedKey: CalendarManagerKey)]
-[UseQuery(typeof(GetEventsOnDay), "GetDaysEvents", fixedKey: CalendarManagerKey)]
+[UseQuery(typeof(CalendarGetEventsOnDay), "GetDaysEvents", fixedKey: CalendarManagerKey)]
+[UseQuery(typeof(CalendarGetEvent), "GetEvent", fixedKey: CalendarManagerKey)]
 public interface ICalendarManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
 {
     const string CalendarManagerKey = "CalendarManagerState";

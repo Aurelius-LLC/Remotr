@@ -52,24 +52,40 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         // Start with adding 120 to the calculator state (initially 0)
         // Then get its prime factors (for 120: [2, 2, 2, 3, 5])
         // Then multiply each factor by 10 ([20, 20, 20, 30, 50])
-        // Then sum them all together (140)
-        // Finally set the state to this result
+        // Then set the state to 10
+        // Then sum them all together (140) and return this value.
         await commandFactory.GetManager<ICalculatorManagerGrain>()
             // Add 120 to the initial state (0), making it 120
             .Add(120.0)
             // Get the prime factors of 120: [2, 2, 2, 3, 5]
             .GetPrimeFactors()
-            // Multiply each factor by 10
-            // "Then" keyword signals that we use the previous output as the input for "this" command/query.
-            .ThenForEach(
-                (b) => b.Multiply(10.0)
-            )
-            // Sum all the values: 20 + 20 + 20 + 30 + 50 = 140
-            .ThenReduce(
-                new SumReducer()
+            // MergeSplit allows us to split the builder into two branches.
+            // They must be merged back together at the end.
+            // Several default strategies exist to merge the branches back together.
+            // e.g. TakeFirst, TakeSecond, TakeGreater, TakeLesser, TakeTuple, etc.
+            .MergeSplit(
+                // Set the state to 10
+                (b1) => b1.Set(10.0),
+
+                // Multiply each factor by 10
+                // Multiply each factor by 10
+                // "Then" keyword signals that we use the previous output as the input for "this" command/query.
+                // However, we're not setting the state here.
+                (b2) => 
+                    b2.ThenForEach(
+                        (b) => b.Multiply(10.0)
+                    // Sum all the values: 20 + 20 + 20 + 30 + 50 = 140
+                    ).ThenReduce(
+                        new SumReducer()
+                    ),
+                
+                // Take the second value, which is the sum of the factors.
+                new TakeSecond<double, double>()
             )
             // Run for a given target.
             .Run("Target1");
+
+        // The state is now 10, however, the returned value is 140.
     }
 
     public async Task OnlyQueries() {
