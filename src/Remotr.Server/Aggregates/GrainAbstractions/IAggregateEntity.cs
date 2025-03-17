@@ -1,9 +1,9 @@
-﻿using Trackr.Backend.Core.Remotr.Transactions.GrainAbstractions;
+﻿
 
 namespace Remotr;
 
 public interface IAggregateEntity<T> :
-    IExecuteChildTransactions,
+    IExecuteEntityTransactions,
     IHaveTransactionOperations,
     IGrainWithStringKey
         where T : new()
