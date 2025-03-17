@@ -2,7 +2,8 @@
 
 public interface IInternalCommandFactory
 {
-    public IGrainCommandBaseBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> GetChild<T>()
+    public IGrainCommandBaseBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> GetEntity<T>()
             where T : new();
-}
 
+    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot;
+}

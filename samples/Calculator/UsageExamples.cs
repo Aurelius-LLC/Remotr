@@ -7,14 +7,14 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
     private readonly IExternalCommandFactory commandFactory = commandFactory;
     private readonly IExternalQueryFactory queryFactory = queryFactory;
 
-    // The below operation on the ICalculatorManagerGrain:
+    // The below operation on the ICalculatorAggregate:
         // 1. Is sent as a single RPC
         // 2. Will be executed in the order specified
         // 3. Will all succeed or fail together (ACID)
     public async Task SimpleArithmetic() {
         // CalculatorState starts at 0.
         // This algorithm returns 1 given an initial state of 0.
-        var algorithm = commandFactory.GetManager<ICalculatorManagerGrain>()
+        var algorithm = commandFactory.GetAggregate<ICalculatorAggregate>()
             // Now 2.0
             .Add(2.0)
             // Now 4.0
@@ -27,7 +27,7 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
 
         // CalculatorState starts at 0.
         // This algorithm returns 1 given an initial state of 0.
-        var algorithm = commandFactory.GetManager<ICalculatorManagerGrain>()
+        var algorithm = commandFactory.GetAggregate<ICalculatorAggregate>()
             // Now 2
             .Add(2.0)
             // Now 1
@@ -53,7 +53,7 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         // Then multiply each factor by 10 ([20, 20, 20, 30, 50])
         // Then set the state to 10
         // Then sum them all together (140) and return this value.
-        await commandFactory.GetManager<ICalculatorManagerGrain>()
+        await commandFactory.GetAggregate<ICalculatorAggregate>()
             // Add 120 to the initial state (0), making it 120
             .Add(120.0)
             // Get the prime factors of 120: [2, 2, 2, 3, 5]
@@ -91,7 +91,7 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         // Because we are using the query factory, we can only use queries.
         // This is infectious, meaning that queries run here can only run queries themselves.
         // Assuming the state is 120, the prime factors of 120: [2, 2, 2, 3, 5]
-        var primeFactors = await queryFactory.GetManager<ICalculatorManagerGrain>()
+        var primeFactors = await queryFactory.GetAggregate<ICalculatorAggregate>()
             .GetPrimeFactors()
             .Run("Target1");
     }

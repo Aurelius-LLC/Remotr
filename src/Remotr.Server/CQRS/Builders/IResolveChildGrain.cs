@@ -1,6 +1,6 @@
 ﻿namespace Remotr;
 
-public interface IResolveChildGrain<T> where T : IGrain
+public interface IResolveEntityGrain<T> where T : IGrain
 {
-    internal Func<string, T> ResolveChildGrain { get; }
+    internal Func<string, T> ResolveEntityGrain { get; }
 }

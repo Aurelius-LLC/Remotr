@@ -7,24 +7,24 @@ using Remotr;
 
 namespace KeyStrategiesGenerationTest;
 
-public class TestC2 : StatelessCommandHandler<ITestManagerGrain, double>
+public class TestC2 : StatelessCommandHandler<ITestAggregate, double>
 {
     public override async Task<double> Execute()
     {
-        return await CommandFactory.GetChild<KeyStrategiesGenerationTest.TestState>()
+        return await CommandFactory.GetEntity<KeyStrategiesGenerationTest.TestState>()
             .Tell<TestCommand2Type, double>()
             .Run("testKey1");
     }
 }
 
-public static class ITestManagerGrainTestC2Extensions
+public static class ITestAggregateTestC2Extensions
 {
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestC2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder)
         {
             return builder.Tell<TestC2, double>();
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, double> TestC2<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC2<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Tell<TestC2, double>();
         }

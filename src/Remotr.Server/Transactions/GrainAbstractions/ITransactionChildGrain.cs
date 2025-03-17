@@ -2,7 +2,7 @@
 
 namespace Remotr;
 
-public interface ITransactionChildGrain<T> :
+public interface IAggregateEntity<T> :
     IExecuteChildTransactions,
     IHaveTransactionOperations,
     IGrainWithStringKey

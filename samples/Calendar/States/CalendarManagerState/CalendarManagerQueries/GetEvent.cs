@@ -6,7 +6,7 @@ public class CalendarGetEvent : StatefulQueryHandler<CalendarManagerState, Guid,
     public override async Task<EventState> Execute(Guid eventId)
     {
         // Get the event directly from the EventState child grain
-        var eventState = await QueryFactory.GetChild<EventState>()
+        var eventState = await QueryFactory.GetEntity<EventState>()
             .GetEventState()
             .Run(eventId.ToString());
             

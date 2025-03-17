@@ -9,12 +9,12 @@ public class CalendarUpdateEventDuration : StatefulCommandHandler<CalendarManage
         var eventId = input.eventId;
         
         // Update the event duration
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateDuration(input.duration)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

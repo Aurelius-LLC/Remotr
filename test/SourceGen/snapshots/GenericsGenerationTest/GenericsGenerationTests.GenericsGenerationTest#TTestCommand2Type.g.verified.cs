@@ -7,12 +7,12 @@ namespace GenericsGenerationTest;
 
 public static class TTestCommand2Type
 {
-        public static IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, K> TestCommand2Type<T, K>(this IGrainCommandBaseBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> builder) where K : new() where T : ITest
+        public static IGrainCommandBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, K> TestCommand2Type<T, K>(this IGrainCommandBaseBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> builder) where K : new() where T : ITest
         {
             return builder.Tell<TestCommand2Type<T, K>, K>();
         }
 
-        public static IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, K> TestCommand2Type<T, K, TOther>(this IGrainCommandBuilder<ITransactionChildGrain<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, TOther> builder) where K : new() where T : ITest
+        public static IGrainCommandBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, K> TestCommand2Type<T, K, TOther>(this IGrainCommandBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>, TOther> builder) where K : new() where T : ITest
         {
             return builder.Tell<TestCommand2Type<T, K>, K>();
         }

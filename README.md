@@ -85,15 +85,15 @@ Remotr was created to simplify 3 common scenarios:</p>
 
          // Make the Manager Grain interface.
          // Using "Api" or "Manager" before Grain can signal that it's a Manager grain
-         public interface ICustomerApiGrain : ITransactionManagerGrain, IGrainWithGuidKey // For Manager grains, you can define what type of Grain key they will use.
+         public interface ICustomerApiGrain : IAggregateRoot, IGrainWithGuidKey // For Manager grains, you can define what type of Grain key they will use.
          {
             // This will ALWAYS be empty.
             // The interface simply defines how the Manager grain is accessed.
          }
 
          // Make the Manager Grain implementation.
-         // Need to have Manager Grains inherit from TransactionManagerGrain<IType> and IType
-         public class CustomerApiGrain : TransactionManagerGrain<ICustomerApiGrain>, ICustomerApiGrain
+         // Need to have Manager Grains inherit from AggregateRoot<IType> and IType
+         public class CustomerApiGrain : AggregateRoot<ICustomerApiGrain>, ICustomerApiGrain
          {
             // Define what persistent store to use
             // This comes from the previous code block cosmosBuilder.AddContainer("Customer" ...
@@ -259,7 +259,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
                 }
                 public override async Task<bool> Execute(UpateCustomerInfoInput input)
                 {
-                  _logger.LogInformation("Updating user info for customer with ID: {}", this.GetManagerId());
+                  _logger.LogInformation("Updating user info for customer with ID: {}", this.GetAggregateId());
 
                   // Update customer info
                   ...
@@ -316,7 +316,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
              public async Task<CustomerInfo> GetCustomerInfo(Guid customerId)
              {
                  return await _queryFactory
-                     .GetManager<ICustomerApiGrain>()
+                     .GetAggregate<ICustomerApiGrain>()
                      .Ask<RetrieveCustomerInfo, CustomerInfo>()
                      .Run(customerId);
              }
@@ -339,7 +339,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
              public Task UpdateCustomerInformation(Guid customerId, UpdateCustomerInfoInput input)
              {
                  await _commandFactory
-                     .GetManagerGrain<ICustomerApiGrain>()
+                     .GetAggregate<ICustomerApiGrain>()
                      .Tell<UpdateCustomerInfo, UpdateCustomerInfoInput, bool>(input)
                      .Run(customerId);
              }
@@ -404,7 +404,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
 
 
    8. Other Useful Methods  
-      1) **GetManagerId() on Child Grains**\
+      1) **GetAggregateId() on Child Grains**\
          **This shouldn’t be used to call the Manager Grain ever**, and it should only be used in rare situations anyways, but it is sometimes useful. The downside of this method being accessible is that it’s possible to make Child Grains less reusable for other Manager Grain types if they are tightly coupled with a particular Manager Grain type.  
 
       2) **`String GetPrimaryKey()` for Child Grains**\
@@ -440,7 +440,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
 
 4. **Child to Self-Manager Calls:** Calling the Manager Grain of a Child Grain from the Child Grain itself. This is an inversion of the expected control flow, and usually makes it impossible to reuse Child Grains for other types of Manager Grains. It will also cause a deadlock (on itself) if you run a command against the Manager Grain from one of that Manager Grain’s Child Grains.
 
-5. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having ChildGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
+5. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having EntityGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
    - **Example:** The IoT security sensors for an entire building should most likely not go directly through a single grain partition, even if it would be convenient for them to do so. This is assuming that they are constantly feeding data, which would slow the grain partition to a halt given hundreds of commands per second. That’s not to say that Remotr couldn’t be utilized, but it’s important to design the grain partitions with this in mind.  
 
 
@@ -452,9 +452,9 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
   {
       public override async Task<Post?> Execute(SaveStreaksInput input)
       {
-         var customerId = this.GetManagerId(); // This will be the the manager grain's Id.
+         var customerId = this.GetAggregateId(); // This will be the the manager grain's Id.
           return await CommandFactory
-              .GetChild<CustomerState>()
+              .GetEntity<CustomerState>()
               .Tell<UpdateCustomerInof, UpdateCustomerInfoInput, bool>(input)
               .Run("Customer"); // Customer will be the Id of all CustomerState objects.
               // This is a singleton on a per-grain-partition basis.

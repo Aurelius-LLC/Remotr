@@ -3,12 +3,12 @@ using Orleans.Runtime;
 
 namespace Remotr;
 
-public interface ITransactionManagerGrain : ITransactionalStateFetcher
+public interface IAggregateRoot : ITransactionalStateFetcher
 {
     Task Wait();
 
     [OneWay]
-    Task DeferChildGrainTransactionCallback<T>(ITransactionChildGrain<T> childGrain, Guid callbackId) where T : new();
+    Task DeferEntityGrainTransactionCallback<T>(IAggregateEntity<T> entityGrain, Guid callbackId) where T : new();
 
     [AlwaysInterleave]
     Task NotifyOfTransactionParticipation(Guid transactionId, GrainId grainId, Guid activationId);

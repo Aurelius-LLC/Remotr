@@ -2,9 +2,9 @@
 
 public interface IInternalQueryFactory
 {
-    public IGrainQueryBaseBuilder<ITransactionChildGrain<T>, BaseStatefulQueryHandler<T>> GetChild<T>()
+    public IGrainQueryBaseBuilder<IAggregateEntity<T>, BaseStatefulQueryHandler<T>> GetEntity<T>()
         where T : new();
 
-    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetManager<T>() where T : ITransactionManagerGrain;
+    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot;
 }
 

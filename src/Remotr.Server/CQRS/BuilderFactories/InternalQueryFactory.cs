@@ -16,26 +16,26 @@ public class InternalQueryFactory : IInternalQueryFactory
         _managerId = managerId;
     }
 
-    public IGrainQueryBaseBuilder<ITransactionChildGrain<T>, BaseStatefulQueryHandler<T>> GetChild<T>()
+    public IGrainQueryBaseBuilder<IAggregateEntity<T>, BaseStatefulQueryHandler<T>> GetEntity<T>()
         where T : new()
     {
-        UniversalBuilder<ITransactionChildGrain<T>, object> builder = new(new EmptyStep());
-        return new GrainQueryBaseBuilder<ITransactionChildGrain<T>, BaseStatefulQueryHandler<T>>(
+        UniversalBuilder<IAggregateEntity<T>, object> builder = new(new EmptyStep());
+        return new GrainQueryBaseBuilder<IAggregateEntity<T>, BaseStatefulQueryHandler<T>>(
                 _grainFactory,
                 (string key) =>
                 {
                     var componentId = new ComponentId
                     {
-                        ManagerGrainId = _managerId,
+                        AggregateId = _managerId,
                         ItemId = key
                     };
-                    return _grainFactory.GetGrain<ITransactionChildGrain<T>>(JsonSerializer.Serialize(componentId, _serializerOptions));
+                    return _grainFactory.GetGrain<IAggregateEntity<T>>(JsonSerializer.Serialize(componentId, _serializerOptions));
                 },
                 builder
         );
     }
 
-    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetManager<T>() where T : ITransactionManagerGrain
+    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
     {
         UniversalBuilder<T, object> builder = new(new EmptyStep());
         return new GrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>>(

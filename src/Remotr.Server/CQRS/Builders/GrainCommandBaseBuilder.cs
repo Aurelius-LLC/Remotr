@@ -3,32 +3,32 @@
 public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q> where T : IGrain
 {
     internal readonly IGrainFactory grainFactory;
-    internal readonly Func<string, T> _resolveChildGrain;
+    internal readonly Func<string, T> _resolveEntityGrain;
     internal readonly UniversalBuilder<T, object> _builder;
     internal readonly Func<IGrain, ValueTask>? _ranWith;
 
     internal GrainCommandBaseBuilder(
         IGrainFactory grainFactory,
-        Func<string, T> resolveChildGrain,
+        Func<string, T> resolveEntityGrain,
         UniversalBuilder<T, object> builder,
         Func<IGrain, ValueTask>? ranWith = null
     )
     {
         this.grainFactory = grainFactory;
-        this._resolveChildGrain = resolveChildGrain;
+        this._resolveEntityGrain = resolveEntityGrain;
         _builder = builder;
         _ranWith = ranWith;
     }
 
     UniversalBuilder<T, object> IProduceUniversalBuilder<T, object>.Builder => _builder;
     IGrainFactory IHaveGrainFactory.GrainFactory => grainFactory;
-    Func<string, T> IResolveChildGrain<T>.ResolveChildGrain => _resolveChildGrain;
+    Func<string, T> IResolveEntityGrain<T>.ResolveEntityGrain => _resolveEntityGrain;
 
     private GrainCommandBaseBuilder<T, C, Q> GetEmptyBuilder()
     {
         return new GrainCommandBaseBuilder<T, C, Q>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             new UniversalBuilder<T, object>(
                 new EmptyStep()
             )
@@ -39,7 +39,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBuilder<T, C, Q, Y>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.Ask<X, Y>()
         );
     }
@@ -48,7 +48,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBuilder<T, C, Q, Z>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.Ask<X, Y, Z>(dto)
         );
     }
@@ -57,7 +57,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBaseBuilder<T, C, Q>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.Tell<X>()
         );
     }
@@ -66,7 +66,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBuilder<T, C, Q, Y>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.Tell<X, Y>()
         );
     }
@@ -75,7 +75,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBuilder<T, C, Q, Z>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.Tell<X, Y, Z>(dto)
         );
     }
@@ -91,7 +91,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
 
         return new GrainCommandBuilder<T, C, Q, Merged>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.MergeSplit<
                 Merger,
                 Output1,
@@ -116,7 +116,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
 
         return new GrainCommandBuilder<T, C, Q, Merged>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.MergeSplit
             (
                 builder1,
@@ -131,7 +131,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
     {
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.ForEach<Handler, Input, Output>(inputs)
         );
     }
@@ -146,7 +146,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
         var builder = operation(
             new GrainCommandBuilder<T, C, Q, Input>(
                 grainFactory,
-                _resolveChildGrain,
+                _resolveEntityGrain,
                 new UniversalBuilder<T, Input>(
                     executionStepNeedsInput
                 )
@@ -155,7 +155,7 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
 
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             grainFactory,
-            _resolveChildGrain,
+            _resolveEntityGrain,
             _builder.ForEachSplit(
                 inputs,
                 executionStepNeedsInput,
@@ -164,20 +164,20 @@ public class GrainCommandBaseBuilder<T, C, Q> : IGrainCommandBaseBuilder<T, C, Q
         );
     }
 
-    public Task RunManagerGrain<X>(X managerGrain) where X : T, ITransactionManagerGrain
+    public Task RunAggregate<X>(X aggregate) where X : T, IAggregateRoot
     {
-        _ranWith?.Invoke(managerGrain);
-        return managerGrain.ExecuteCommand(_builder.ExecutionStep);
+        _ranWith?.Invoke(aggregate);
+        return aggregate.ExecuteCommand(_builder.ExecutionStep);
     }
 
-    public async Task RunChildGrain<X, TState>(X childGrain, bool interleave)
-        where X : T, ITransactionChildGrain<TState>
+    public async Task RunEntityGrain<X, TState>(X entityGrain, bool interleave)
+        where X : T, IAggregateEntity<TState>
         where TState : new()
     {
         if (_ranWith != null)
         {
-            await _ranWith(childGrain);
+            await _ranWith(entityGrain);
         }
-        await childGrain.Execute(_builder.ExecutionStep, interleave);
+        await entityGrain.Execute(_builder.ExecutionStep, interleave);
     }
 }

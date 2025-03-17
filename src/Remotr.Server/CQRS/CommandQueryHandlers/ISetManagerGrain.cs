@@ -2,7 +2,7 @@
 
 namespace Remotr;
 
-internal interface ISetManagerGrain
+internal interface ISetAggregate
 {
-    public void SetManagerGrain(GrainId managerGrainId);
+    public void SetAggregate(GrainId aggregateId);
 }

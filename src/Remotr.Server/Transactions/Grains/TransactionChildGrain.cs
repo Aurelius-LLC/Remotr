@@ -8,7 +8,7 @@ using Remotr.Testing;
 namespace Remotr;
 
 [MayInterleave(nameof(ArgHasInterleaveAttribute))]
-public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITransactionChildGrain<T> where T : new()
+public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateEntity<T> where T : new()
 {
 
     private readonly ChildCqCreator<T> _cqCreator;
@@ -17,7 +17,7 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
     /// Grain that manages all transactions involving this grain.
     /// </summary>
     private ComponentId ComponentId;
-    private ITransactionManagerGrain TransactionManagerGrain;
+    private IAggregateRoot AggregateRoot;
 
     private Dictionary<Guid, Func<Task>> _deferredTransactionCallbacks = new();
 
@@ -26,13 +26,13 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public TransactionChildGrain()
+    public AggregateEntity()
     {
         _jsonSerializerOptions = ServiceProvider.GetRequiredService<JsonSerializerOptions>();
-        _stateCache = new(_jsonSerializerOptions, GetManagerGrain, ServiceProvider);
+        _stateCache = new(_jsonSerializerOptions, GetAggregate, ServiceProvider);
         ComponentId = JsonSerializer.Deserialize<ComponentId>(this.GetPrimaryKeyString(), options: _jsonSerializerOptions)!;
-        TransactionManagerGrain = GrainFactory.GetGrain<ITransactionManagerGrain>(ComponentId.ManagerGrainId);
-        var managerGrainId = TransactionManagerGrain.GetGrainId();
+        AggregateRoot = GrainFactory.GetGrain<IAggregateRoot>(ComponentId.AggregateId);
+        var aggregateId = AggregateRoot.GetGrainId();
         _cqCreator = new ChildCqCreator<T>(
             ServiceProvider,
             this,
@@ -41,16 +41,16 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
             new InternalQueryFactory(
                 GrainFactory,
                 _jsonSerializerOptions,
-                managerGrainId
+                aggregateId
             ),
             new InternalCommandFactory(
                 GrainFactory,
                 _jsonSerializerOptions,
-                managerGrainId
+                aggregateId
             ),
             _stateCache,
             ComponentId,
-            ComponentId.ManagerGrainId,
+            ComponentId.AggregateId,
             NotifyManagerOfTransactionParticipation,
             GetTransactionMetadata
         );
@@ -71,9 +71,9 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
     /// </summary>
     private Guid AlivenessKey { get; set; }
 
-    public override ITransactionManagerGrain GetManagerGrain()
+    public override IAggregateRoot GetAggregate()
     {
-        return TransactionManagerGrain;
+        return AggregateRoot;
     }
 
 
@@ -117,7 +117,7 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
     {
         var callbackId = Guid.NewGuid();
         _deferredTransactionCallbacks.Add(callbackId, callback);
-        await TransactionManagerGrain.DeferChildGrainTransactionCallback(this, callbackId);
+        await AggregateRoot.DeferEntityGrainTransactionCallback(this, callbackId);
     }
 
     public async Task HandleCallback(Guid callbackId)
@@ -161,7 +161,7 @@ public sealed class TransactionChildGrain<T> : IsolatedTransactionalGrain, ITran
         if (!notifiedManagerOfChanges)
         {
             notifiedManagerOfChanges = true;
-            await TransactionManagerGrain.NotifyOfTransactionParticipation(ParticipatingTransactionId, this.GetGrainId(), AlivenessKey);
+            await AggregateRoot.NotifyOfTransactionParticipation(ParticipatingTransactionId, this.GetGrainId(), AlivenessKey);
         }
     }
 

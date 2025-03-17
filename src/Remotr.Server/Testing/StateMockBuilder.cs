@@ -19,35 +19,35 @@ public class StateMockBuilder : IStateMockBuilder
         return this;
     }
 
-    public IStateMockBuilder WithState<TGrain>(Guid key, Dictionary<string, string> jsonState) where TGrain : ITransactionManagerGrain, IGrainWithGuidKey
+    public IStateMockBuilder WithState<TGrain>(Guid key, Dictionary<string, string> jsonState) where TGrain : IAggregateRoot, IGrainWithGuidKey
     {
         var grainId = _grainFactory.GetGrain<TGrain>(key).GetGrainId();
         _testStore.SetJsonState(grainId, jsonState);
         return this;
     }
 
-    public IStateMockBuilder WithState<TGrain>(string key, Dictionary<string, string> jsonState) where TGrain : ITransactionManagerGrain, IGrainWithStringKey
+    public IStateMockBuilder WithState<TGrain>(string key, Dictionary<string, string> jsonState) where TGrain : IAggregateRoot, IGrainWithStringKey
     {
         var grainId = _grainFactory.GetGrain<TGrain>(key).GetGrainId();
         _testStore.SetJsonState(grainId, jsonState);
         return this;
     }
 
-    public IStateMockBuilder WithState<TGrain>(int key, Dictionary<string, string> jsonState) where TGrain : ITransactionManagerGrain, IGrainWithIntegerKey
+    public IStateMockBuilder WithState<TGrain>(int key, Dictionary<string, string> jsonState) where TGrain : IAggregateRoot, IGrainWithIntegerKey
     {
         var grainId = _grainFactory.GetGrain<TGrain>(key).GetGrainId();
         _testStore.SetJsonState(grainId, jsonState);
         return this;
     }
 
-    public IStateMockBuilder WithState<TGrain>(Guid guidKey, string stringKey, Dictionary<string, string> jsonState) where TGrain : ITransactionManagerGrain, IGrainWithGuidCompoundKey
+    public IStateMockBuilder WithState<TGrain>(Guid guidKey, string stringKey, Dictionary<string, string> jsonState) where TGrain : IAggregateRoot, IGrainWithGuidCompoundKey
     {
         var grainId = _grainFactory.GetGrain<TGrain>(guidKey, stringKey).GetGrainId();
         _testStore.SetJsonState(grainId, jsonState);
         return this;
     }
 
-    public IStateMockBuilder WithState<TGrain>(int intKey, string stringKey, Dictionary<string, string> jsonState) where TGrain : ITransactionManagerGrain, IGrainWithIntegerCompoundKey
+    public IStateMockBuilder WithState<TGrain>(int intKey, string stringKey, Dictionary<string, string> jsonState) where TGrain : IAggregateRoot, IGrainWithIntegerCompoundKey
     {
         var grainId = _grainFactory.GetGrain<TGrain>(intKey, stringKey).GetGrainId();
         _testStore.SetJsonState(grainId, jsonState);

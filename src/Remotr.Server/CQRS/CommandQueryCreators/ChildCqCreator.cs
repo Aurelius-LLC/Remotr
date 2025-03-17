@@ -17,7 +17,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
     private readonly IInternalCommandFactory _commandFactory;
     private readonly TransactionStateCache _stateCache;
     private readonly ComponentId _componentId;
-    private readonly GrainId _managerGrainId;
+    private readonly GrainId _aggregateId;
 
     private readonly Func<ValueTask> _notifyManagerOfTransactionParticipation;
     private readonly Func<TransactionMetadata> _getTransactionMetadata;
@@ -46,7 +46,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
         IInternalCommandFactory commandFactory,
         TransactionStateCache stateCache,
         ComponentId componentId,
-        GrainId managerGrainId,
+        GrainId aggregateId,
         Func<ValueTask> notifyManagerOfTransactionParticipation,
         Func<TransactionMetadata> getTransactionMetadata
     )
@@ -59,7 +59,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
         _commandFactory = commandFactory;
         _stateCache = stateCache;
         _componentId = componentId;
-        _managerGrainId = managerGrainId;
+        _aggregateId = aggregateId;
         _notifyManagerOfTransactionParticipation = notifyManagerOfTransactionParticipation;
         _getTransactionMetadata = getTransactionMetadata;
     }
@@ -112,18 +112,18 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
 
         if (query is BaseStatefulQueryHandler<T> handler)
         {
-            var managerGrainId = _managerGrainId;
+            var aggregateId = _aggregateId;
             handler.SetFactories(
                 _grainFactory,
                 _queryFactory
             );
 
             (handler as ISetGetState<T>).SetGetState(this);
-            (handler as ISetManagerGrain).SetManagerGrain(managerGrainId);
+            (handler as ISetAggregate).SetAggregate(aggregateId);
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a TransactionChildGrain.");
+            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a AggregateEntity.");
         }
 
         return query;
@@ -150,7 +150,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
 
         if (command is BaseStatefulCommandHandler<T> handler)
         {
-            var managerGrainId = _managerGrainId;
+            var aggregateId = _aggregateId;
 
             handler.SetFactories(
                 _grainFactory,
@@ -160,11 +160,11 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
 
             (handler as ISetGetState<T>).SetGetState(this);
             (handler as ISetUpdateState<T>).SetUpdateState(this);
-            (handler as ISetManagerGrain).SetManagerGrain(managerGrainId);
+            (handler as ISetAggregate).SetAggregate(aggregateId);
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a TransactionChildGrain.");
+            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a AggregateEntity.");
         }
 
         return command;

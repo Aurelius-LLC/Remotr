@@ -7,29 +7,29 @@ using Remotr;
 
 namespace CommandsAndQueriesWithObjectsGenerationTest;
 
-public class TestC3 : StatelessCommandHandler<ITestManagerGrain, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, double>
+public class TestC3 : StatelessCommandHandler<ITestAggregate, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, double>
 {
     public override async Task<double> Execute(CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
     {
-        return await CommandFactory.GetChild<CommandsAndQueriesWithObjectsGenerationTest.TestState>()
+        return await CommandFactory.GetEntity<CommandsAndQueriesWithObjectsGenerationTest.TestState>()
             .Tell<TestCommand3Type, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, double>(input)
             .Run(GetPrimaryKeyString());
     }
 }
 
-public static class ITestManagerGrainTestC3Extensions
+public static class ITestAggregateTestC3Extensions
 {
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, double> TestC3(this IGrainCommandBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, double> TestC3(this IGrainCommandBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Tell<TestC3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, double>(input);
         }
 
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, double> TestC3<T>(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, double> TestC3<T>(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Tell<TestC3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, double>(input);
         }
 
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, double> ThenTestC3(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestManagerGrain>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, double> ThenTestC3(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
         {
             return builder.ThenTell<TestC3, double>();
         }

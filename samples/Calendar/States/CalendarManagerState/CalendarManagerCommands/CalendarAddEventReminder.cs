@@ -12,12 +12,12 @@ public class CalendarAddEventReminder : StatefulCommandHandler<CalendarManagerSt
         var reminderToAdd = input.reminder;
         
         // Add the reminder to the event
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .AddReminder((reminderToAdd.Key, reminderToAdd.Value))
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

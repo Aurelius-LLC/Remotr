@@ -1,10 +1,10 @@
 ﻿namespace Remotr;
 
-public interface IGetTransactionManager
+public interface IGetAggregateRoot
 {
     /// <summary>
     /// Returns the grain that manages all transactions involving this grain.
     /// </summary>
     /// <returns></returns>
-    ITransactionManagerGrain GetManagerGrain();
+    IAggregateRoot GetAggregate();
 }

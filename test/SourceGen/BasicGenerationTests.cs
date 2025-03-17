@@ -19,7 +19,7 @@ namespace SimpleCommandsAndQueriesTest;
 [UseCommand(typeof(TestCommand3Type), ""TestC3"")]
 [UseQuery(typeof(TestQuery2Type), ""TestQ2"")]
 [UseQuery(typeof(TestQuery3Type), ""TestQ3"")]
-public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
@@ -94,7 +94,7 @@ namespace  " + nameof(CommandsAndQueriesWithObjectsGenerationTest) + @";
 
 [UseCommand(typeof(TestCommand3Type), ""TestC3"")]
 [UseQuery(typeof(TestQuery3Type), ""TestQ3"")]
-public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
@@ -151,12 +151,12 @@ public record TestOutputObject
 using Remotr;
 namespace  " + nameof(StatelessHandlerExtensionGenerationTests) + @";
 
-public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
 [RemotrGen]
-public class TestCommand1Type : StatelessCommandHandler<ITestManagerGrain, TestInputObject, double>
+public class TestCommand1Type : StatelessCommandHandler<ITestAggregate, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
     {
@@ -165,7 +165,7 @@ public class TestCommand1Type : StatelessCommandHandler<ITestManagerGrain, TestI
 }
 
 [RemotrGen]
-public class TestQuery3Type : StatelessQueryHandler<ITestManagerGrain, TestInputObject, TestOutputObject>
+public class TestQuery3Type : StatelessQueryHandler<ITestAggregate, TestInputObject, TestOutputObject>
 {
     public override async Task<TestOutputObject> Execute(TestInputObject input)
     {

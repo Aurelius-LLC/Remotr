@@ -9,12 +9,12 @@ public class CalendarUpdateEventRecurrenceRule : StatefulCommandHandler<Calendar
         var eventId = input.eventId;
         
         // Update the event recurrence rule
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateRecurrenceRule(input.recurrenceRule)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

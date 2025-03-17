@@ -4,8 +4,8 @@ using Remotr.Testing;
 
 namespace Remotr;
 
-public class ManagerCqCreator<IManagerGrain> : ICqCreator
-    where IManagerGrain : ITransactionManagerGrain
+public class ManagerCqCreator<IAggregate> : ICqCreator
+    where IAggregate : IAggregateRoot
 {
     public bool isTesting = false;
     public ICqMockContainer? mockContainer;
@@ -54,7 +54,7 @@ public class ManagerCqCreator<IManagerGrain> : ICqCreator
             executor.SetGrainId(_addressable, _grainId);
         }
 
-        if (query is BaseStatelessQueryHandler<IManagerGrain> handler)
+        if (query is BaseStatelessQueryHandler<IAggregate> handler)
         {
             handler.SetFactories(
                 _grainFactory,
@@ -63,7 +63,7 @@ public class ManagerCqCreator<IManagerGrain> : ICqCreator
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a TransactionChildGrain.");
+            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a AggregateEntity.");
         }
 
         return query;
@@ -88,7 +88,7 @@ public class ManagerCqCreator<IManagerGrain> : ICqCreator
             executor.SetGrainId(_addressable, _grainId);
         }
 
-        if (command is BaseStatelessCommandHandler<IManagerGrain> handler)
+        if (command is BaseStatelessCommandHandler<IAggregate> handler)
         {
             handler.SetFactories(
                 _grainFactory,
@@ -98,7 +98,7 @@ public class ManagerCqCreator<IManagerGrain> : ICqCreator
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a TransactionChildGrain.");
+            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a AggregateEntity.");
         }
 
         return command;

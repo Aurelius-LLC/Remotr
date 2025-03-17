@@ -9,12 +9,12 @@ public class CalendarUpdateEventDescription : StatefulCommandHandler<CalendarMan
         var eventId = input.eventId;
         
         // Update the event description
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateDescription(input.description)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

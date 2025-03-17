@@ -15,7 +15,7 @@ public class AdvancedEventCreatorApiExample(IExternalCommandFactory commandFacto
     private readonly IExternalCommandFactory commandFactory = commandFactory;
 
     private Guid? _eventId;
-    private IGrainCommandBuilder<ICalendarManagerGrain, BaseStatelessCommandHandler<ICalendarManagerGrain>, BaseStatelessQueryHandler<ICalendarManagerGrain>, EventState>? _eventBuilder;
+    private IGrainCommandBuilder<ICalendarAggregate, BaseStatelessCommandHandler<ICalendarAggregate>, BaseStatelessQueryHandler<ICalendarAggregate>, EventState>? _eventBuilder;
 
     /// <summary>
     /// Initializes the event builder with a new event state.
@@ -25,7 +25,7 @@ public class AdvancedEventCreatorApiExample(IExternalCommandFactory commandFacto
     {
         // Initialize the event builder with a new event state.
         var _eventId = Guid.NewGuid();
-        _eventBuilder = commandFactory.GetManager<ICalendarManagerGrain>()
+        _eventBuilder = commandFactory.GetAggregate<ICalendarAggregate>()
             .AddEvent(new EventState {
                 Id = _eventId
             });
@@ -39,7 +39,7 @@ public class AdvancedEventCreatorApiExample(IExternalCommandFactory commandFacto
     {
 
         // Loading the event state in to the builder.
-        _eventBuilder = commandFactory.GetManager<ICalendarManagerGrain>()
+        _eventBuilder = commandFactory.GetAggregate<ICalendarAggregate>()
             .GetEvent(eventId);
 
         // Validate the event exists.

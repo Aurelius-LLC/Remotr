@@ -2,13 +2,13 @@ using Orleans.Runtime;
 
 namespace Remotr;
 
-public abstract class IsolatedTransactionalGrain : Grain, IIncomingGrainCallFilter, IOutgoingGrainCallFilter, IGetTransactionManager
+public abstract class IsolatedTransactionalGrain : Grain, IIncomingGrainCallFilter, IOutgoingGrainCallFilter, IGetAggregateRoot
 {
     protected abstract TransactionMetadata? GetTransactionMetadata();
 
     protected abstract void SetTransactionMetadata(TransactionMetadata transactionMetadata);
 
-    public abstract ITransactionManagerGrain GetManagerGrain();
+    public abstract IAggregateRoot GetAggregate();
 
     public Task Invoke(IIncomingGrainCallContext context)
     {
@@ -51,13 +51,13 @@ public abstract class IsolatedTransactionalGrain : Grain, IIncomingGrainCallFilt
 
     public Task Invoke(IOutgoingGrainCallContext context)
     {
-        var tmId = GetManagerGrain().GetGrainId().ToString();
+        var tmId = GetAggregate().GetGrainId().ToString();
 
-        string? currentTmId = RequestContext.Get("transactionManagerId") as string;
+        string? currentTmId = RequestContext.Get("aggregateRootId") as string;
 
         if (currentTmId == null || currentTmId != tmId)
         {
-            RequestContext.Set("transactionManagerId", tmId);
+            RequestContext.Set("aggregateRootId", tmId);
         }
 
         return context.Invoke();

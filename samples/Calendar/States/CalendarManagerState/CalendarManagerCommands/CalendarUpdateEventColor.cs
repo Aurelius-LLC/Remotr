@@ -9,12 +9,12 @@ public class CalendarUpdateEventColor : StatefulCommandHandler<CalendarManagerSt
         var eventId = input.eventId;
         
         // Update the event color
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateColor(input.color)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

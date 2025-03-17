@@ -18,7 +18,7 @@ namespace  " + nameof(GenericsGenerationTest) + @";
 [UseCommand(typeof(TestCommand3Type<TestState, int, double>), ""TestC3"")]
 [UseQuery(typeof(TestQuery2Type<TestState, TestState>), ""TestQ2"")]
 [UseQuery(typeof(TestQuery3Type<TestState, int, double>), ""TestQ3"")]
-public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 

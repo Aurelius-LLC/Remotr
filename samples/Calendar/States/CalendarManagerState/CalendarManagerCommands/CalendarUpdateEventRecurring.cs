@@ -9,12 +9,12 @@ public class CalendarUpdateEventRecurring : StatefulCommandHandler<CalendarManag
         var eventId = input.eventId;
         
         // Update the event recurring property
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateIsRecurring(input.isRecurring)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

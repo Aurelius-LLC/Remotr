@@ -3,34 +3,34 @@
 public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T : IGrain
 {
     internal readonly IGrainFactory grainFactory;
-    internal readonly Func<string, T> resolveChildGrain;
+    internal readonly Func<string, T> resolveEntityGrain;
     private readonly UniversalBuilder<T, object> _builder;
     internal readonly Func<IGrain, ValueTask>? _ranWith;
 
 
     internal GrainQueryBaseBuilder(
         IGrainFactory grainFactory,
-        Func<string, T> resolveChildGrain,
+        Func<string, T> resolveEntityGrain,
         UniversalBuilder<T, object> builder,
         Func<IGrain, ValueTask>? ranWith = null
     )
     {
         this.grainFactory = grainFactory;
-        this.resolveChildGrain = resolveChildGrain;
+        this.resolveEntityGrain = resolveEntityGrain;
         _builder = builder;
         _ranWith = ranWith;
     }
 
     UniversalBuilder<T, object> IProduceUniversalBuilder<T, object>.Builder => _builder;
     IGrainFactory IHaveGrainFactory.GrainFactory => grainFactory;
-    Func<string, T> IResolveChildGrain<T>.ResolveChildGrain => resolveChildGrain;
+    Func<string, T> IResolveEntityGrain<T>.ResolveEntityGrain => resolveEntityGrain;
 
 
     internal GrainQueryBaseBuilder<T, Q> GetEmptyBuilder()
     {
         return new GrainQueryBaseBuilder<T, Q>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             new UniversalBuilder<T, object>(
                 new EmptyStep()
             )
@@ -41,7 +41,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
     {
         return new GrainQueryBuilder<T, Q, Y>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.Ask<X, Y>()
         );
     }
@@ -50,7 +50,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
     {
         return new GrainQueryBuilder<T, Q, Z>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.Ask<X, Y, Z>(dto)
         );
     }
@@ -66,7 +66,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
 
         return new GrainQueryBuilder<T, Q, Merged>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.MergeSplit<
                 Merger,
                 Output1,
@@ -91,7 +91,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
 
         return new GrainQueryBuilder<T, Q, Merged>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.MergeSplit
             (
                 builder1,
@@ -112,7 +112,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
         var builder = operation(
             new GrainQueryBuilder<T, Q, Input>(
                 grainFactory,
-                resolveChildGrain,
+                resolveEntityGrain,
                 new UniversalBuilder<T, Input>(
                     executionStepNeedsInput
                 )
@@ -122,7 +122,7 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
         return new GrainQueryBuilder<T, Q, IEnumerable<Output>>
         (
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.ForEachSplit
             (
                 inputs,
@@ -132,20 +132,20 @@ public class GrainQueryBaseBuilder<T, Q> : IGrainQueryBaseBuilder<T, Q> where T 
         );
     }
 
-    public Task RunManagerGrain<X>(X managerGrain) where X : T, ITransactionManagerGrain
+    public Task RunAggregate<X>(X aggregate) where X : T, IAggregateRoot
     {
-        _ranWith?.Invoke(managerGrain);
-        return managerGrain.ExecuteQuery(_builder.ExecutionStep, false);
+        _ranWith?.Invoke(aggregate);
+        return aggregate.ExecuteQuery(_builder.ExecutionStep, false);
     }
 
-    public async Task RunChildGrain<X, TState>(X childGrain, bool interleave)
-        where X : T, ITransactionChildGrain<TState>
+    public async Task RunEntityGrain<X, TState>(X entityGrain, bool interleave)
+        where X : T, IAggregateEntity<TState>
         where TState : new()
     {
         if (_ranWith != null)
         {
-            await _ranWith(childGrain);
+            await _ranWith(entityGrain);
         }
-        await childGrain.Execute(_builder.ExecutionStep, interleave);
+        await entityGrain.Execute(_builder.ExecutionStep, interleave);
     }
 }

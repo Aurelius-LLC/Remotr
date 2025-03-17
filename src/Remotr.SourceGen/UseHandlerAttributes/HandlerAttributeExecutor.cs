@@ -53,15 +53,15 @@ public class HandlerAttributeExecutor
         // Get attribute name for error messages
         string attributeName = _attributeValidator.GetAttributeTypeName(attribute, compilation);
         
-        // Check if the interface implements ITransactionManagerGrain
-        if (!_interfaceValidator.ImplementsITransactionManagerGrain(interfaceDeclaration, compilation))
+        // Check if the interface implements IAggregateRoot
+        if (!_interfaceValidator.ImplementsIAggregateRoot(interfaceDeclaration, compilation))
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     new DiagnosticDescriptor(
                         "REMOTR001",
-                        "Interface must implement ITransactionManagerGrain",
-                        "The interface '{0}' with {1} attribute must implement ITransactionManagerGrain",
+                        "Interface must implement IAggregateRoot",
+                        "The interface '{0}' with {1} attribute must implement IAggregateRoot",
                         "Remotr",
                         DiagnosticSeverity.Error,
                         isEnabledByDefault: true),

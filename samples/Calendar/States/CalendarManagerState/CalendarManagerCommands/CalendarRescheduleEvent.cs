@@ -7,7 +7,7 @@ public class CalendarRescheduleEvent : StatefulCommandHandler<CalendarManagerSta
     {
         // Get current event state
         var eventId = input.eventId;
-        var currentEvent = await CommandFactory.GetChild<EventState>()
+        var currentEvent = await CommandFactory.GetEntity<EventState>()
             .GetEventState()
             .Run(eventId.ToString());
             
@@ -16,7 +16,7 @@ public class CalendarRescheduleEvent : StatefulCommandHandler<CalendarManagerSta
         var newDate = input.newDate;
         
         // Update the event state with the new date
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateDate(newDate)
             .Run(eventId.ToString());
         
@@ -24,12 +24,12 @@ public class CalendarRescheduleEvent : StatefulCommandHandler<CalendarManagerSta
         if (oldDate != newDate)
         {
             // Remove from old day
-            await CommandFactory.GetChild<DayState>()
+            await CommandFactory.GetEntity<DayState>()
                 .RemoveEventFromDay(eventId)
                 .Run(oldDate.ToString());
                 
             // Add to new day
-            await CommandFactory.GetChild<DayState>()
+            await CommandFactory.GetEntity<DayState>()
                 .AddEventToDay(updatedEventState)
                 .Run(newDate.ToString());
         }

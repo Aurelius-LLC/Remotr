@@ -1,7 +1,7 @@
 ﻿namespace Remotr;
 
-public abstract class BaseStatelessCommandHandler<IManagerGrain> : BaseStatelessQueryHandler<IManagerGrain>
-    where IManagerGrain : ITransactionManagerGrain
+public abstract class BaseStatelessCommandHandler<IAggregate> : BaseStatelessQueryHandler<IAggregate>
+    where IAggregate : IAggregateRoot
 {
     public IInternalCommandFactory CommandFactory { get; private set; } = default!;
 

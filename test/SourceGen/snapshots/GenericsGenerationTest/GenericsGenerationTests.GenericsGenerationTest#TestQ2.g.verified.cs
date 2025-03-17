@@ -7,34 +7,34 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestQ2 : StatelessQueryHandler<ITestManagerGrain, GenericsGenerationTest.TestState>
+public class TestQ2 : StatelessQueryHandler<ITestAggregate, GenericsGenerationTest.TestState>
 {
     public override async Task<GenericsGenerationTest.TestState> Execute()
     {
-        return await QueryFactory.GetChild<GenericsGenerationTest.TestState>()
+        return await QueryFactory.GetEntity<GenericsGenerationTest.TestState>()
             .Ask<TestQuery2Type<GenericsGenerationTest.TestState, GenericsGenerationTest.TestState>, GenericsGenerationTest.TestState>()
             .Run(GetPrimaryKeyString());
     }
 }
 
-public static class ITestManagerGrainTestQ2Extensions
+public static class ITestAggregateTestQ2Extensions
 {
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2(this IGrainQueryBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, GenericsGenerationTest.TestState> TestQ2(this IGrainQueryBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }
 
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, GenericsGenerationTest.TestState> TestQ2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, GenericsGenerationTest.TestState> TestQ2<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Ask<TestQ2, GenericsGenerationTest.TestState>();
         }

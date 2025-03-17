@@ -7,6 +7,6 @@ namespace Remotr.Samples.Calculator;
 [UseCommand(typeof(AddState), "Add")]
 [UseQuery(typeof(GetValueState<CalculatorState>), "GetValue")]
 [UseQuery(typeof(GetPrimeFactorsState), "GetPrimeFactors")]
-public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ICalculatorAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }

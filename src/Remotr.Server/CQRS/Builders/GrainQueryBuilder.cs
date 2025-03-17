@@ -3,34 +3,34 @@
 public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : IGrain
 {
     internal readonly IGrainFactory grainFactory;
-    internal readonly Func<string, T> resolveChildGrain;
+    internal readonly Func<string, T> resolveEntityGrain;
     private readonly UniversalBuilder<T, K> _builder;
     internal readonly Func<IGrain, ValueTask>? _ranWith;
 
 
     internal GrainQueryBuilder(
         IGrainFactory grainFactory,
-        Func<string, T> resolveChildGrain,
+        Func<string, T> resolveEntityGrain,
         UniversalBuilder<T, K> builder,
         Func<IGrain, ValueTask>? ranWith = null
     )
     {
         this.grainFactory = grainFactory;
-        this.resolveChildGrain = resolveChildGrain;
+        this.resolveEntityGrain = resolveEntityGrain;
         _builder = builder;
         _ranWith = ranWith;
     }
 
     UniversalBuilder<T, K> IProduceUniversalBuilder<T, K>.Builder => _builder;
     IGrainFactory IHaveGrainFactory.GrainFactory => grainFactory;
-    Func<string, T> IResolveChildGrain<T>.ResolveChildGrain => resolveChildGrain;
+    Func<string, T> IResolveEntityGrain<T>.ResolveEntityGrain => resolveEntityGrain;
 
 
     public IGrainQueryBuilder<T, Q, Y> Ask<X, Y>() where X : IAsyncQueryHandler<T, Y>, Q
     {
         return new GrainQueryBuilder<T, Q, Y>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.Ask<X, Y>()
         );
     }
@@ -39,7 +39,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
     {
         return new GrainQueryBuilder<T, Q, Z>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.Ask<X, Y, Z>(dto)
         );
     }
@@ -48,7 +48,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
     {
         return new GrainQueryBuilder<T, Q, Y>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.ThenAsk<X, Y>()
         );
     }
@@ -57,7 +57,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
     {
         return new GrainQueryBuilder<T, Q, Y>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.ThenMap<X, Y>()
         );
     }
@@ -72,7 +72,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
 
         var needsPropBuilder = new GrainQueryBuilder<T, Q, K>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             new UniversalBuilder<T, K>(
                 needsPropStep
             )
@@ -83,7 +83,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
 
         return new GrainQueryBuilder<T, Q, Merged>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.MergeSplit
             (
                 needsPropStep,
@@ -103,7 +103,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
 
         var needsPropBuilder = new GrainQueryBuilder<T, Q, K>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             new UniversalBuilder<T, K>(
                 needsPropStep
             )
@@ -114,7 +114,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
 
         return new GrainQueryBuilder<T, Q, Merged>(
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.MergeSplit<
                 Merger,
                 Output1,
@@ -138,7 +138,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
         var builder = operation(
             new GrainQueryBuilder<T, Q, Input>(
                 grainFactory,
-                resolveChildGrain,
+                resolveEntityGrain,
                 new UniversalBuilder<T, Input>(
                     executionStepNeedsInput
                 )
@@ -148,7 +148,7 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
         return new GrainQueryBuilder<T, Q, IEnumerable<Output>>
         (
             grainFactory,
-            resolveChildGrain,
+            resolveEntityGrain,
             _builder.ForEachSplit
             (
                 inputs,
@@ -158,20 +158,20 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
         );
     }
 
-    public Task<K> RunManagerGrain<X>(X managerGrain) where X : T, ITransactionManagerGrain
+    public Task<K> RunAggregate<X>(X aggregate) where X : T, IAggregateRoot
     {
-        _ranWith?.Invoke(managerGrain);
-        return managerGrain.ExecuteQuery(_builder.ExecutionStep, false);
+        _ranWith?.Invoke(aggregate);
+        return aggregate.ExecuteQuery(_builder.ExecutionStep, false);
     }
 
-    public async Task<K> RunChildGrain<X, TState>(X childGrain, bool interleave)
-        where X : T, ITransactionChildGrain<TState>
+    public async Task<K> RunEntityGrain<X, TState>(X entityGrain, bool interleave)
+        where X : T, IAggregateEntity<TState>
         where TState : new()
     {
         if (_ranWith != null)
         {
-            await _ranWith(childGrain);
+            await _ranWith(entityGrain);
         }
-        return await childGrain.Execute(_builder.ExecutionStep, interleave);
+        return await entityGrain.Execute(_builder.ExecutionStep, interleave);
     }
 }

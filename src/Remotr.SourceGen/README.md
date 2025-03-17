@@ -79,7 +79,7 @@ To use these generators in your project, add a reference to the Remotr.SourceGen
 [UseCommand(typeof(DivideState), "Divide", fixedKey: "fixed-divide-key")]
 [UseQuery(typeof(GetValueState<CalculatorState, string>), "GetValue")]
 [UseQuery(typeof(GetPrimeFactorsState), "GetPrimeFactors", findMethod: nameof(GetPrimeFactorsKey))]
-public interface ICalculatorManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ICalculatorAggregate : IAggregateRoot, IGrainWithStringKey
 {
     // Optional key resolution method
     public static string GetPrimeFactorsKey(int input) 

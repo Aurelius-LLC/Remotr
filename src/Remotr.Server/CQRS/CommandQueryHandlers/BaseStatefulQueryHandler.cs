@@ -2,10 +2,10 @@
 
 namespace Remotr;
 
-public abstract class BaseStatefulQueryHandler<TState> : AddressableChild, ISetGetState<TState>, ISetManagerGrain, IDiscoverableCq
+public abstract class BaseStatefulQueryHandler<TState> : AddressableChild, ISetGetState<TState>, ISetAggregate, IDiscoverableCq
     where TState : new()
 {
-    public GrainId ManagerGrainId { get; private set; } = default!;
+    public GrainId AggregateId { get; private set; } = default!;
     public GrainId GrainId { get; private set; } = default!;
 
     private ComponentId _address { get; set; } = default!;
@@ -30,9 +30,9 @@ public abstract class BaseStatefulQueryHandler<TState> : AddressableChild, ISetG
     {
         Reader = reader;
     }
-    void ISetManagerGrain.SetManagerGrain(GrainId managerGrainId)
+    void ISetAggregate.SetAggregate(GrainId aggregateId)
     {
-        ManagerGrainId = managerGrainId;
+        AggregateId = aggregateId;
     }
     internal override void SetGrainId(ComponentId addressable, GrainId grainId)
     {

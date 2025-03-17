@@ -37,7 +37,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         sb.AppendLine("{");
         sb.AppendLine("    public override async Task Execute()");
         sb.AppendLine("    {");
-        sb.AppendLine($"        await CommandFactory.GetChild<{stateType}>()");
+        sb.AppendLine($"        await CommandFactory.GetEntity<{stateType}>()");
         sb.AppendLine($"            .Tell<{statefulHandlerName}{genericTypeArgsString}>()");
         sb.AppendLine($"            .Run({keyStrategy.GenerateKeyStrategy()});");
         sb.AppendLine("    }");

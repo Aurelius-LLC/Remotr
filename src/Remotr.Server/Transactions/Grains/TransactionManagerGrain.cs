@@ -4,8 +4,8 @@ using Remotr.Testing;
 
 namespace Remotr;
 
-public abstract class TransactionManagerGrain<T> : Grain, ITransactionManagerGrain, IIncomingGrainCallFilter
-    where T : ITransactionManagerGrain
+public abstract class AggregateRoot<T> : Grain, IAggregateRoot, IIncomingGrainCallFilter
+    where T : IAggregateRoot
 {
 
     private readonly ManagerCqCreator<T> _managerCqCreator;
@@ -62,7 +62,7 @@ public abstract class TransactionManagerGrain<T> : Grain, ITransactionManagerGra
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public TransactionManagerGrain(IPersistentStore persistentStore)
+    public AggregateRoot(IPersistentStore persistentStore)
     {
         _grainTypeName = typeof(T).Name.ToString();
         _jsonSerializerOptions = ServiceProvider.GetRequiredService<JsonSerializerOptions>();
@@ -91,10 +91,10 @@ public abstract class TransactionManagerGrain<T> : Grain, ITransactionManagerGra
         return Task.CompletedTask;
     }
 
-    public async Task DeferChildGrainTransactionCallback<T>(ITransactionChildGrain<T> childGrain, Guid callbackId)
+    public async Task DeferEntityGrainTransactionCallback<T>(IAggregateEntity<T> entityGrain, Guid callbackId)
         where T : new()
     {
-        await StartTransaction(async () => await childGrain.HandleCallback(callbackId));
+        await StartTransaction(async () => await entityGrain.HandleCallback(callbackId));
     }
 
     public virtual async Task<T> GetState<T>(string itemId) where T : new()

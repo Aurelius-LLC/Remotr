@@ -28,7 +28,7 @@ namespace " + nameof(KeyStrategiesGenerationTest) + @";
 [UseCommand(typeof(TestCommand3Type), ""TestC3"", findMethod: nameof(SetValue3TypeKey))]
 [UseQuery(typeof(TestQuery2Type), ""TestQ2"", findMethod: nameof(SetValue2TypeKey))]
 [UseQuery(typeof(TestQuery3Type), ""TestQ3"", fixedKey: ""testKey2"")]
-public interface ITestManagerGrain : Remotr.ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
     public static string SetValue2TypeKey() {
         return ""testKey2"";

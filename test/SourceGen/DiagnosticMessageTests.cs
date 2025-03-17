@@ -4,16 +4,16 @@ namespace SourceGen;
 public class DiagnosticMessageTests
 {
     [Fact]
-    public async Task MissingITransactionManagerGrainInterfaceTest()
+    public async Task MissingIAggregateRootInterfaceTest()
     {
         const string source = @"
 using Remotr;
-namespace " + nameof(MissingITransactionManagerGrainInterfaceTest) + @";
+namespace " + nameof(MissingIAggregateRootInterfaceTest) + @";
 
 
 [UseCommand(typeof(TestCommand1Type), ""TestC1"")]
 [UseQuery(typeof(TestQuery2Type), ""TestQ2"")]
-public interface ITestManagerGrain : IGrain, IGrainWithStringKey
+public interface ITestAggregate : IGrain, IGrainWithStringKey
 {
 }
 
@@ -45,7 +45,7 @@ public record TestState
         // Verify the output
         await Verify(
             () => Task.FromResult(driver), 
-            settings: Utils.GetVerifySettings(nameof(MissingITransactionManagerGrainInterfaceTest))
+            settings: Utils.GetVerifySettings(nameof(MissingIAggregateRootInterfaceTest))
         );
     }
 
@@ -60,7 +60,7 @@ namespace " + nameof(InvalidKeyStrategyDelegateNumberOfParametersTest) + @";
 
 [UseCommand(typeof(TestCommand3Type), ""TestC3"", findMethod: nameof(SetValue3TypeKey))]
 [UseQuery(typeof(TestQuery2Type), ""TestQ2"", findMethod: nameof(SetValue2TypeKey))]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
     public static string SetValue2TypeKey(double input) {
         return ""testKey2"";
@@ -112,7 +112,7 @@ namespace " + nameof(InvalidKeyStrategyDelegateInputTypeTest) + @";
 
 
 [UseCommand(typeof(TestCommand3Type), ""TestC3"", findMethod: nameof(SetValue3TypeKey))]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
     public static string SetValue3TypeKey(string input) {
         return ""testKey3"";
@@ -151,7 +151,7 @@ namespace " + nameof(InvalidKeyStrategyDelegateReturnTypeTest) + @";
 
 
 [UseCommand(typeof(TestCommand3Type), ""TestC3"", findMethod: nameof(SetValue3TypeKey))]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
     public static int SetValue3TypeKey(double input) {
         return 123;
@@ -190,7 +190,7 @@ namespace " + nameof(InvalidKeyStrategyDelegateNameTest) + @";
 
 
 [UseCommand(typeof(TestCommand3Type), ""TestC3"", findMethod: ""NonExistentMethod"")]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
     public static string SetValue3TypeKey(double input) {
         return ""testKey3"";
@@ -229,7 +229,7 @@ namespace " + nameof(UseCommandInvalidHandlerTypeTest) + @";
 
 
 [UseCommand(typeof(TestQueryType), ""TestC"")]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 
@@ -265,7 +265,7 @@ namespace " + nameof(UseQueryInvalidHandlerTypeTest) + @";
 
 
 [UseQuery(typeof(TestCommandType), ""TestQ"")]
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 
@@ -299,7 +299,7 @@ public record TestState
 using Remotr;
 namespace " + nameof(RemotrGenAttributeOnInvalidTargetTest) + @";
 
-public interface ITestManagerGrain : ITransactionManagerGrain, IGrainWithStringKey
+public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 

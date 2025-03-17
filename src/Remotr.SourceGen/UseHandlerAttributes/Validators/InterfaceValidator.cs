@@ -10,12 +10,12 @@ namespace Remotr.SourceGen.UseHandlerAttributes.Validators;
 public class InterfaceValidator
 {
     /// <summary>
-    /// Checks if an interface implements ITransactionManagerGrain.
+    /// Checks if an interface implements IAggregateRoot.
     /// </summary>
     /// <param name="interfaceDeclaration">The interface declaration to check</param>
     /// <param name="compilation">The current compilation</param>
-    /// <returns>True if the interface implements ITransactionManagerGrain</returns>
-    public bool ImplementsITransactionManagerGrain(InterfaceDeclarationSyntax interfaceDeclaration, Compilation compilation)
+    /// <returns>True if the interface implements IAggregateRoot</returns>
+    public bool ImplementsIAggregateRoot(InterfaceDeclarationSyntax interfaceDeclaration, Compilation compilation)
     {
         var semanticModel = compilation.GetSemanticModel(interfaceDeclaration.SyntaxTree);
         var interfaceSymbol = semanticModel.GetDeclaredSymbol(interfaceDeclaration) as INamedTypeSymbol;
@@ -28,10 +28,10 @@ public class InterfaceValidator
         
         foreach (var ns in possibleNamespaces)
         {
-            var transactionManagerGrainSymbol = compilation.GetTypeByMetadataName($"{ns}.ITransactionManagerGrain");
+            var aggregateRootGrainSymbol = compilation.GetTypeByMetadataName($"{ns}.IAggregateRoot");
             
-            if (transactionManagerGrainSymbol != null && 
-                interfaceSymbol.AllInterfaces.Any(i => i.Equals(transactionManagerGrainSymbol, SymbolEqualityComparer.Default)))
+            if (aggregateRootGrainSymbol != null && 
+                interfaceSymbol.AllInterfaces.Any(i => i.Equals(aggregateRootGrainSymbol, SymbolEqualityComparer.Default)))
             {
                 return true;
             }

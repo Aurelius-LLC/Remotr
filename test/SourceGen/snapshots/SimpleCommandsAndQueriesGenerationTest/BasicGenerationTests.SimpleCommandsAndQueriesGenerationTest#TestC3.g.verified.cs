@@ -7,29 +7,29 @@ using Remotr;
 
 namespace SimpleCommandsAndQueriesTest;
 
-public class TestC3 : StatelessCommandHandler<ITestManagerGrain, int, double>
+public class TestC3 : StatelessCommandHandler<ITestAggregate, int, double>
 {
     public override async Task<double> Execute(int input)
     {
-        return await CommandFactory.GetChild<SimpleCommandsAndQueriesTest.TestState>()
+        return await CommandFactory.GetEntity<SimpleCommandsAndQueriesTest.TestState>()
             .Tell<TestCommand3Type, int, double>(input)
             .Run(GetPrimaryKeyString());
     }
 }
 
-public static class ITestManagerGrainTestC3Extensions
+public static class ITestAggregateTestC3Extensions
 {
-        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, double> TestC3(this IGrainCommandBaseBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>> builder, int input)
+        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC3(this IGrainCommandBaseBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>> builder, int input)
         {
             return builder.Tell<TestC3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, double> TestC3<T>(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, T> builder, int input)
+        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC3<T>(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, T> builder, int input)
         {
             return builder.Tell<TestC3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, double> ThenTestC3(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestManagerGrain, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestManagerGrain>, int> builder)
+        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> ThenTestC3(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, int> builder)
         {
             return builder.ThenTell<TestC3, double>();
         }

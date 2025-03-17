@@ -9,7 +9,7 @@ public class ExternalCommandFactory : IExternalCommandFactory
         _grainFactory = grainFactory;
     }
 
-    public IGrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>> GetManager<T>() where T : ITransactionManagerGrain
+    public IGrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
     {
         UniversalBuilder<T, object> builder = new(new EmptyStep());
         return new GrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>>(

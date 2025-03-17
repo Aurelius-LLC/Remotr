@@ -53,7 +53,7 @@ public static class GrainCommandBuilderExtensions
         var builder = operation(
             new GrainCommandBuilder<T, C, Q, Input>(
                 target.GrainFactory,
-                target.ResolveChildGrain,
+                target.ResolveEntityGrain,
                 new UniversalBuilder<T, Input>(
                     executionStepNeedsInput
                 )
@@ -63,7 +63,7 @@ public static class GrainCommandBuilderExtensions
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>
         (
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenForEachSplit
             (
                 executionStepNeedsInput,
@@ -78,7 +78,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenFilter<T, Mapper, Output>()
         );
     }
@@ -90,7 +90,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenFilter(mapper)
         );
     }
@@ -104,7 +104,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenMap<T, Mapper, Input, Output>()
         );
     }
@@ -116,7 +116,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, IEnumerable<Output>>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenMap(mapper)
         );
     }
@@ -129,7 +129,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, Output>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenReduce<T, Reducer, Output>()
         );
     }
@@ -142,7 +142,7 @@ public static class GrainCommandBuilderExtensions
     {
         return new GrainCommandBuilder<T, C, Q, Output>(
             target.GrainFactory,
-            target.ResolveChildGrain,
+            target.ResolveEntityGrain,
             target.Builder.ThenReduce(reducer)
         );
     }

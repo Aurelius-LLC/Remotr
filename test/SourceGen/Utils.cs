@@ -21,7 +21,7 @@ public static class Utils {
         var assemblies = new[]
         {
             typeof(object).Assembly, // System.Private.CoreLib
-            typeof(ITransactionManagerGrain).Assembly, // Remotr
+            typeof(IAggregateRoot).Assembly, // Remotr
             Assembly.Load("netstandard"),
             Assembly.Load("System.Runtime"),
         };

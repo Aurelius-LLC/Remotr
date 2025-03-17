@@ -4,6 +4,6 @@ using Remotr;
 
 namespace Remotr.Samples.Calendar;
 
-public class CalendarManagerGrain([FromKeyedServices("Calendar")] IPersistentStore persistentStore) : TransactionManagerGrain<ICalendarManagerGrain>(persistentStore)
+public class CalendarAggregate([FromKeyedServices("Calendar")] IPersistentStore persistentStore) : AggregateRoot<ICalendarAggregate>(persistentStore)
 {
 }

@@ -6,7 +6,7 @@ public class CalendarGetEventsOnDay : StatefulQueryHandler<CalendarManagerState,
     public override async Task<List<EventState>> Execute(DateOnly date)
     {
         // Get all events for the specified day
-        var dayEvents = await QueryFactory.GetChild<DayState>()
+        var dayEvents = await QueryFactory.GetEntity<DayState>()
             .GetDayStateEvents()
             .Run(date.ToString());
             

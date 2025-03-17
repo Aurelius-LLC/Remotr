@@ -7,17 +7,17 @@ public class CalendarUpdateEventTime : StatefulCommandHandler<CalendarManagerSta
     {
         // Get the event ID and current state
         var eventId = input.eventId;
-        var currentEvent = await CommandFactory.GetChild<EventState>()
+        var currentEvent = await CommandFactory.GetEntity<EventState>()
             .GetEventState()
             .Run(eventId.ToString());
             
         // Update the event start time
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .UpdateStartTime(input.startTime)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             

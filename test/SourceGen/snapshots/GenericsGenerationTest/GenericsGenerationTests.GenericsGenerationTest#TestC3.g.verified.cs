@@ -7,29 +7,29 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestC3 : StatelessCommandHandler<ITestManagerGrain, int, double>
+public class TestC3 : StatelessCommandHandler<ITestAggregate, int, double>
 {
     public override async Task<double> Execute(int input)
     {
-        return await CommandFactory.GetChild<GenericsGenerationTest.TestState>()
+        return await CommandFactory.GetEntity<GenericsGenerationTest.TestState>()
             .Tell<TestCommand3Type<GenericsGenerationTest.TestState, int, double>, int, double>(input)
             .Run(GetPrimaryKeyString());
     }
 }
 
-public static class ITestManagerGrainTestC3Extensions
+public static class ITestAggregateTestC3Extensions
 {
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, double> TestC3(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder, int input)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC3(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder, int input)
         {
             return builder.Tell<TestC3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, double> TestC3<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder, int input)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC3<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder, int input)
         {
             return builder.Tell<TestC3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, double> ThenTestC3(this IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, int> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> ThenTestC3(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, int> builder)
         {
             return builder.ThenTell<TestC3, double>();
         }

@@ -7,24 +7,24 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestC1 : StatelessCommandHandler<ITestManagerGrain>
+public class TestC1 : StatelessCommandHandler<ITestAggregate>
 {
     public override async Task Execute()
     {
-        await CommandFactory.GetChild<GenericsGenerationTest.TestState>()
+        await CommandFactory.GetEntity<GenericsGenerationTest.TestState>()
             .Tell<TestCommand1Type<GenericsGenerationTest.TestState>>()
             .Run(GetPrimaryKeyString());
     }
 }
 
-public static class ITestManagerGrainTestC1Extensions
+public static class ITestAggregateTestC1Extensions
 {
-        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> TestC1(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> builder)
+        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
         {
             return builder.Tell<TestC1>();
         }
 
-        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>> TestC1<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestManagerGrain, BaseStatelessCommandHandler<GenericsGenerationTest.ITestManagerGrain>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestManagerGrain>, T> builder)
+        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Tell<TestC1>();
         }

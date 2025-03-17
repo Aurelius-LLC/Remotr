@@ -6,12 +6,12 @@ public class CalendarAddEvent : StatefulCommandHandler<CalendarManagerState, Eve
     public override async Task<EventState> Execute(EventState eventState)
     {
         // Create the event
-        var createdEvent = await CommandFactory.GetChild<EventState>()
+        var createdEvent = await CommandFactory.GetEntity<EventState>()
             .CreateEventState(eventState)
             .Run(eventState.Id.ToString());
             
         // Add the event to the day
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .AddEventToDay(createdEvent)
             .Run(createdEvent.Date.ToString());
             

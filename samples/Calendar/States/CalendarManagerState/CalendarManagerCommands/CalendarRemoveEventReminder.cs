@@ -12,17 +12,17 @@ public class CalendarRemoveEventReminder : StatefulCommandHandler<CalendarManage
         var reminderTimeSpan = input.reminderTimeSpan;
         
         // Get current event state to know the reminder time
-        var currentEvent = await CommandFactory.GetChild<EventState>()
+        var currentEvent = await CommandFactory.GetEntity<EventState>()
             .GetEventState()
             .Run(eventId.ToString());
             
         // Remove the reminder from the event
-        var updatedEventState = await CommandFactory.GetChild<EventState>()
+        var updatedEventState = await CommandFactory.GetEntity<EventState>()
             .RemoveReminder(reminderTimeSpan)
             .Run(eventId.ToString());
             
         // Update the event in the day state
-        await CommandFactory.GetChild<DayState>()
+        await CommandFactory.GetEntity<DayState>()
             .EditEventInDay(updatedEventState)
             .Run(updatedEventState.Date.ToString());
             
