@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class RemoveEventFromDay : StatefulCommandHandler<DayState, Guid, DayState>
+public class RemoveEventFromDay : EntityCommandHandler<DayState, Guid, DayState>
 {
     public override async Task<DayState> Execute(Guid eventId)
     {

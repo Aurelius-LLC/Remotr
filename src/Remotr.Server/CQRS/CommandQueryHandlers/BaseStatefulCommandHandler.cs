@@ -1,6 +1,6 @@
 ﻿namespace Remotr;
 
-public abstract class BaseStatefulCommandHandler<TState> : BaseStatefulQueryHandler<TState>, ISetUpdateState<TState>
+public abstract class BaseEntityCommandHandler<TState> : BaseEntityQueryHandler<TState>, ISetUpdateState<TState>
     where TState : new()
 {
 

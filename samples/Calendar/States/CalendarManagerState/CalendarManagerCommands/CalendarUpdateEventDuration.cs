@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class CalendarUpdateEventDuration : StatefulCommandHandler<CalendarManagerState, (Guid eventId, TimeOnly duration), EventState>
+public class CalendarUpdateEventDuration : EntityCommandHandler<CalendarManagerState, (Guid eventId, TimeOnly duration), EventState>
 {
     public override async Task<EventState> Execute((Guid eventId, TimeOnly duration) input)
     {

@@ -110,7 +110,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
             executor.SetGrainId(_componentId, _grainId);
         }
 
-        if (query is BaseStatefulQueryHandler<T> handler)
+        if (query is BaseEntityQueryHandler<T> handler)
         {
             var aggregateId = _aggregateId;
             handler.SetFactories(
@@ -123,7 +123,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a AggregateEntity.");
+            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseEntityQueryHandler from a AggregateEntity.");
         }
 
         return query;
@@ -148,7 +148,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
             executor.SetGrainId(_componentId, _grainId);
         }
 
-        if (command is BaseStatefulCommandHandler<T> handler)
+        if (command is BaseEntityCommandHandler<T> handler)
         {
             var aggregateId = _aggregateId;
 
@@ -164,7 +164,7 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a AggregateEntity.");
+            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseEntityCommandHandler from a AggregateEntity.");
         }
 
         return command;

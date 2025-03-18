@@ -33,7 +33,7 @@ public class CommandHandlerGenerator : IStatelessHandlerGenerator
         string genericTypeArgsString,
         IHandlerKeyStrategy keyStrategy)
     {
-        sb.AppendLine($"public class {className} : StatelessCommandHandler<{interfaceName}>");
+        sb.AppendLine($"public class {className} : RootCommandHandler<{interfaceName}>");
         sb.AppendLine("{");
         sb.AppendLine("    public override async Task Execute()");
         sb.AppendLine("    {");

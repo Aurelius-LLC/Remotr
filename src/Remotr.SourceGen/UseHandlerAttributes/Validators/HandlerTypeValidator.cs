@@ -8,7 +8,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.Validators;
 public class HandlerTypeValidator
 {
     /// <summary>
-    /// Checks if the handler type is valid (extends StatefulCommandHandler or StatefulQueryHandler).
+    /// Checks if the handler type is valid (extends EntityCommandHandler or EntityQueryHandler).
     /// </summary>
     /// <param name="isCommandHandler">Whether this is validating a command handler or query handler</param>
     /// <param name="handlerTypeSymbol">The handler type symbol to check</param>
@@ -18,26 +18,26 @@ public class HandlerTypeValidator
     {
         // Try different namespace possibilities
         string[] possibleNamespaces = new[] { "Remotr" };
-        INamedTypeSymbol? statefulCommandHandlerSymbol = null;
-        INamedTypeSymbol? statefulQueryHandlerSymbol = null;
+        INamedTypeSymbol? entityCommandHandlerSymbol = null;
+        INamedTypeSymbol? entityQueryHandlerSymbol = null;
 
         foreach (var ns in possibleNamespaces)
         {
             string prefix = string.IsNullOrEmpty(ns) ? "" : ns + ".";
             
             // Try different generic versions
-            statefulCommandHandlerSymbol = 
-                compilation.GetTypeByMetadataName($"{prefix}StatefulCommandHandler`1") ??
-                compilation.GetTypeByMetadataName($"{prefix}StatefulCommandHandler`2") ??
-                compilation.GetTypeByMetadataName($"{prefix}StatefulCommandHandler`3");
+            entityCommandHandlerSymbol = 
+                compilation.GetTypeByMetadataName($"{prefix}EntityCommandHandler`1") ??
+                compilation.GetTypeByMetadataName($"{prefix}EntityCommandHandler`2") ??
+                compilation.GetTypeByMetadataName($"{prefix}EntityCommandHandler`3");
             
-            statefulQueryHandlerSymbol = 
-                compilation.GetTypeByMetadataName($"{prefix}StatefulQueryHandler`1") ??
-                compilation.GetTypeByMetadataName($"{prefix}StatefulQueryHandler`2") ??
-                compilation.GetTypeByMetadataName($"{prefix}StatefulQueryHandler`3");
+            entityQueryHandlerSymbol = 
+                compilation.GetTypeByMetadataName($"{prefix}EntityQueryHandler`1") ??
+                compilation.GetTypeByMetadataName($"{prefix}EntityQueryHandler`2") ??
+                compilation.GetTypeByMetadataName($"{prefix}EntityQueryHandler`3");
 
             // If we found either type, break out of the loop
-            if (statefulCommandHandlerSymbol != null || statefulQueryHandlerSymbol != null)
+            if (entityCommandHandlerSymbol != null || entityQueryHandlerSymbol != null)
                 break;
         }
 
@@ -48,21 +48,21 @@ public class HandlerTypeValidator
             var currentName = current.Name;
             
             // Check if the name contains the expected string (simplified check)
-            if ((currentName == "StatefulCommandHandler" && isCommandHandler) || (currentName == "StatefulQueryHandler" && !isCommandHandler))
+            if ((currentName == "EntityCommandHandler" && isCommandHandler) || (currentName == "EntityQueryHandler" && !isCommandHandler))
                 return true;
                 
             current = current.BaseType;
         }
         
         // Fallback to original check if direct name check didn't succeed
-        if (statefulCommandHandlerSymbol == null && statefulQueryHandlerSymbol == null)
+        if (entityCommandHandlerSymbol == null && entityQueryHandlerSymbol == null)
             return false;
 
-        bool isCommandHandlerType = statefulCommandHandlerSymbol != null && 
-                              IsSubtypeOfOpenGeneric(handlerTypeSymbol, statefulCommandHandlerSymbol);
+        bool isCommandHandlerType = entityCommandHandlerSymbol != null && 
+                              IsSubtypeOfOpenGeneric(handlerTypeSymbol, entityCommandHandlerSymbol);
                               
-        bool isQueryHandlerType = statefulQueryHandlerSymbol != null && 
-                            IsSubtypeOfOpenGeneric(handlerTypeSymbol, statefulQueryHandlerSymbol);
+        bool isQueryHandlerType = entityQueryHandlerSymbol != null && 
+                            IsSubtypeOfOpenGeneric(handlerTypeSymbol, entityQueryHandlerSymbol);
                             
         return (isCommandHandlerType && isCommandHandler) || (isQueryHandlerType && !isCommandHandler);
     }

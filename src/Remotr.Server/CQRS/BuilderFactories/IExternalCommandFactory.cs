@@ -2,6 +2,6 @@
 
 public interface IExternalCommandFactory
 {
-    public IGrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot;
+    public IGrainCommandBaseBuilder<T, BaseRootCommandHandler<T>, BaseRootQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot;
 }
 

@@ -6,8 +6,8 @@
       Severity: Error,
       WarningLevel: 0,
       Location: : (8,0)-(15,1),
-      MessageFormat: The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler,
-      Message: The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler,
+      MessageFormat: The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
+      Message: The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
       Category: Remotr
     }
   ]

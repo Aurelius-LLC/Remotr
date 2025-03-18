@@ -54,7 +54,7 @@ public class ManagerCqCreator<IAggregate> : ICqCreator
             executor.SetGrainId(_addressable, _grainId);
         }
 
-        if (query is BaseStatelessQueryHandler<IAggregate> handler)
+        if (query is BaseRootQueryHandler<IAggregate> handler)
         {
             handler.SetFactories(
                 _grainFactory,
@@ -63,7 +63,7 @@ public class ManagerCqCreator<IAggregate> : ICqCreator
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseStatefulQueryHandler from a AggregateEntity.");
+            throw new InvalidOperationException("Cannot execute a query that does not inherit from BaseEntityQueryHandler from a AggregateEntity.");
         }
 
         return query;
@@ -88,7 +88,7 @@ public class ManagerCqCreator<IAggregate> : ICqCreator
             executor.SetGrainId(_addressable, _grainId);
         }
 
-        if (command is BaseStatelessCommandHandler<IAggregate> handler)
+        if (command is BaseRootCommandHandler<IAggregate> handler)
         {
             handler.SetFactories(
                 _grainFactory,
@@ -98,7 +98,7 @@ public class ManagerCqCreator<IAggregate> : ICqCreator
         }
         else
         {
-            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseStatefulCommandHandler from a AggregateEntity.");
+            throw new InvalidOperationException("Cannot execute a command that does not inherit from BaseEntityCommandHandler from a AggregateEntity.");
         }
 
         return command;

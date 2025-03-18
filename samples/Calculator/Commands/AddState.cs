@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calculator;
 
 [RemotrGen]
-public class AddState : StatefulCommandHandler<CalculatorState, double, double>
+public class AddState : EntityCommandHandler<CalculatorState, double, double>
 {
     public override async Task<double> Execute(double input)
     {

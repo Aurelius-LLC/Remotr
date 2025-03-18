@@ -11,7 +11,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class EditEventInDay : StatefulCommandHandler<DayState, EventState, DayState>
+public class EditEventInDay : EntityCommandHandler<DayState, EventState, DayState>
 {
     public override async Task<DayState> Execute(EventState updatedEvent)
     {

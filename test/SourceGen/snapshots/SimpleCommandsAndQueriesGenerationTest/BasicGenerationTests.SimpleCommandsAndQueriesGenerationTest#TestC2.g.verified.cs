@@ -7,7 +7,7 @@ using Remotr;
 
 namespace SimpleCommandsAndQueriesTest;
 
-public class TestC2 : StatelessCommandHandler<ITestAggregate, double>
+public class TestC2 : RootCommandHandler<ITestAggregate, double>
 {
     public override async Task<double> Execute()
     {
@@ -19,12 +19,12 @@ public class TestC2 : StatelessCommandHandler<ITestAggregate, double>
 
 public static class ITestAggregateTestC2Extensions
 {
-        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC2(this IGrainCommandBaseBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>> builder)
+        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseRootCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseRootQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC2(this IGrainCommandBaseBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseRootCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseRootQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>> builder)
         {
             return builder.Tell<TestC2, double>();
         }
 
-        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC2<T>(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseStatelessCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseStatelessQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, T> builder)
+        public static IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseRootCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseRootQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, double> TestC2<T>(this IGrainCommandBuilder<SimpleCommandsAndQueriesTest.ITestAggregate, BaseRootCommandHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, BaseRootQueryHandler<SimpleCommandsAndQueriesTest.ITestAggregate>, T> builder)
         {
             return builder.Tell<TestC2, double>();
         }

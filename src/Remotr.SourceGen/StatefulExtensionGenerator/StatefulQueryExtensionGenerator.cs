@@ -6,18 +6,18 @@ using Remotr.SourceGen.Shared;
 namespace Remotr.StatefulExtensionGenerators;
 
 /// <summary>
-/// Generator for StatefulQueryHandler types that generates appropriate extension methods.
+/// Generator for EntityQueryHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulQueryExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
+public class EntityQueryExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
 {
     private readonly StatefulExtensionGeneratorComponent _component;
     private readonly ExtensionConfig _queryConfig;
     private readonly ExtensionConfig _commandToQueryConfig;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatefulQueryExtensionGenerator"/> class.
+    /// Initializes a new instance of the <see cref="EntityQueryExtensionGenerator"/> class.
     /// </summary>
-    public StatefulQueryExtensionGenerator()
+    public EntityQueryExtensionGenerator()
     {
         _component = new StatefulExtensionGeneratorComponent();
         
@@ -42,7 +42,7 @@ public class StatefulQueryExtensionGenerator : BaseExtensionGenerator, IStateful
     }
 
     /// <inheritdoc/>
-    protected override string HandlerBaseTypeName => "StatefulQueryHandler";
+    protected override string HandlerBaseTypeName => "EntityQueryHandler";
 
     /// <inheritdoc/>
     public override void GenerateExtensions(

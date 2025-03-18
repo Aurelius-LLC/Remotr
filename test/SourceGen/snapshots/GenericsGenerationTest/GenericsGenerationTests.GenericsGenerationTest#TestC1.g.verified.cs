@@ -7,7 +7,7 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestC1 : StatelessCommandHandler<ITestAggregate>
+public class TestC1 : RootCommandHandler<ITestAggregate>
 {
     public override async Task Execute()
     {
@@ -19,12 +19,12 @@ public class TestC1 : StatelessCommandHandler<ITestAggregate>
 
 public static class ITestAggregateTestC1Extensions
 {
-        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
+        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
         {
             return builder.Tell<TestC1>();
         }
 
-        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
+        public static IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> TestC1<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Tell<TestC1>();
         }

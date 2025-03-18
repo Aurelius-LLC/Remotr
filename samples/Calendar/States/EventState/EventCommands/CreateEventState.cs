@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class CreateEventState : StatefulCommandHandler<EventState, EventState, EventState>
+public class CreateEventState : EntityCommandHandler<EventState, EventState, EventState>
 {
     public override async Task<EventState> Execute(EventState newState)
     {

@@ -1,6 +1,6 @@
 ﻿namespace Remotr;
 
-public abstract class BaseStatelessCommandHandler<IAggregate> : BaseStatelessQueryHandler<IAggregate>
+public abstract class BaseRootCommandHandler<IAggregate> : BaseRootQueryHandler<IAggregate>
     where IAggregate : IAggregateRoot
 {
     public IInternalCommandFactory CommandFactory { get; private set; } = default!;

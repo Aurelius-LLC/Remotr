@@ -16,11 +16,11 @@ public class InternalCommandFactory : IInternalCommandFactory
         _managerId = managerId;
     }
 
-    public IGrainCommandBaseBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>> GetEntity<T>()
+    public IGrainCommandBaseBuilder<IAggregateEntity<T>, BaseEntityCommandHandler<T>, BaseEntityQueryHandler<T>> GetEntity<T>()
         where T : new()
     {
         UniversalBuilder<IAggregateEntity<T>, object> builder = new(new EmptyStep());
-        return new GrainCommandBaseBuilder<IAggregateEntity<T>, BaseStatefulCommandHandler<T>, BaseStatefulQueryHandler<T>>(
+        return new GrainCommandBaseBuilder<IAggregateEntity<T>, BaseEntityCommandHandler<T>, BaseEntityQueryHandler<T>>(
                 _grainFactory,
                 (string key) =>
                 {
@@ -35,10 +35,10 @@ public class InternalCommandFactory : IInternalCommandFactory
         );
     }
 
-    public IGrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
+    public IGrainQueryBaseBuilder<T, BaseRootQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
     {
         UniversalBuilder<T, object> builder = new(new EmptyStep());
-        return new GrainQueryBaseBuilder<T, BaseStatelessQueryHandler<T>>(
+        return new GrainQueryBaseBuilder<T, BaseRootQueryHandler<T>>(
             _grainFactory,
             (string key) => throw new InvalidOperationException("Cannot resolve child grain from manager grain"),
             builder

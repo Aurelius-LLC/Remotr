@@ -7,7 +7,7 @@ using Remotr;
 
 namespace KeyStrategiesGenerationTest;
 
-public class TestC3 : StatelessCommandHandler<ITestAggregate, KeyStrategiesGenerationTest.TestInputObject, double>
+public class TestC3 : RootCommandHandler<ITestAggregate, KeyStrategiesGenerationTest.TestInputObject, double>
 {
     public override async Task<double> Execute(KeyStrategiesGenerationTest.TestInputObject input)
     {
@@ -19,17 +19,17 @@ public class TestC3 : StatelessCommandHandler<ITestAggregate, KeyStrategiesGener
 
 public static class ITestAggregateTestC3Extensions
 {
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC3(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder, KeyStrategiesGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC3(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder, KeyStrategiesGenerationTest.TestInputObject input)
         {
             return builder.Tell<TestC3, KeyStrategiesGenerationTest.TestInputObject, double>(input);
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC3<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder, KeyStrategiesGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestC3<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder, KeyStrategiesGenerationTest.TestInputObject input)
         {
             return builder.Tell<TestC3, KeyStrategiesGenerationTest.TestInputObject, double>(input);
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> ThenTestC3(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, KeyStrategiesGenerationTest.TestInputObject> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> ThenTestC3(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, KeyStrategiesGenerationTest.TestInputObject> builder)
         {
             return builder.ThenTell<TestC3, double>();
         }

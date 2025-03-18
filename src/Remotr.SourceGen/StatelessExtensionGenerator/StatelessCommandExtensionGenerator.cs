@@ -6,17 +6,17 @@ using Remotr.SourceGen.Shared;
 namespace Remotr.StatelessExtensionGenerators;
 
 /// <summary>
-/// Generator for StatelessCommandHandler types that generates appropriate extension methods.
+/// Generator for RootCommandHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatelessCommandExtensionGenerator : BaseExtensionGenerator, IStatelessExtensionGenerator
+public class RootCommandExtensionGenerator : BaseExtensionGenerator, IStatelessExtensionGenerator
 {
     private readonly StatelessExtensionGeneratorComponent _component;
     private readonly ExtensionConfig _config;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatelessCommandExtensionGenerator"/> class.
+    /// Initializes a new instance of the <see cref="RootCommandExtensionGenerator"/> class.
     /// </summary>
-    public StatelessCommandExtensionGenerator()
+    public RootCommandExtensionGenerator()
     {
         _component = new StatelessExtensionGeneratorComponent();
         _config = new ExtensionConfig
@@ -30,7 +30,7 @@ public class StatelessCommandExtensionGenerator : BaseExtensionGenerator, IState
     }
 
     /// <inheritdoc/>
-    protected override string HandlerBaseTypeName => "StatelessCommandHandler";
+    protected override string HandlerBaseTypeName => "RootCommandHandler";
 
     /// <inheritdoc/>
     public override void GenerateExtensions(

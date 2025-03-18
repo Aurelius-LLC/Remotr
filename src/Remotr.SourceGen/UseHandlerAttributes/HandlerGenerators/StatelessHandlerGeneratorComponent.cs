@@ -24,7 +24,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             string genericTypeArgsString,
             IHandlerKeyStrategy keyStrategy)
         {
-            sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {outputType}>");
+            sb.AppendLine($"public class {className} : Root{handlerType}Handler<{interfaceName}, {outputType}>");
             sb.AppendLine("{");
             sb.AppendLine($"    public override async Task<{outputType}> Execute()");
             sb.AppendLine("    {");
@@ -52,7 +52,7 @@ namespace Remotr.SourceGen.UseHandlerAttributes.HandlerGenerators
             string genericTypeArgsString,
             IHandlerKeyStrategy keyStrategy)
         {
-            sb.AppendLine($"public class {className} : Stateless{handlerType}Handler<{interfaceName}, {inputType}, {outputType}>");
+            sb.AppendLine($"public class {className} : Root{handlerType}Handler<{interfaceName}, {inputType}, {outputType}>");
             sb.AppendLine("{");
             sb.AppendLine($"    public override async Task<{outputType}> Execute({inputType} input)");
             sb.AppendLine("    {");

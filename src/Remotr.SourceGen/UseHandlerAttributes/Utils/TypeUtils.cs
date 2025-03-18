@@ -15,13 +15,13 @@ public static class TypeUtils
     /// <returns>The list of generic type arguments</returns>
     public static List<ITypeSymbol> GetBaseGenericTypeArguments(ITypeSymbol handlerTypeSymbol)
     {
-        // Find the StatefulCommandHandler or StatefulQueryHandler base class and get its type arguments
+        // Find the EntityCommandHandler or EntityQueryHandler base class and get its type arguments
         var current = handlerTypeSymbol;
         
         while (current != null)
         {
             if (current is INamedTypeSymbol namedType && 
-                (current.Name == "StatefulCommandHandler" || current.Name == "StatefulQueryHandler"))
+                (current.Name == "EntityCommandHandler" || current.Name == "EntityQueryHandler"))
             {
                 return namedType.TypeArguments.ToList();
             }
@@ -40,7 +40,7 @@ public static class TypeUtils
     /// <returns>The list of generic type arguments</returns>
     public static List<ITypeSymbol> GetGenericTypeArguments(ITypeSymbol handlerTypeSymbol)
     {
-        // Find the StatefulCommandHandler or StatefulQueryHandler base class and get its type arguments
+        // Find the EntityCommandHandler or EntityQueryHandler base class and get its type arguments
         var current = handlerTypeSymbol;
     
         if (current is INamedTypeSymbol namedType)

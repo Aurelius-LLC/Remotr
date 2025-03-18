@@ -118,7 +118,7 @@ public class ExtensionsGeneratorExecutor(List<IExtensionGenerator> extensionGene
         extensionsBuilder.AppendLine($"public static class {interfaceName}{alias}Extensions");
         extensionsBuilder.AppendLine("{");
 
-        var baseTypeName = isCommandHandler ? "StatelessCommandHandler" : "StatelessQueryHandler";
+        var baseTypeName = isCommandHandler ? "RootCommandHandler" : "RootQueryHandler";
         var generator = _extensionGenerators.FirstOrDefault(g => g.CanHandle(baseTypeName));
         if (generator != null)
         {

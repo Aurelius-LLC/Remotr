@@ -21,13 +21,13 @@ Remotr.SourceGen/
 ├── StatelessExtensionGenerator/        # Generates extensions for stateless handlers
 │   ├── IStatelessExtensionGenerator.cs # Interface for extension generators
 │   ├── StatelessExtensionGeneratorComponent.cs # Main component
-│   ├── StatelessCommandExtensionGenerator.cs # Command extensions
-│   └── StatelessQueryExtensionGenerator.cs # Query extensions
+│   ├── RootCommandExtensionGenerator.cs # Command extensions
+│   └── RootQueryExtensionGenerator.cs # Query extensions
 ├── StatefulExtensionGenerator/         # Generates extensions for stateful handlers
 │   ├── IStatefulExtensionGenerator.cs  # Interface for extension generators
 │   ├── StatefulExtensionGeneratorComponent.cs # Main component
-│   ├── StatefulCommandExtensionGenerator.cs # Command extensions
-│   └── StatefulQueryExtensionGenerator.cs # Query extensions
+│   ├── EntityCommandExtensionGenerator.cs # Command extensions
+│   └── EntityQueryExtensionGenerator.cs # Query extensions
 ├── Shared/                             # Shared components and utilities
 │   ├── AttributeGenerator.cs           # Base attribute generation
 │   ├── BaseExtensionGenerator.cs       # Base class for extension generators
@@ -94,7 +94,7 @@ public interface ICalculatorAggregate : IAggregateRoot, IGrainWithStringKey
 ```csharp
 // Stateful command handler implementation
 [RemotrGen]
-public class MultiplyState : StatefulCommandHandler<CalculatorState, double, double>
+public class MultiplyState : EntityCommandHandler<CalculatorState, double, double>
 {
     public override async Task<double> Execute(double input)
     {
@@ -109,7 +109,7 @@ public class MultiplyState : StatefulCommandHandler<CalculatorState, double, dou
 
 // Stateful query handler implementation
 [RemotrGen]
-public class GetPrimeFactorsState : StatefulQueryHandler<CalculatorState, int, List<int>>
+public class GetPrimeFactorsState : EntityQueryHandler<CalculatorState, int, List<int>>
 {
     public override async Task<List<int>> Execute(int input)
     {

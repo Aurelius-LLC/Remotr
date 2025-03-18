@@ -7,7 +7,7 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestQ3 : StatelessQueryHandler<ITestAggregate, int, double>
+public class TestQ3 : RootQueryHandler<ITestAggregate, int, double>
 {
     public override async Task<double> Execute(int input)
     {
@@ -19,32 +19,32 @@ public class TestQ3 : StatelessQueryHandler<ITestAggregate, int, double>
 
 public static class ITestAggregateTestQ3Extensions
 {
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3(this IGrainQueryBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder, int input)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3(this IGrainQueryBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> builder, int input)
         {
             return builder.Ask<TestQ3, int, double>(input);
         }
 
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder, int input)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3<T>(this IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder, int input)
         {
             return builder.Ask<TestQ3, int, double>(input);
         }
 
-        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> ThenTestQ3(this IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, int> builder)
+        public static IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> ThenTestQ3(this IGrainQueryBuilder<GenericsGenerationTest.ITestAggregate, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, int> builder)
         {
             return builder.ThenAsk<TestQ3, double>();
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder, int input)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> builder, int input)
         {
             return builder.Ask<TestQ3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder, int input)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestQ3<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder, int input)
         {
             return builder.Ask<TestQ3, int, double>(input);
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> ThenTestQ3(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, int> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> ThenTestQ3(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, int> builder)
         {
             return builder.ThenAsk<TestQ3, double>();
         }

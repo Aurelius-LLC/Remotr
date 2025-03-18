@@ -234,13 +234,13 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
               
 
       3) **Creating Commands and Queries** 
-         1) **Creating Commands:** Extend StatefulCommandHandler to create a command
+         1) **Creating Commands:** Extend EntityCommandHandler to create a command
             ```csharp
 
-            // StatefulCommandHandler Generic Forms:
-            // 1) StatefulCommandHandler<TState>
-            // 2) StatefulCommandHandler<TState, TOuput>
-            // 3) StatefulCommandHandler<TState, TInput, TOutput>
+            // EntityCommandHandler Generic Forms:
+            // 1) EntityCommandHandler<TState>
+            // 2) EntityCommandHandler<TState, TOuput>
+            // 3) EntityCommandHandler<TState, TInput, TOutput>
             //
             // - TState is the state of the child grain the command is acting on.
             // - TOutput is return value from executing the command.
@@ -248,7 +248,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
             //
             // Because updating customer info requires input, we are using the third
             // generic form.
-            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
                 private readonly ILogger _logger;
 
@@ -276,14 +276,14 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
             - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
             - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
             - If you do need an input, but do not want to return anything, a best practice is to return a bool the signals success or failure.
-         2) **Creating Queries:** Extend StatefulQueryHandler to create a query
-            - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
-            - The only difference is that StatefulQueryHandler cannot update state or call commands.
+         2) **Creating Queries:** Extend EntityQueryHandler to create a query
+            - The generic type parameters are the same as EntityCommandHandler and have the same constraints.
+            - The only difference is that EntityQueryHandler cannot update state or call commands.
 
       4) **Reading and Writing State**
          1) Only for Child Grains
             ```csharp
-            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
                 public override async Task<bool> Execute(UpateCustomerInfoInput input)
                 {
@@ -385,7 +385,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
          ```csharp
          public static class CustomerCommandExtensions
          {
-             public static async Task<CustomerInfo> GetCustomerInfo(this BaseStatefulCommandHandler<CustomerState> target)
+             public static async Task<CustomerInfo> GetCustomerInfo(this BaseEntityCommandHandler<CustomerState> target)
              {
                  var state = await target.GetState();
                  return new CustomerInfo
@@ -399,7 +399,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
          }
          ```
          - Extension methods can be added for queries and commands of a specific type.
-         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands; however, because it extends the `BaseStatefulCommandHandler<TState>`, it can only be used by commands. Extensions on `BaseStatefulQueryHandler<TState>` can be used by both commands and queries.
+         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands; however, because it extends the `BaseEntityCommandHandler<TState>`, it can only be used by commands. Extensions on `BaseEntityQueryHandler<TState>` can be used by both commands and queries.
 
 
 
@@ -448,7 +448,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
 ## Common Useful Remotr Patterns  
 1. **Singleton Child Grain IDs:**
   ```csharp
-  public sealed class ApiUpdateCustomerInfo : StatelessCommandHandler<ICustomerApiGrain, UpdateCustomerInfoInput, bool>
+  public sealed class ApiUpdateCustomerInfo : RootCommandHandler<ICustomerApiGrain, UpdateCustomerInfoInput, bool>
   {
       public override async Task<Post?> Execute(SaveStreaksInput input)
       {

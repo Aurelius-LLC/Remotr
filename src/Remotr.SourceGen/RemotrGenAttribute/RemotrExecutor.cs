@@ -16,7 +16,7 @@ public class RemotrExecutor
     private static readonly DiagnosticDescriptor InvalidTargetDiagnostic = new(
         id: "REMOTR020",
         title: "Invalid RemotrGen target",
-        messageFormat: "The RemotrGen attribute can only be applied to classes that extend StatelessQueryHandler, StatelessCommandHandler, StatefulQueryHandler, or StatefulCommandHandler",
+        messageFormat: "The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler",
         category: "Remotr",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -28,13 +28,13 @@ public class RemotrExecutor
     {
         _statefulExtensionGenerator = new ExtensionsGeneratorExecutor(
         [
-            new StatefulCommandExtensionGenerator(),
-            new StatefulQueryExtensionGenerator()
+            new EntityCommandExtensionGenerator(),
+            new EntityQueryExtensionGenerator()
         ]);
         _statelessExtensionGenerator = new ExtensionsGeneratorExecutor(
         [
-            new StatelessCommandExtensionGenerator(),
-            new StatelessQueryExtensionGenerator()
+            new RootCommandExtensionGenerator(),
+            new RootQueryExtensionGenerator()
         ]);
     }
 
@@ -64,11 +64,11 @@ public class RemotrExecutor
         var baseTypeName = genericBase.Identifier.Text;
         
         // Process based on the handler type
-        if (baseTypeName is "StatefulQueryHandler" or "StatefulCommandHandler")
+        if (baseTypeName is "EntityQueryHandler" or "EntityCommandHandler")
         {
             _statefulExtensionGenerator.Generate(classDeclaration, context);
         }
-        else if (baseTypeName is "StatelessQueryHandler" or "StatelessCommandHandler")
+        else if (baseTypeName is "RootQueryHandler" or "RootCommandHandler")
         {
             _statelessExtensionGenerator.Generate(classDeclaration, context);
 

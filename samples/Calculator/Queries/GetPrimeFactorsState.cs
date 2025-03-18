@@ -2,7 +2,7 @@
 namespace Remotr.Samples.Calculator;
 
 [RemotrGen]
-public class GetPrimeFactorsState : StatefulQueryHandler<CalculatorState, IEnumerable<double>>
+public class GetPrimeFactorsState : EntityQueryHandler<CalculatorState, IEnumerable<double>>
 {
     public override async Task<IEnumerable<double>> Execute()
     {

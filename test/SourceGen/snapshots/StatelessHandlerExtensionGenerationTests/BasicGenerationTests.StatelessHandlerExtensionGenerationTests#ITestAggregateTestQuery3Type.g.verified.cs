@@ -7,32 +7,32 @@ namespace StatelessHandlerExtensionGenerationTests;
 
 public static class ITestAggregateTestQuery3Type
 {
-        public static IGrainQueryBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type(this IGrainQueryBaseBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>> builder, TestInputObject input)
+        public static IGrainQueryBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type(this IGrainQueryBaseBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>> builder, TestInputObject input)
         {
             return builder.Ask<TestQuery3Type, TestInputObject, TestOutputObject>(input);
         }
 
-        public static IGrainQueryBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type<T>(this IGrainQueryBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>, T> builder, TestInputObject input)
+        public static IGrainQueryBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type<T>(this IGrainQueryBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>, T> builder, TestInputObject input)
         {
             return builder.Ask<TestQuery3Type, TestInputObject, TestOutputObject>(input);
         }
 
-        public static IGrainQueryBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> ThenTestQuery3Type(this IGrainQueryBuilder<ITestAggregate, BaseStatelessQueryHandler<ITestAggregate>, TestInputObject> builder)
+        public static IGrainQueryBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> ThenTestQuery3Type(this IGrainQueryBuilder<ITestAggregate, BaseRootQueryHandler<ITestAggregate>, TestInputObject> builder)
         {
             return builder.ThenAsk<TestQuery3Type, TestOutputObject>();
         }
 
-        public static IGrainCommandBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type(this IGrainCommandBaseBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>> builder, TestInputObject input)
+        public static IGrainCommandBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type(this IGrainCommandBaseBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>> builder, TestInputObject input)
         {
             return builder.Ask<TestQuery3Type, TestInputObject, TestOutputObject>(input);
         }
 
-        public static IGrainCommandBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type<T>(this IGrainCommandBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>, T> builder, TestInputObject input)
+        public static IGrainCommandBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> TestQuery3Type<T>(this IGrainCommandBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>, T> builder, TestInputObject input)
         {
             return builder.Ask<TestQuery3Type, TestInputObject, TestOutputObject>(input);
         }
 
-        public static IGrainCommandBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>, TestOutputObject> ThenTestQuery3Type(this IGrainCommandBuilder<ITestAggregate, BaseStatelessCommandHandler<ITestAggregate>, BaseStatelessQueryHandler<ITestAggregate>, TestInputObject> builder)
+        public static IGrainCommandBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>, TestOutputObject> ThenTestQuery3Type(this IGrainCommandBuilder<ITestAggregate, BaseRootCommandHandler<ITestAggregate>, BaseRootQueryHandler<ITestAggregate>, TestInputObject> builder)
         {
             return builder.ThenAsk<TestQuery3Type, TestOutputObject>();
         }

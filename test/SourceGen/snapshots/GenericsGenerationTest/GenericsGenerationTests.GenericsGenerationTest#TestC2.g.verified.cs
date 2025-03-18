@@ -7,7 +7,7 @@ using Remotr;
 
 namespace GenericsGenerationTest;
 
-public class TestC2 : StatelessCommandHandler<ITestAggregate, double>
+public class TestC2 : RootCommandHandler<ITestAggregate, double>
 {
     public override async Task<double> Execute()
     {
@@ -19,12 +19,12 @@ public class TestC2 : StatelessCommandHandler<ITestAggregate, double>
 
 public static class ITestAggregateTestC2Extensions
 {
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC2(this IGrainCommandBaseBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>> builder)
         {
             return builder.Tell<TestC2, double>();
         }
 
-        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC2<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
+        public static IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, double> TestC2<T>(this IGrainCommandBuilder<GenericsGenerationTest.ITestAggregate, BaseRootCommandHandler<GenericsGenerationTest.ITestAggregate>, BaseRootQueryHandler<GenericsGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Tell<TestC2, double>();
         }

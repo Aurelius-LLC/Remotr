@@ -7,7 +7,7 @@ using Remotr;
 
 namespace KeyStrategiesGenerationTest;
 
-public class TestQ2 : StatelessQueryHandler<ITestAggregate, double>
+public class TestQ2 : RootQueryHandler<ITestAggregate, double>
 {
     public override async Task<double> Execute()
     {
@@ -19,22 +19,22 @@ public class TestQ2 : StatelessQueryHandler<ITestAggregate, double>
 
 public static class ITestAggregateTestQ2Extensions
 {
-        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2(this IGrainQueryBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder)
+        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2(this IGrainQueryBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder)
         {
             return builder.Ask<TestQ2, double>();
         }
 
-        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2<T>(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder)
+        public static IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2<T>(this IGrainQueryBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Ask<TestQ2, double>();
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2(this IGrainCommandBaseBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>> builder)
         {
             return builder.Ask<TestQ2, double>();
         }
 
-        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseStatelessCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder)
+        public static IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, double> TestQ2<T>(this IGrainCommandBuilder<KeyStrategiesGenerationTest.ITestAggregate, BaseRootCommandHandler<KeyStrategiesGenerationTest.ITestAggregate>, BaseRootQueryHandler<KeyStrategiesGenerationTest.ITestAggregate>, T> builder)
         {
             return builder.Ask<TestQ2, double>();
         }

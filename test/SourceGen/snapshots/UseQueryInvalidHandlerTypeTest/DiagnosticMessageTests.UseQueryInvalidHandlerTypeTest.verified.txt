@@ -7,7 +7,7 @@
       WarningLevel: 0,
       Location: : (5,1)-(5,43),
       MessageFormat: The handler type '{1}' in {2} attribute must extend {0},
-      Message: The handler type 'TestCommandType' in UseQueryAttribute attribute must extend StatefulQueryHandler,
+      Message: The handler type 'TestCommandType' in UseQueryAttribute attribute must extend EntityQueryHandler,
       Category: Remotr
     }
   ]

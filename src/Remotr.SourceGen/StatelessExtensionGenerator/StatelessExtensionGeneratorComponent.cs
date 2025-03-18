@@ -22,16 +22,16 @@ public class StatelessExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateless{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseRoot{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
@@ -52,16 +52,16 @@ public class StatelessExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateless{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseRoot{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
@@ -84,16 +84,16 @@ public class StatelessExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateless{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseRoot{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder, {inputType} input){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder, {inputType} input){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
@@ -102,7 +102,7 @@ public class StatelessExtensionGeneratorComponent
         {
             sb.AppendLine();
 
-            sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}{implementationGenericTypes}(this {config.BuilderType}<{stateType}, BaseStateless{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder){genericConstraints}
+            sb.AppendLine($@"        public static {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}{implementationGenericTypes}(this {config.BuilderType}<{stateType}, BaseRoot{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder){genericConstraints}
         {{
             return builder.{thenActionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");

@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class CalendarUpdateEventColor : StatefulCommandHandler<CalendarManagerState, (Guid eventId, string color), EventState>
+public class CalendarUpdateEventColor : EntityCommandHandler<CalendarManagerState, (Guid eventId, string color), EventState>
 {
     public override async Task<EventState> Execute((Guid eventId, string color) input)
     {

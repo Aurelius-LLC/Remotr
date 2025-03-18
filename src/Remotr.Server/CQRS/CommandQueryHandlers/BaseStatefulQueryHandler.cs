@@ -2,7 +2,7 @@
 
 namespace Remotr;
 
-public abstract class BaseStatefulQueryHandler<TState> : AddressableChild, ISetGetState<TState>, ISetAggregate, IDiscoverableCq
+public abstract class BaseEntityQueryHandler<TState> : AddressableChild, ISetGetState<TState>, ISetAggregate, IDiscoverableCq
     where TState : new()
 {
     public GrainId AggregateId { get; private set; } = default!;

@@ -17,7 +17,7 @@ public interface ITestAggregate : IGrain, IGrainWithStringKey
 {
 }
 
-public class TestCommand1Type : StatefulCommandHandler<TestState>
+public class TestCommand1Type : EntityCommandHandler<TestState>
 {
     public override Task Execute()
     {
@@ -25,7 +25,7 @@ public class TestCommand1Type : StatefulCommandHandler<TestState>
     }
 }
 
-public class TestQuery2Type : StatefulQueryHandler<TestState, double>
+public class TestQuery2Type : EntityQueryHandler<TestState, double>
 {
     public override async Task<double> Execute()
     {
@@ -71,7 +71,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
     }
 }
 
-public class TestCommand3Type : StatefulCommandHandler<TestState, double, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, double, double>
 {
     public override Task<double> Execute(double input)
     {
@@ -79,7 +79,7 @@ public class TestCommand3Type : StatefulCommandHandler<TestState, double, double
     }
 }
 
-public class TestQuery2Type : StatefulQueryHandler<TestState, double>
+public class TestQuery2Type : EntityQueryHandler<TestState, double>
 {
     public override async Task<double> Execute()
     {
@@ -119,7 +119,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
     }
 }
 
-public class TestCommand3Type : StatefulCommandHandler<TestState, double, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, double, double>
 {
     public override Task<double> Execute(double input)
     {
@@ -158,7 +158,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
     }
 }
 
-public class TestCommand3Type : StatefulCommandHandler<TestState, double, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, double, double>
 {
     public override Task<double> Execute(double input)
     {
@@ -197,7 +197,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
     }
 }
 
-public class TestCommand3Type : StatefulCommandHandler<TestState, double, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, double, double>
 {
     public override Task<double> Execute(double input)
     {
@@ -233,7 +233,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 
-public class TestQueryType : StatefulQueryHandler<TestState, double>
+public class TestQueryType : EntityQueryHandler<TestState, double>
 {
     public override Task<double> Execute()
     {
@@ -269,7 +269,7 @@ public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 
-public class TestCommandType : StatefulCommandHandler<TestState, double>
+public class TestCommandType : EntityCommandHandler<TestState, double>
 {
     public override Task<double> Execute()
     {

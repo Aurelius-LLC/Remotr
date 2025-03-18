@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class UpdateRecurrenceRule : StatefulCommandHandler<EventState, RecurrenceRule?, EventState>
+public class UpdateRecurrenceRule : EntityCommandHandler<EventState, RecurrenceRule?, EventState>
 {
     public override async Task<EventState> Execute(RecurrenceRule? recurrenceRule)
     {

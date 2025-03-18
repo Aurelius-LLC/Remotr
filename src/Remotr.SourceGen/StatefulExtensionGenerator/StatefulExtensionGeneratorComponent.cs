@@ -23,16 +23,16 @@ public class StatefulExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseEntity{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}>();
         }}");
@@ -53,16 +53,16 @@ public class StatefulExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseEntity{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");
@@ -85,16 +85,16 @@ public class StatefulExtensionGeneratorComponent
         string genericConstraints,
         string otherGenericType)
     {
-        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseStateful{config.OtherHandlerType}Handler<{stateType}>" : "";
+        var otherHandlerPart = config.IncludeOtherHandler ? $", BaseEntity{config.OtherHandlerType}Handler<{stateType}>" : "";
         
-        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypes}(this {config.BaseBuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}> builder, {inputType} input){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
 
         sb.AppendLine();
 
-        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder, {inputType} input){genericConstraints}
+        sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> {className}{implementationGenericTypesWithOther}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {otherGenericType}> builder, {inputType} input){genericConstraints}
         {{
             return builder.{actionMethod}<{className}{implementationGenericTypes}, {inputType}, {outputType}>(input);
         }}");
@@ -103,7 +103,7 @@ public class StatefulExtensionGeneratorComponent
         {
             sb.AppendLine();
 
-            sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}{implementationGenericTypes}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseStateful{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder){genericConstraints}
+            sb.AppendLine($@"        public static {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {outputType}> Then{className}{implementationGenericTypes}(this {config.BuilderType}<IAggregateEntity<{stateType}>, BaseEntity{config.HandlerType}Handler<{stateType}>{otherHandlerPart}, {inputType}> builder){genericConstraints}
         {{
             return builder.{thenActionMethod}<{className}{implementationGenericTypes}, {outputType}>();
         }}");

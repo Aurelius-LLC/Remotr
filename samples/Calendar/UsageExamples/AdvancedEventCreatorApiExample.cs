@@ -15,7 +15,7 @@ public class AdvancedEventCreatorApiExample(IExternalCommandFactory commandFacto
     private readonly IExternalCommandFactory commandFactory = commandFactory;
 
     private Guid? _eventId;
-    private IGrainCommandBuilder<ICalendarAggregate, BaseStatelessCommandHandler<ICalendarAggregate>, BaseStatelessQueryHandler<ICalendarAggregate>, EventState>? _eventBuilder;
+    private IGrainCommandBuilder<ICalendarAggregate, BaseRootCommandHandler<ICalendarAggregate>, BaseRootQueryHandler<ICalendarAggregate>, EventState>? _eventBuilder;
 
     /// <summary>
     /// Initializes the event builder with a new event state.

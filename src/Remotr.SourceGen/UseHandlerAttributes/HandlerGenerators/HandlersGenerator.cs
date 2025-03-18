@@ -95,13 +95,13 @@ public class HandlersGenerator
 
         switch (baseGenericTypeArgs.Count)
         {
-            case 1: // ex StatefulCommandHandler<TState>
+            case 1: // ex EntityCommandHandler<TState>
                 _handlerGenerator!.GenerateNoInputNoOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, genericTypeArgsString, keyStrategy);
                 break;
-            case 2: // ex StatefulCommandHandler<TState, TOutput>
+            case 2: // ex EntityCommandHandler<TState, TOutput>
                 _handlerGenerator!.GenerateNoInputWithOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), genericTypeArgsString, keyStrategy);
                 break;
-            case 3: // ex StatefulCommandHandler<TState, TInput, TOutput>
+            case 3: // ex EntityCommandHandler<TState, TInput, TOutput>
                 _handlerGenerator!.GenerateWithInputAndOutput(sourceBuilder, interfaceName, className, statefulHandlerName, stateType, baseGenericTypeArgs[1].ToString(), baseGenericTypeArgs[2].ToString(), genericTypeArgsString, keyStrategy);
                 break;
         }

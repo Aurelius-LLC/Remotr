@@ -1,7 +1,7 @@
 namespace Remotr.Samples.Calendar;
 
 [RemotrGen]
-public class RemoveReminder : StatefulCommandHandler<EventState, TimeSpan, EventState>
+public class RemoveReminder : EntityCommandHandler<EventState, TimeSpan, EventState>
 {
     public override async Task<EventState> Execute(TimeSpan timeSpan)
     {

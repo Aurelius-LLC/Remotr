@@ -32,8 +32,8 @@ public class HandlerAttributeExecutor
         _handlersGenerator = new HandlersGenerator();
         _extensionsGenerator = new ExtensionsGeneratorExecutor(
         [
-            new StatelessCommandExtensionGenerator(),
-            new StatelessQueryExtensionGenerator()
+            new RootCommandExtensionGenerator(),
+            new RootQueryExtensionGenerator()
         ]);
     }
 
@@ -86,10 +86,10 @@ public class HandlerAttributeExecutor
             return;
         }
 
-        // Check if the handler type extends StatefulCommandHandler or StatefulQueryHandler
+        // Check if the handler type extends EntityCommandHandler or EntityQueryHandler
         if (!_handlerTypeValidator.IsValidHandlerType(attributeName == "UseCommandAttribute", handlerTypeSymbol!, compilation))
         {
-            var queryOrCommand = attributeName == "UseCommandAttribute" ? "StatefulCommandHandler" : "StatefulQueryHandler";
+            var queryOrCommand = attributeName == "UseCommandAttribute" ? "EntityCommandHandler" : "EntityQueryHandler";
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     new DiagnosticDescriptor(

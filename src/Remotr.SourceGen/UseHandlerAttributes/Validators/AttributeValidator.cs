@@ -593,7 +593,7 @@ public class AttributeValidator
         Compilation compilation, 
         SourceProductionContext context)
     {
-        // Use TypeUtils to find the StatefulQueryHandler or StatefulCommandHandler base class
+        // Use TypeUtils to find the EntityQueryHandler or EntityCommandHandler base class
         // and determine if the handler has an input
         var genericArgs = TypeUtils.GetBaseGenericTypeArguments(handlerTypeSymbol);
         bool hasInput = genericArgs.Count > 2; // Input is present if there are 3 generic arguments

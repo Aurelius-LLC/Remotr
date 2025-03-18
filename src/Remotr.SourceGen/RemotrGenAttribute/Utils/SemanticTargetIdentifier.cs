@@ -51,8 +51,8 @@ public static class SemanticTargetIdentifier
         }
 
         var baseTypeName = genericBase.Identifier.Text;
-        bool isValidHandler = baseTypeName is "StatelessQueryHandler" or "StatelessCommandHandler" 
-                            or "StatefulQueryHandler" or "StatefulCommandHandler";
+        bool isValidHandler = baseTypeName is "RootQueryHandler" or "RootCommandHandler" 
+                            or "EntityQueryHandler" or "EntityCommandHandler";
 
         return (classDeclaration, isValidHandler);
     }

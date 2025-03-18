@@ -6,17 +6,17 @@ using Remotr.SourceGen.Shared;
 namespace Remotr.StatefulExtensionGenerators;
 
 /// <summary>
-/// Generator for StatefulCommandHandler types that generates appropriate extension methods.
+/// Generator for EntityCommandHandler types that generates appropriate extension methods.
 /// </summary>
-public class StatefulCommandExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
+public class EntityCommandExtensionGenerator : BaseExtensionGenerator, IStatefulExtensionGenerator
 {
     private readonly StatefulExtensionGeneratorComponent _component;
     private readonly ExtensionConfig _config;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="StatefulCommandExtensionGenerator"/> class.
+    /// Initializes a new instance of the <see cref="EntityCommandExtensionGenerator"/> class.
     /// </summary>
-    public StatefulCommandExtensionGenerator()
+    public EntityCommandExtensionGenerator()
     {
         _component = new StatefulExtensionGeneratorComponent();
         _config = new ExtensionConfig
@@ -30,7 +30,7 @@ public class StatefulCommandExtensionGenerator : BaseExtensionGenerator, IStatef
     }
 
     /// <inheritdoc/>
-    protected override string HandlerBaseTypeName => "StatefulCommandHandler";
+    protected override string HandlerBaseTypeName => "EntityCommandHandler";
 
     /// <inheritdoc/>
     public override void GenerateExtensions(

@@ -7,7 +7,7 @@ using Remotr;
 
 namespace CommandsAndQueriesWithObjectsGenerationTest;
 
-public class TestQ3 : StatelessQueryHandler<ITestAggregate, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>
+public class TestQ3 : RootQueryHandler<ITestAggregate, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>
 {
     public override async Task<CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> Execute(CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
     {
@@ -19,32 +19,32 @@ public class TestQ3 : StatelessQueryHandler<ITestAggregate, CommandsAndQueriesWi
 
 public static class ITestAggregateTestQ3Extensions
 {
-        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3(this IGrainQueryBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3(this IGrainQueryBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
         }
 
-        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3<T>(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3<T>(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
         }
 
-        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
+        public static IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainQueryBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
         {
             return builder.ThenAsk<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>();
         }
 
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3(this IGrainCommandBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3(this IGrainCommandBaseBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
         }
 
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3<T>(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> TestQ3<T>(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, T> builder, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject input)
         {
             return builder.Ask<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>(input);
         }
 
-        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseStatelessCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseStatelessQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
+        public static IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject> ThenTestQ3(this IGrainCommandBuilder<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate, BaseRootCommandHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, BaseRootQueryHandler<CommandsAndQueriesWithObjectsGenerationTest.ITestAggregate>, CommandsAndQueriesWithObjectsGenerationTest.TestInputObject> builder)
         {
             return builder.ThenAsk<TestQ3, CommandsAndQueriesWithObjectsGenerationTest.TestOutputObject>();
         }

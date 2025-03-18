@@ -9,10 +9,10 @@ public class ExternalCommandFactory : IExternalCommandFactory
         _grainFactory = grainFactory;
     }
 
-    public IGrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
+    public IGrainCommandBaseBuilder<T, BaseRootCommandHandler<T>, BaseRootQueryHandler<T>> GetAggregate<T>() where T : IAggregateRoot
     {
         UniversalBuilder<T, object> builder = new(new EmptyStep());
-        return new GrainCommandBaseBuilder<T, BaseStatelessCommandHandler<T>, BaseStatelessQueryHandler<T>>(
+        return new GrainCommandBaseBuilder<T, BaseRootCommandHandler<T>, BaseRootQueryHandler<T>>(
                 _grainFactory,
                 (string key) => throw new InvalidOperationException("Cannot resolve child grain from manager grain"),
                 builder

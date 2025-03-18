@@ -2,7 +2,7 @@
 
 namespace Remotr;
 
-public abstract class BaseStatelessQueryHandler<IAggregate> : AddressableManager, IDiscoverableCq
+public abstract class BaseRootQueryHandler<IAggregate> : AddressableManager, IDiscoverableCq
     where IAggregate : IAggregateRoot
 {
     public GrainId GrainId { get; private set; } = default!;

@@ -24,7 +24,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 }
 
 [RemotrGen]
-public class TestCommand1Type : StatefulCommandHandler<TestState>
+public class TestCommand1Type : EntityCommandHandler<TestState>
 {
     public override Task Execute()
     {
@@ -33,7 +33,7 @@ public class TestCommand1Type : StatefulCommandHandler<TestState>
 }
 
 [RemotrGen]
-public class TestCommand2Type : StatefulCommandHandler<TestState, double>
+public class TestCommand2Type : EntityCommandHandler<TestState, double>
 {
     public override async Task<double> Execute()
     {
@@ -42,7 +42,7 @@ public class TestCommand2Type : StatefulCommandHandler<TestState, double>
 }
 
 [RemotrGen]
-public class TestCommand3Type : StatefulCommandHandler<TestState, int, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, int, double>
 {
     public override async Task<double> Execute(int input)
     {
@@ -51,7 +51,7 @@ public class TestCommand3Type : StatefulCommandHandler<TestState, int, double>
 }
 
 [RemotrGen]
-public class TestQuery2Type : StatefulQueryHandler<TestState, double>
+public class TestQuery2Type : EntityQueryHandler<TestState, double>
 {
     public override async Task<double> Execute()
     {
@@ -60,7 +60,7 @@ public class TestQuery2Type : StatefulQueryHandler<TestState, double>
 }
 
 [RemotrGen]
-public class TestQuery3Type : StatefulQueryHandler<TestState, int, double>
+public class TestQuery3Type : EntityQueryHandler<TestState, int, double>
 {
     public override async Task<double> Execute(int input)
     {
@@ -99,7 +99,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 }
 
 [RemotrGen]
-public class TestCommand3Type : StatefulCommandHandler<TestState, TestInputObject, double>
+public class TestCommand3Type : EntityCommandHandler<TestState, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
     {
@@ -108,7 +108,7 @@ public class TestCommand3Type : StatefulCommandHandler<TestState, TestInputObjec
 }
 
 [RemotrGen]
-public class TestQuery3Type : StatefulQueryHandler<TestState, TestInputObject, TestOutputObject>
+public class TestQuery3Type : EntityQueryHandler<TestState, TestInputObject, TestOutputObject>
 {
     public override async Task<TestOutputObject> Execute(TestInputObject input)
     {
@@ -156,7 +156,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 }
 
 [RemotrGen]
-public class TestCommand1Type : StatelessCommandHandler<ITestAggregate, TestInputObject, double>
+public class TestCommand1Type : RootCommandHandler<ITestAggregate, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
     {
@@ -165,7 +165,7 @@ public class TestCommand1Type : StatelessCommandHandler<ITestAggregate, TestInpu
 }
 
 [RemotrGen]
-public class TestQuery3Type : StatelessQueryHandler<ITestAggregate, TestInputObject, TestOutputObject>
+public class TestQuery3Type : RootQueryHandler<ITestAggregate, TestInputObject, TestOutputObject>
 {
     public override async Task<TestOutputObject> Execute(TestInputObject input)
     {
