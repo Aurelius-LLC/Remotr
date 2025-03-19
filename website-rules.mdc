@@ -1,0 +1,47 @@
+When creating custom ".tsx" components for use in markdown ".mdx" files, consider that, for any text which doesn't have a solid background color, we need to make sure that it is visible in dark mode as well.
+
+Here is example code of what this would look like in the custom css file for a component with a class of "yourComponent":
+
+/* Light mode styles (default) */
+.yourComponent {
+  color: #000000;
+  background: #ffffff;
+}
+
+/* Dark mode styles */
+[data-theme='dark'] .yourComponent {
+  color: #ffffff;
+  background: #1c1e21;
+}
+
+# SVG Animation Rules
+
+When using AnimeJS to animate SVG elements:
+
+1. Always use the `attr` property to animate SVG attributes directly instead of CSS transforms:
+
+```typescript
+// CORRECT - Using SVG transform attribute
+anime({
+  targets: svgElement,
+  attr: {
+    transform: ['translate(0, 0)', 'translate(100, 100) scale(2)']
+  }
+});
+
+// INCORRECT - Using CSS transforms
+anime({
+  targets: svgElement,
+  translateX: [0, 100],
+  scale: [1, 2]
+});
+```
+
+2. When animating SVG transforms, always use the complete transform string to avoid conflicts:
+   - Use `transform: ['translate(x1, y1) scale(s1)', 'translate(x2, y2) scale(s2)']`
+   - Don't split transforms into separate properties
+
+3. Set initial transform attributes explicitly before animation to ensure consistent starting states:
+```typescript
+element.setAttribute('transform', 'translate(x, y)');
+``` 

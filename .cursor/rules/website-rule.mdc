@@ -1,0 +1,52 @@
+---
+description: 
+globs: website/*
+alwaysApply: false
+---
+# Dark/Light Mode Rules
+
+When creating custom ".tsx" components for use in markdown ".mdx" files, consider that, for any text which doesn't have a solid background color, we need to make sure that it is visible in dark mode as well.
+
+Here is example code of what this would look like in the custom css file for a component with a class of "yourComponent":
+
+/* Light mode styles (default) */
+.yourComponent {
+  color: #000000;
+  background: #ffffff;
+}
+
+/* Dark mode styles */
+[data-theme='dark'] .yourComponent {
+  color: #ffffff;
+  background: #1c1e21;
+}
+
+# SVG Creation Rules
+
+When creating SVGs, for any transformations, prefer to use the style property rather than transformations directly. Also, prefer to use the "translateX(NUMpx) translateY(NUMpx)" format rather than the "translate(x, y)" format. 
+
+This is bad:
+transform="translate(400, 180)"
+This is also bad:
+style="transform: translate(400, 180)"
+This is good, it should look like this:
+style="transform: translateX(80px) translateY(100px)"
+
+For typescript, the proper formatting would look like this:
+style={{ transform: 'translateX(80px) translateY(100px)' }}
+
+# Anime.js Transform Rule
+
+When using anime.js transforms (translate, scale, etc.), remember:
+1. Transform values are ABSOLUTE coordinates in the SVG coordinate space, not relative to the element's current position
+2. Each animation step must account for ALL previous transforms to maintain correct positioning
+3. To track an element's current position, either:
+   - Store transform state in component state/refs, OR
+   - Use the element's computed transform values before starting a new animation
+4. Never assume transform values will compound or be relative to the previous animation
+
+Example:
+❌ Bad: Trying to move left by animating `translateX: [0, -100]` after a previous animation
+✅ Good: Tracking total transforms and using absolute coordinates like `translateX: [currentX, targetX]`
+
+

@@ -2,13 +2,15 @@
 sidebar_position: 4
 ---
 
+import AnimeExample from '@site/src/components/OverviewAnimation/AnimeExample';
+
 # Markdown Features
 
 Docusaurus supports **[Markdown](https://daringfireball.net/projects/markdown/syntax)** and a few **additional features**.
 
 ## Front Matter
 
-Markdown documents have metadata at the top called [Front Matter](https://jekyllrb.com/docs/front-matter/):
+Markdown documents have metEach aggregate contains one root adata at the top called [Front Matter](https://jekyllrb.com/docs/front-matter/):
 
 ```text title="my-doc.md"
 // highlight-start
@@ -150,3 +152,15 @@ export const Highlight = ({children, color}) => (
 This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
 
 This is <Highlight color="#1877F2">Facebook blue</Highlight> !
+
+## Animation with AnimeJS
+
+You can also create interactive animations using external libraries like AnimeJS:
+
+<AnimeExample />
+
+Try clicking the button above to see the animation in action!
+
+You can customize the animation by passing props:
+
+<AnimeExample boxColor="#e91e63" finalColor="#4caf50" />
