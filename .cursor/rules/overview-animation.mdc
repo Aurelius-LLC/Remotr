@@ -1,0 +1,25 @@
+---
+description: 
+globs: website/src/components/Animation/OverviewAnimation.tsx,website/src/components/Animation/transitions/*
+alwaysApply: false
+---
+
+# Instructions for creating a new step
+1. When creating a new step, never forget to add the transition animation to go back to the previous step. For example, going from step 1 to step 2 will change elements that should have a reverse animation for going from step 2 to step 1 via the back button.
+2. Create new Step{N}To{N+1}Transition.ts file in transitions directory: website/src/components/Animation/transitions
+3. Implement the Transition interface found in [types.ts](mdc:website/src/components/Animation/transitions/types.ts)
+4. Use anime.js for animations:
+- Duration: TRANSITION_DURATION (300ms)
+- Wrap in Promise
+- Handle skipAnimation by setting duration to 0
+5. Add transition to TRANSITIONS array in TransitionManager.ts
+6. Implement cleanup if animations persist between transitions
+7. Ensure all animations resolve their promises on completion
+
+Look at [Step1To2Transition.ts](mdc:website/src/components/Animation/transitions/Step1To2Transition.ts) as an example.
+
+# Instructions for modifying an existing step
+- When adding more animations to an existing step, never forget to add the transition animation to go back to the previous step. For example, going from step 1 to step 2 will change elements that should have a reverse animation for going from step 2 to step 1 via the back button.
+
+
+

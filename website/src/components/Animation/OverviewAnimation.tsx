@@ -1,170 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import anime from 'animejs';
+import React, { useRef } from 'react';
+import { useTransitionManager } from './transitions/TransitionManager';
 
 export default function OverviewAnimation(): React.JSX.Element {
   const svgRef = useRef<SVGSVGElement>(null);
-  const customerRootAnimation = useRef<anime.AnimeInstance | null>(null);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const totalSteps = 3;
-
-  // Animation constants
-  const TRANSITION_DURATION = 300;  // Duration in milliseconds for transition animations
-  const ROOT_OSCILLATION_DURATION = 1000;  // Duration for root color oscillation
-  const COLOR_RESET_DURATION = 300;  // Duration for resetting root color
-
-  // Function to start the root color oscillation
-  const startRootOscillation = () => {
-    if (svgRef.current) {
-      const customerRoot = svgRef.current.querySelector('g[data-aggregate="customer"] > circle[cx="0"][cy="-70"]');
-      if (customerRoot) {
-        customerRootAnimation.current = anime({
-          targets: customerRoot,
-          fill: ['#2E5A35', '#1A331F', '#2E5A35'],
-          duration: ROOT_OSCILLATION_DURATION,
-          easing: 'easeInOutSine',
-          loop: true,
-          direction: 'alternate'
-        });
-      }
-    }
-  };
-
-  // Function to stop the root color oscillation
-  const stopRootOscillation = () => {
-    if (customerRootAnimation.current) {
-      customerRootAnimation.current.pause();
-      // Reset the color back to original
-      if (svgRef.current) {
-        const customerRoot = svgRef.current.querySelector('g[data-aggregate="customer"] > circle[cx="0"][cy="-70"]');
-        if (customerRoot) {
-          anime({
-            targets: customerRoot,
-            fill: '#2E5A35',
-            duration: COLOR_RESET_DURATION
-          });
-        }
-      }
-    }
-  };
-
-  // Function to animate from step 1 (initial state) to step 2 (Customer aggregate focused)
-  const animateToStep2 = () => {
-    setIsAnimating(true);
-    if (svgRef.current) {
-      // Animate customer aggregate to center and scale up
-      anime({
-        targets: svgRef.current.querySelector('g[data-aggregate="customer"]'),
-        translateY: [180, 350],
-        scale: [1, 1.8],
-        duration: TRANSITION_DURATION,
-        easing: 'easeInOutQuad',
-        complete: () => {
-          startRootOscillation();
-          setIsAnimating(false);
-        }
-      });
-
-      // Fade out store and order aggregates
-      anime({
-        targets: [
-          svgRef.current.querySelector('g[data-aggregate="store"]'),
-          svgRef.current.querySelector('g[data-aggregate="order"]')
-        ],
-        opacity: [1, 0],
-        duration: TRANSITION_DURATION * 0.8,
-        easing: 'easeInOutQuad'
-      });
-    }
-  };
-
-  // Function to animate from step 2 back to step 1 (initial state)
-  const animateToStep1 = () => {
-    setIsAnimating(true);
-    stopRootOscillation();
-    
-    if (svgRef.current) {
-      // Animate customer aggregate back to original position
-      anime({
-        targets: svgRef.current.querySelector('g[data-aggregate="customer"]'),
-        translateY: [350, 180],
-        scale: [1.8, 1],
-        duration: TRANSITION_DURATION,
-        easing: 'easeInOutQuad',
-        complete: () => setIsAnimating(false)
-      });
-
-      // Fade in store and order aggregates
-      anime({
-        targets: [
-          svgRef.current.querySelector('g[data-aggregate="store"]'),
-          svgRef.current.querySelector('g[data-aggregate="order"]')
-        ],
-        opacity: [0, 1],
-        duration: TRANSITION_DURATION * 0.8,
-        easing: 'easeInOutQuad'
-      });
-    }
-  };
-
-  // Function to animate from step 2 to step 3 (Customer aggregate at medium scale)
-  const animateToStep3 = () => {
-    setIsAnimating(true);
-    stopRootOscillation();
-    
-    if (svgRef.current) {
-      // Animate customer aggregate to slightly smaller scale
-      anime({
-        targets: svgRef.current.querySelector('g[data-aggregate="customer"]'),
-        scale: [1.8, 1.2],
-        translateX: [400, 200],
-        duration: TRANSITION_DURATION,
-        easing: 'easeInOutQuad',
-        complete: () => setIsAnimating(false)
-      });
-    }
-  };
-
-  // Function to animate from step 3 back to step 2 (Customer aggregate back to larger scale)
-  const animateBackToStep2 = () => {
-    setIsAnimating(true);
-    if (svgRef.current) {
-      // Animate customer aggregate back to larger scale
-      anime({
-        targets: svgRef.current.querySelector('g[data-aggregate="customer"]'),
-        scale: [1.2, 1.8],
-        translateX: [200, 400],
-        duration: TRANSITION_DURATION,
-        easing: 'easeInOutQuad',
-        complete: () => {
-          startRootOscillation();
-          setIsAnimating(false);
-        }
-      });
-    }
-  };
-
-  const handleNext = () => {
-    if (currentStep < totalSteps && !isAnimating) {
-      setCurrentStep(currentStep + 1);
-      if (currentStep === 1) {
-        animateToStep2();
-      } else if (currentStep === 2) {
-        animateToStep3();
-      }
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1 && !isAnimating) {
-      setCurrentStep(currentStep - 1);
-      if (currentStep === 2) {
-        animateToStep1();
-      } else if (currentStep === 3) {
-        animateBackToStep2();
-      }
-    }
-  };
+  const { currentStep, isAnimating, handleNext, handleBack, skipToStep } = useTransitionManager(svgRef as React.RefObject<SVGSVGElement>);
+  const totalSteps = 4;
 
   // Button styles
   const buttonStyle = {
@@ -184,6 +24,18 @@ export default function OverviewAnimation(): React.JSX.Element {
     cursor: 'not-allowed',
   };
 
+  const stepButtonStyle = {
+    ...buttonStyle,
+    padding: '8px 16px',
+    fontSize: '14px',
+  };
+
+  const activeStepButtonStyle = {
+    ...stepButtonStyle,
+    backgroundColor: '#1A3520',
+    border: '2px solid #ffffff',
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <svg 
@@ -192,6 +44,7 @@ export default function OverviewAnimation(): React.JSX.Element {
         height="680" 
         viewBox="0 0 800 680" 
         xmlns="http://www.w3.org/2000/svg"
+        style={{ backgroundColor: "#FF0000" }}
       >
         {/* Define colors for our bubbles */}
         <defs>
@@ -242,21 +95,21 @@ export default function OverviewAnimation(): React.JSX.Element {
             <text x="80" y="30" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="white">(entity)</text>
           </g>
           
-          <g transform="translate(0, 0)">
+          <g data-commands="customer" style={{ transform: 'translateX(255px) translateY(190px) scale(1.5)' }} opacity="0">
             <rect x="131" width="88" height="24" rx="7" fill="#FF4D4D"/>
-            <text x="160.004" y="19.6818" fill="white" fontFamily="Arial" fontSize="6">Command</text>
+            <text x="155.004" y="19.6818" fill="white" fontFamily="Arial" fontSize="6">Root Command</text>
             <text x="144.143" y="10.6818" fill="white" fontFamily="Arial" fontSize="6" fontWeight="bold">CreateUserCommand</text>
             
             <rect x="131" y="26" width="88" height="24" rx="7" fill="#1FA2FF"/>
-            <text x="165.39" y="45.6818" fill="white" fontFamily="Arial" fontSize="6">Query</text>
+            <text x="160.39" y="45.6818" fill="white" fontFamily="Arial" fontSize="6">Root Query</text>
             <text x="155.324" y="36.6818" fill="white" fontFamily="Arial" fontSize="6" fontWeight="bold">GetUserQuery</text>
             
             <rect x="131" y="78" width="88" height="24" rx="7" fill="#1FA2FF"/>
-            <text x="165.39" y="97.6818" fill="white" fontFamily="Arial" fontSize="6">Query</text>
+            <text x="160.39" y="97.6818" fill="white" fontFamily="Arial" fontSize="6">Root Query</text>
             <text x="155.246" y="88.6818" fill="white" fontFamily="Arial" fontSize="6" fontWeight="bold">GetCartQuery</text>
             
             <rect x="131" y="52" width="88" height="24" rx="7" fill="#FF4D4D"/>
-            <text x="160.004" y="71.6818" fill="white" fontFamily="Arial" fontSize="6">Command</text>
+            <text x="155.004" y="71.6818" fill="white" fontFamily="Arial" fontSize="6">Root Command</text>
             <text x="136.162" y="62.6818" fill="white" fontFamily="Arial" fontSize="6" fontWeight="bold">ProcessPaymentCommand</text>
             
             <path d="M9.18627 32.4188C8.86526 32.8682 8.96935 33.4927 9.41876 33.8137L16.7424 39.0449C17.1918 39.3659 17.8163 39.2618 18.1373 38.8124C18.4583 38.363 18.3543 37.7384 17.9048 37.4174L11.395 32.7675L16.0449 26.2576C16.3659 25.8082 16.2618 25.1837 15.8124 24.8627C15.363 24.5417 14.7384 24.6457 14.4174 25.0952L9.18627 32.4188ZM123.836 13.0136L9.8356 32.0136L10.1644 33.9864L124.164 14.9864L123.836 13.0136Z" fill="black"/>
@@ -314,24 +167,54 @@ export default function OverviewAnimation(): React.JSX.Element {
             <text x="80" y="15" fontFamily="Arial" fontSize="11" textAnchor="middle" fill="white">PaymentEntity</text>
             <text x="80" y="30" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="white">(entity)</text>
           </g>
+
+          {/* Step 4 elements */}
+          <g data-step="4" style={{ opacity: 0 }}>
+            <g data-step="4root" style={{ transform: 'translateX(200px) translateY(350px) scale(1.2)' }}>
+              <circle cx="0" cy="-70" r="50" fill="rgba(46,90,53,1)"></circle>
+              <text x="0" y="-70" fontFamily="Arial" fontSize="14" textAnchor="middle" fill="white">CustomerRoot</text>
+              <text x="0" y="-55" fontFamily="Arial" fontSize="12" textAnchor="middle" fill="white">(root)</text>
+            </g>
+
+            <g data-step="4entity" style={{ transform: 'translateX(200px) translateY(350px) scale(1.2)' }}>
+              <circle cx="80" cy="20" r="40" fill="black"></circle>
+              <text x="80" y="15" fontFamily="Arial" fontSize="11" textAnchor="middle" fill="white">WishListEntity</text>
+              <text x="80" y="30" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="white">(entity)</text>
+            </g>
+          </g>
         </g>
       </svg>
 
-      <div style={{ display: 'flex', marginTop: '20px' }}>
-        <button
-          onClick={handleBack}
-          style={currentStep === 1 || isAnimating ? disabledButtonStyle : buttonStyle}
-          disabled={currentStep === 1 || isAnimating}
-        >
-          Back
-        </button>
-        <button
-          onClick={handleNext}
-          style={currentStep === totalSteps || isAnimating ? disabledButtonStyle : buttonStyle}
-          disabled={currentStep === totalSteps || isAnimating}
-        >
-          Next
-        </button>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', marginTop: '20px' }}>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+            <button
+              key={step}
+              onClick={() => skipToStep(step)}
+              style={currentStep === step ? activeStepButtonStyle : stepButtonStyle}
+              disabled={isAnimating || currentStep === step}
+            >
+              Step {step}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex' }}>
+          <button
+            onClick={handleBack}
+            style={currentStep === 1 || isAnimating ? disabledButtonStyle : buttonStyle}
+            disabled={currentStep === 1 || isAnimating}
+          >
+            Back
+          </button>
+          <button
+            onClick={handleNext}
+            style={currentStep === totalSteps || isAnimating ? disabledButtonStyle : buttonStyle}
+            disabled={currentStep === totalSteps || isAnimating}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
