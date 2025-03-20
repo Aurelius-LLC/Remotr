@@ -4,7 +4,20 @@ import { transitionsCount, useTransitionManager } from './transitions/Transition
 const stepMetadata = [
   {
     title: "What are Aggregates in Remotr?",
-    description: <p>Aggregates in Remotr are loosely coupled groups of stateful entities. Aggregates follow the virtual actor model, use CQRS, and have transactional state.</p>,
+    description: <p>
+      Aggregates in Remotr are loosely coupled groups of stateful entities that...<br /><br />
+      <ul>
+        <li>
+          <a target="_blank" href="https://www.etteplan.com/about-us/insights/how-virtual-actors-will-help-you-scale-your-applications-easy-way/">follow the virtual actor model</a>
+        </li>
+        <li>
+        <a target="_blank" href="https://www.geeksforgeeks.org/cqrs-command-query-responsibility-segregation/">use CQRS</a>
+        </li>
+        <li>
+          have transactional state across the whole aggregate
+        </li>
+      </ul>
+    </p>,
   },
   {
     title: "How to call or interface with aggregates?",
@@ -17,11 +30,11 @@ const stepMetadata = [
   
   {
     title: "CQRS pattern continued",
-    description: <p>Entities operate with the same concept in terms of CQRS; however, entities can only be accessed by their AggregateRoot. For example, RootA cannot call the entity of RootB and vice versa. Entities can also call commands/queries of other entities, allowing for rich and dynamic composition of state.</p>,
+    description: <p>Entities operate with the same concept in terms of CQRS; however, entities can only be accessed by their AggregateRoot. For example, RootA cannot call the entity of RootB and vice versa.<br /><br />Entities can also call commands/queries of other entities, allowing for rich and dynamic composition of state.</p>,
   },
   {
     title: 'CQRS is "infectious"',
-    description: <p>Similar to `async`, CQRS is an "infectious" programming model. Anything declared as a query can only call other queries, all the way down; however, commands can call other commands or queries.</p>,
+    description: <p>Similar to `async`, CQRS is an "infectious" programming model. Anything declared as a query can only call other queries, all the way down; however, commands can call other commands or queries.<br /><br />This gives assurance that all queries will never result in a state change anywhere.</p>,
   }
 ];
 
