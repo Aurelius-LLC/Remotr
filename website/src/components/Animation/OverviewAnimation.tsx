@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
-import { useTransitionManager } from './transitions/TransitionManager';
+import { transitionsCount, useTransitionManager } from './transitions/TransitionManager';
 
 export default function OverviewAnimation(): React.JSX.Element {
   const svgRef = useRef<SVGSVGElement>(null);
   const { currentStep, isAnimating, handleNext, handleBack, skipToStep } = useTransitionManager(svgRef as React.RefObject<SVGSVGElement>);
-  const totalSteps = 4;
+  const totalSteps = transitionsCount + 1;
 
   // Button styles
   const buttonStyle = {
@@ -44,7 +44,7 @@ export default function OverviewAnimation(): React.JSX.Element {
         height="680" 
         viewBox="0 0 800 680" 
         xmlns="http://www.w3.org/2000/svg"
-        style={{ backgroundColor: "#FF0000" }}
+        style={{ backgroundColor: "#00FF00" }}
       >
         {/* Define colors for our bubbles */}
         <defs>
@@ -181,6 +181,84 @@ export default function OverviewAnimation(): React.JSX.Element {
               <text x="80" y="15" fontFamily="Arial" fontSize="11" textAnchor="middle" fill="white">WishListEntity</text>
               <text x="80" y="30" fontFamily="Arial" fontSize="10" textAnchor="middle" fill="white">(entity)</text>
             </g>
+
+            <g style={{ transform: 'translateX(5px) translateY(100px) scale(1.5)' }}>
+              <rect width="88" height="24" rx="7" fill="#FF4D4D"/>
+              <text style={{ fill: 'white', whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}>
+                <tspan x="21.0889" y="19.6818">Root Command</tspan>
+              </text>
+              <text style={{ fill: 'white', whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}>
+                <tspan x="13.1426" y="10.6818">CreateUserCommand</tspan>
+              </text>
+              <rect x="245" width="95" height="24" rx="7" fill="#FF4D4D"/>
+              <text style={{ fill: 'white', whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}>
+                <tspan x="267.051" y="18.6818">Entity Command</tspan>
+              </text>
+              <text style={{ fill: 'white', whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}>
+                <tspan x="252.032" y="9.68182">CreateUserEntityCommand</tspan>
+              </text>
+              <path d="M114.707 12.7071C115.098 12.3166 115.098 11.6834 114.707 11.2929L108.343 4.92893C107.953 4.53841 107.319 4.53841 106.929 4.92893C106.538 5.31946 106.538 5.95262 106.929 6.34315L112.586 12L106.929 17.6569C106.538 18.0474 106.538 18.6805 106.929 19.0711C107.319 19.4616 107.953 19.4616 108.343 19.0711L114.707 12.7071ZM93 13H114V11H93V13Z" fill="black"/>
+              <path d="M234.707 12.7071C235.098 12.3166 235.098 11.6834 234.707 11.2929L228.343 4.92893C227.953 4.53841 227.319 4.53841 226.929 4.92893C226.538 5.31946 226.538 5.95262 226.929 6.34315L232.586 12L226.929 17.6569C226.538 18.0474 226.538 18.6805 226.929 19.0711C227.319 19.4616 227.953 19.4616 228.343 19.0711L234.707 12.7071ZM211 13L234 13L234 11L211 11L211 13Z" fill="black"/>
+              <path d="M368.707 11.7071C369.098 11.3166 369.098 10.6834 368.707 10.2929L362.343 3.92893C361.953 3.53841 361.319 3.53841 360.929 3.92893C360.538 4.31946 360.538 4.95262 360.929 5.34315L366.586 11L360.929 16.6569C360.538 17.0474 360.538 17.6805 360.929 18.0711C361.319 18.4616 361.953 18.4616 362.343 18.0711L368.707 11.7071ZM345 12L368 12L368 10L345 10L345 12Z" fill="black"/>
+            </g>
+          </g>
+
+          {/* Step 5 elements */}
+          <g data-step="5"  style={{ opacity: 0, transform: 'translateX(60px) translateY(185px) scale(1.4)' }}>
+            <rect x="248" y="18" width="88" height="24" rx="7" fill="#1FA2FF"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="273.437" y="37.6818">Entity Query</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="280.136" y="28.6818">FindItem</tspan></text>
+            <rect y="31.5" width="88" height="24" rx="7" fill="#FF4D4D"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="21.0889" y="51.1818">Root Command</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="18.2227" y="42.1818">AddItemToWishes</tspan></text>
+            <path d="M114.707 44.2071C115.098 43.8166 115.098 43.1834 114.707 42.7929L108.343 36.4289C107.953 36.0384 107.319 36.0384 106.929 36.4289C106.538 36.8195 106.538 37.4526 106.929 37.8431L112.586 43.5L106.929 49.1569C106.538 49.5474 106.538 50.1805 106.929 50.5711C107.319 50.9616 107.953 50.9616 108.343 50.5711L114.707 44.2071ZM93 44.5H114V42.5H93V44.5Z" fill="black"/>
+            <rect x="245" y="49" width="95" height="24" rx="7" fill="#FF4D4D"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="267.051" y="67.6818">Entity Command</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="279.499" y="58.6818">AddItem</tspan></text>
+            <path d="M234.707 61.7071C235.098 61.3166 235.098 60.6834 234.707 60.2929L228.343 53.9289C227.953 53.5384 227.319 53.5384 226.929 53.9289C226.538 54.3195 226.538 54.9526 226.929 55.3431L232.586 61L226.929 66.6569C226.538 67.0474 226.538 67.6805 226.929 68.0711C227.319 68.4616 227.953 68.4616 228.343 68.0711L234.707 61.7071ZM211 62L234 62L234 60L211 60L211 62Z" fill="black"/>
+            <path d="M234.707 31.7071C235.098 31.3166 235.098 30.6834 234.707 30.2929L228.343 23.9289C227.953 23.5384 227.319 23.5384 226.929 23.9289C226.538 24.3195 226.538 24.9526 226.929 25.3431L232.586 31L226.929 36.6569C226.538 37.0474 226.538 37.6805 226.929 38.0711C227.319 38.4616 227.953 38.4616 228.343 38.0711L234.707 31.7071ZM211 32L234 32L234 30L211 30L211 32Z" fill="black"/>
+            <path d="M368.707 60.7071C369.098 60.3166 369.098 59.6834 368.707 59.2929L362.343 52.9289C361.953 52.5384 361.319 52.5384 360.929 52.9289C360.538 53.3195 360.538 53.9526 360.929 54.3431L366.586 60L360.929 65.6569C360.538 66.0474 360.538 66.6805 360.929 67.0711C361.319 67.4616 361.953 67.4616 362.343 67.0711L368.707 60.7071ZM345 61L368 61L368 59L345 59L345 61Z" fill="black"/>
+            <path d="M368.707 30.7071C369.098 30.3166 369.098 29.6834 368.707 29.2929L362.343 22.9289C361.953 22.5384 361.319 22.5384 360.929 22.9289C360.538 23.3195 360.538 23.9526 360.929 24.3431L366.586 30L360.929 35.6569C360.538 36.0474 360.538 36.6805 360.929 37.0711C361.319 37.4616 361.953 37.4616 362.343 37.0711L368.707 30.7071ZM345 31L368 31L368 29L345 29L345 31Z" fill="black"/>
+            <path d="M161 86C184.748 86 204 66.7482 204 43C204 19.2518 184.748 0 161 0C137.252 0 118 19.2518 118 43C118 66.7482 137.252 86 161 86Z" fill="#2E5A35"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '12.04px', letterSpacing: '0em' }}><tspan x="119.791" y="42.8382">CustomerRoot</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '10.32px', letterSpacing: '0em' }}><tspan x="147.635" y="55.3328">(root)</tspan></text>
+            <path d="M408 77.5C426.778 77.5 442 62.2777 442 43.5C442 24.7223 426.778 9.5 408 9.5C389.222 9.5 374 24.7223 374 43.5C374 62.2777 389.222 77.5 408 77.5Z" fill="black"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '9.35px', letterSpacing: '0em' }}><tspan x="376.727" y="42.379">WishListEntity</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '8.5px', letterSpacing: '0em' }}><tspan x="393.173" y="55.1699">(entity)</tspan></text>
+            <rect x="248" y="126" width="88" height="24" rx="7" fill="#1FA2FF"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="273.437" y="145.682">Entity Query</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="280.136" y="136.682">FindItem</tspan></text>
+            <rect y="139.5" width="88" height="24" rx="7" fill="#1FA2FF"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="27.4746" y="159.182">Root Query</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="32.1357" y="150.182">FindItem</tspan></text>
+            <path d="M114.707 152.207C115.098 151.817 115.098 151.183 114.707 150.793L108.343 144.429C107.953 144.038 107.319 144.038 106.929 144.429C106.538 144.819 106.538 145.453 106.929 145.843L112.586 151.5L106.929 157.157C106.538 157.547 106.538 158.181 106.929 158.571C107.319 158.962 107.953 158.962 108.343 158.571L114.707 152.207ZM93 152.5H114V150.5H93V152.5Z" fill="black"/>
+            <rect x="245" y="157" width="95" height="24" rx="7" fill="#FF4D4D"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="267.051" y="175.682">Entity Command</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="279.499" y="166.682">AddItem</tspan></text>
+            <path d="M234.707 169.707C235.098 169.317 235.098 168.683 234.707 168.293L228.343 161.929C227.953 161.538 227.319 161.538 226.929 161.929C226.538 162.319 226.538 162.953 226.929 163.343L232.586 169L226.929 174.657C226.538 175.047 226.538 175.681 226.929 176.071C227.319 176.462 227.953 176.462 228.343 176.071L234.707 169.707ZM211 170L234 170L234 168L211 168L211 170Z" fill="black"/>
+            <path d="M234.707 139.707C235.098 139.317 235.098 138.683 234.707 138.293L228.343 131.929C227.953 131.538 227.319 131.538 226.929 131.929C226.538 132.319 226.538 132.953 226.929 133.343L232.586 139L226.929 144.657C226.538 145.047 226.538 145.681 226.929 146.071C227.319 146.462 227.953 146.462 228.343 146.071L234.707 139.707ZM211 140L234 140L234 138L211 138L211 140Z" fill="black"/>
+            <path d="M368.707 168.707C369.098 168.317 369.098 167.683 368.707 167.293L362.343 160.929C361.953 160.538 361.319 160.538 360.929 160.929C360.538 161.319 360.538 161.953 360.929 162.343L366.586 168L360.929 173.657C360.538 174.047 360.538 174.681 360.929 175.071C361.319 175.462 361.953 175.462 362.343 175.071L368.707 168.707ZM345 169L368 169L368 167L345 167L345 169Z" fill="black"/>
+            <path d="M368.707 138.707C369.098 138.317 369.098 137.683 368.707 137.293L362.343 130.929C361.953 130.538 361.319 130.538 360.929 130.929C360.538 131.319 360.538 131.953 360.929 132.343L366.586 138L360.929 143.657C360.538 144.047 360.538 144.681 360.929 145.071C361.319 145.462 361.953 145.462 362.343 145.071L368.707 138.707ZM345 139L368 139L368 137L345 137L345 139Z" fill="black"/>
+            <path d="M161 194C184.748 194 204 174.748 204 151C204 127.252 184.748 108 161 108C137.252 108 118 127.252 118 151C118 174.748 137.252 194 161 194Z" fill="#2E5A35"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '12.04px', letterSpacing: '0em' }}><tspan x="119.791" y="150.838">CustomerRoot</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '10.32px', letterSpacing: '0em' }}><tspan x="147.635" y="163.333">(root)</tspan></text>
+            <path d="M408 185.5C426.778 185.5 442 170.278 442 151.5C442 132.722 426.778 117.5 408 117.5C389.222 117.5 374 132.722 374 151.5C374 170.278 389.222 185.5 408 185.5Z" fill="black"/>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '9.35px', letterSpacing: '0em' }}><tspan x="376.727" y="150.379">WishListEntity</tspan></text>
+            <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '8.5px', letterSpacing: '0em' }}><tspan x="393.173" y="163.17">(entity)</tspan></text>
+            <circle cx="221.5" cy="31.5" r="7.5" fill="#00E725"/>
+            <path d="M225.192 29.1845C225.407 29.4005 225.407 29.7513 225.192 29.9673L220.789 34.3907C220.574 34.6067 220.225 34.6067 220.01 34.3907L217.808 32.179C217.593 31.963 217.593 31.6122 217.808 31.3962C218.023 31.1803 218.372 31.1803 218.587 31.3962L220.4 33.2157L224.415 29.1845C224.629 28.9685 224.979 28.9685 225.194 29.1845H225.192Z" fill="white"/>
+            <circle cx="221.5" cy="139.5" r="7.5" fill="#00E725"/>
+            <path d="M225.192 137.185C225.407 137.401 225.407 137.751 225.192 137.967L220.789 142.391C220.574 142.607 220.225 142.607 220.01 142.391L217.808 140.179C217.593 139.963 217.593 139.612 217.808 139.396C218.023 139.18 218.372 139.18 218.587 139.396L220.4 141.216L224.415 137.185C224.629 136.969 224.979 136.969 225.194 137.185H225.192Z" fill="white"/>
+            <circle cx="221.5" cy="167.5" r="7.5" fill="#E65361"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M225.287 171.047C224.893 171.441 224.255 171.441 223.861 171.047L217.953 165.139C217.559 164.745 217.559 164.107 217.953 163.713C218.347 163.319 218.985 163.319 219.379 163.713L225.287 169.621C225.681 170.015 225.681 170.653 225.287 171.047Z" fill="white"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M217.713 171.108C217.319 170.714 217.319 170.075 217.713 169.682L223.621 163.774C224.015 163.38 224.653 163.38 225.047 163.774C225.441 164.168 225.441 164.806 225.047 165.2L219.139 171.108C218.745 171.501 218.107 171.501 217.713 171.108Z" fill="white"/>
+            <circle cx="475.5" cy="152.5" r="20.5" fill="#E65361"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M485.851 162.195C484.775 163.271 483.03 163.271 481.953 162.195L465.805 146.047C464.729 144.97 464.729 143.225 465.805 142.149C466.882 141.073 468.627 141.073 469.703 142.149L485.851 158.297C486.928 159.373 486.928 161.118 485.851 162.195Z" fill="white"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M465.149 162.361C464.073 161.285 464.073 159.54 465.149 158.463L481.297 142.315C482.373 141.239 484.118 141.239 485.195 142.315C486.271 143.392 486.271 145.137 485.195 146.213L469.047 162.361C467.97 163.437 466.225 163.437 465.149 162.361Z" fill="white"/>
+            <circle cx="221.5" cy="59.5" r="7.5" fill="#00E725"/>
+            <path d="M225.192 57.1845C225.407 57.4005 225.407 57.7513 225.192 57.9673L220.789 62.3907C220.574 62.6067 220.225 62.6067 220.01 62.3907L217.808 60.179C217.593 59.963 217.593 59.6122 217.808 59.3962C218.023 59.1803 218.372 59.1803 218.587 59.3962L220.4 61.2157L224.415 57.1845C224.629 56.9685 224.979 56.9685 225.194 57.1845H225.192Z" fill="white"/>
+            <circle cx="475" cy="40" r="20" fill="#00E725"/>
+            <path d="M484.845 33.8253C485.418 34.4013 485.418 35.3366 484.845 35.9126L473.104 47.7085C472.53 48.2845 471.599 48.2845 471.026 47.7085L465.155 41.8106C464.582 41.2346 464.582 40.2992 465.155 39.7232C465.728 39.1473 466.659 39.1473 467.233 39.7232L472.067 44.5752L482.772 33.8253C483.345 33.2493 484.276 33.2493 484.85 33.8253H484.845Z" fill="white"/>
           </g>
         </g>
       </svg>

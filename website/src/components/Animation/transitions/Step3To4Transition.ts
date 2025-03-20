@@ -11,7 +11,7 @@ export const Step3To4Transition: Transition = {
             svg.querySelector('g[data-commands="customer"]')
           ],
           opacity: [1, 0],
-          duration: skipAnimation ? 0 : TRANSITION_DURATION,
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad'
         });
   
@@ -19,7 +19,7 @@ export const Step3To4Transition: Transition = {
         anime({
           targets: svg.querySelector('g[data-step="4"]'),
           opacity: [0, 1],
-          duration: skipAnimation ? 0 : TRANSITION_DURATION,
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad'
         });
   
@@ -28,7 +28,16 @@ export const Step3To4Transition: Transition = {
           targets: svg.querySelector('g[data-step="4root"]'),
           translateX: [200, 250],
           translateY: [350, 200],
-          duration: skipAnimation ? 0 : TRANSITION_DURATION,
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
+          easing: 'easeInOutQuad'
+        });
+
+        // Animate the entity element's position
+        anime({
+          targets: svg.querySelector('g[data-step="4entity"]'),
+          translateX: [200, 520],
+          translateY: [350, 90],
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad',
           complete: () => resolve()
         });
@@ -42,7 +51,16 @@ export const Step3To4Transition: Transition = {
           targets: svg.querySelector('g[data-step="4root"]'),
           translateX: [250, 200],
           translateY: [200, 350],
-          duration: skipAnimation ? 0 : TRANSITION_DURATION,
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
+          easing: 'easeInOutQuad'
+        });
+
+        // Animate the entity element back to its original position
+        anime({
+          targets: svg.querySelector('g[data-step="4entity"]'),
+          translateX: [520, 200],
+          translateY: [90, 350],
+          duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad',
           complete: () => {
                 // Fade in customer aggregate and commands
@@ -52,7 +70,7 @@ export const Step3To4Transition: Transition = {
                     svg.querySelector('g[data-commands="customer"]')
                     ],
                     opacity: [0, 1],
-                    duration: skipAnimation ? 0 : TRANSITION_DURATION,
+                    duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
                     easing: 'easeInOutQuad',
                     complete: () => resolve()
                 });
@@ -61,7 +79,7 @@ export const Step3To4Transition: Transition = {
                 anime({
                     targets: svg.querySelector('g[data-step="4"]'),
                     opacity: [1, 0],
-                    duration: skipAnimation ? 0 : TRANSITION_DURATION,
+                    duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
                     easing: 'easeInOutQuad'
                 });
             }

@@ -3,12 +3,16 @@ import { Transition, TransitionState } from './types';
 import { Step1To2Transition } from './Step1To2Transition';
 import { Step2To3Transition } from './Step2To3Transition';
 import { Step3To4Transition } from './Step3To4Transition';
+import { Step4To5Transition } from './Step4To5Transition';
 
 const TRANSITIONS = [
   Step1To2Transition,
   Step2To3Transition,
-  Step3To4Transition
+  Step3To4Transition,
+  Step4To5Transition
 ];
+
+export var transitionsCount = TRANSITIONS.length;
 
 export const useTransitionManager = (svgRef: React.RefObject<SVGSVGElement>) => {
   const [state, setState] = useState<TransitionState>({
