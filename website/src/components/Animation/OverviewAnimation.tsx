@@ -1,8 +1,9 @@
-import React, { useRef, CSSProperties } from 'react';
+import React, { useRef, CSSProperties, useEffect } from 'react';
 import { transitionsCount, useTransitionManager } from './transitions/TransitionManager';
 
 const stepMetadata = [
   {
+    fragment: "aggregates-defined",
     title: "What are Aggregates in Remotr?",
     description: <p>
       Aggregates in Remotr are loosely coupled groups of stateful entities that...<br /><br />
@@ -20,21 +21,33 @@ const stepMetadata = [
     </p>,
   },
   {
+    fragment: "calling-aggregates",
     title: "How to call or interface with aggregates?",
     description: <p>Communication to aggregates goes through a singleton "AggregateRoot" which describes how the aggregates entities can be accessed. Usually, the entire aggregate revolves around this entity.</p>,
   },
   {
+    fragment: "cqrs-aggregates",
     title: "Command Query Responsibility Segregation (CQRS)",
     description: <p>You can't call methods on Aggregates. Instead, you call commands or queries on the AggregateRoot. Commands allow for state changes, but queries guarantee that the entire state of the aggregate, including all its entities, will remain unchanged.</p>,
   },
   
   {
-    title: "CQRS pattern continued",
+    fragment: "cqrs-entities",
+    title: "CQRS pattern in Entities",
     description: <p>Entities operate with the same concept in terms of CQRS; however, entities can only be accessed by their AggregateRoot. For example, RootA cannot call the entity of RootB and vice versa.<br /><br />Entities can also call commands/queries of other entities, allowing for rich and dynamic composition of state.</p>,
   },
   {
-    title: 'CQRS is "infectious"',
-    description: <p>Similar to `async`, CQRS is an "infectious" programming model. Anything declared as a query can only call other queries, all the way down; however, commands can call other commands or queries.<br /><br />This gives assurance that all queries will never result in a state change anywhere.</p>,
+    fragment: "cqrs-infectious",
+    title: 'Queries are "infectious"',
+    description: <p>Similar to `async`, queries in the Remotr CQRS API are "infectious". Anything declared as a query can only call other queries, all the way down; however, commands can call other commands or queries.<br /><br />This gives assurance that all queries will never result in a state change anywhere.</p>,
+  },
+  {
+    // TODO: Insert link for deadlocks page.
+    // TODO: Insert link for sagas eventually.
+    // TODO: Insert link at bottom for next page.
+    fragment: "root-to-root",
+    title: 'Root to Root calls',
+    description: <p>The commands or queries of an AggregateRoot can call queries on other AggregateRoots, but not commands. <br /><br />This is because different aggregates could be placed on different nodes in the cluster, and distributed transactions aren't supported with Remotr.  <br /><br />This also drastically reduces the risk of deadlocking as it's nearly impossible to create a deadlock within an aggregate, and queries can't deadlock by nature.</p>,
   }
 ];
 
@@ -42,6 +55,51 @@ export default function OverviewAnimation(): React.JSX.Element {
   const svgRef = useRef<SVGSVGElement>(null);
   const { currentStep, isAnimating, handleNext, handleBack, skipToStep } = useTransitionManager(svgRef as React.RefObject<SVGSVGElement>);
   const totalSteps = transitionsCount + 1;
+  const isUrlNavigationRef = useRef(false);
+  const hasInitializedRef = useRef(false);
+
+  // Handle initial navigation from URL fragment
+  useEffect(() => {
+    if (!hasInitializedRef.current && window.location.hash) {
+      const hash = window.location.hash.slice(1);
+      const stepIndex = stepMetadata.findIndex(step => step.fragment === hash);
+      if (stepIndex !== -1) {
+        isUrlNavigationRef.current = true;
+        skipToStep(stepIndex + 1);
+      }
+    }
+    hasInitializedRef.current = true;
+  }, []); // Run only once on mount
+
+  // Update URL fragment when step changes
+  useEffect(() => {
+    const fragment = stepMetadata[currentStep - 1].fragment;
+    if (window.location.hash.slice(1) !== fragment && !isUrlNavigationRef.current) {
+      window.location.hash = fragment;
+    }
+    isUrlNavigationRef.current = false;
+  }, [currentStep]);
+
+  // Handle URL fragment changes after initial load
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      const stepIndex = stepMetadata.findIndex(step => step.fragment === hash);
+      if (stepIndex !== -1 && stepIndex + 1 !== currentStep) {
+        isUrlNavigationRef.current = true;
+        skipToStep(stepIndex + 1);
+      }
+    };
+
+    // Set initial hash if none present
+    if (!window.location.hash) {
+      window.location.hash = stepMetadata[currentStep - 1].fragment;
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [skipToStep, currentStep]);
 
   // Button styles
   const buttonStyle = {
@@ -273,9 +331,9 @@ export default function OverviewAnimation(): React.JSX.Element {
               <path d="M234.707 31.7071C235.098 31.3166 235.098 30.6834 234.707 30.2929L228.343 23.9289C227.953 23.5384 227.319 23.5384 226.929 23.9289C226.538 24.3195 226.538 24.9526 226.929 25.3431L232.586 31L226.929 36.6569C226.538 37.0474 226.538 37.6805 226.929 38.0711C227.319 38.4616 227.953 38.4616 228.343 38.0711L234.707 31.7071ZM211 32L234 32L234 30L211 30L211 32Z" fill="black"/>
               <path d="M368.707 60.7071C369.098 60.3166 369.098 59.6834 368.707 59.2929L362.343 52.9289C361.953 52.5384 361.319 52.5384 360.929 52.9289C360.538 53.3195 360.538 53.9526 360.929 54.3431L366.586 60L360.929 65.6569C360.538 66.0474 360.538 66.6805 360.929 67.0711C361.319 67.4616 361.953 67.4616 362.343 67.0711L368.707 60.7071ZM345 61L368 61L368 59L345 59L345 61Z" fill="black"/>
               <path d="M368.707 30.7071C369.098 30.3166 369.098 29.6834 368.707 29.2929L362.343 22.9289C361.953 22.5384 361.319 22.5384 360.929 22.9289C360.538 23.3195 360.538 23.9526 360.929 24.3431L366.586 30L360.929 35.6569C360.538 36.0474 360.538 36.6805 360.929 37.0711C361.319 37.4616 361.953 37.4616 362.343 37.0711L368.707 30.7071ZM345 31L368 31L368 29L345 29L345 31Z" fill="black"/>
-              <path d="M161 86C184.748 86 204 66.7482 204 43C204 19.2518 184.748 0 161 0C137.252 0 118 19.2518 118 43C118 66.7482 137.252 86 161 86Z" fill="#2E5A35"/>
-              <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '12.04px', letterSpacing: '0em' }}><tspan x="119.791" y="42.8382">CustomerRoot</tspan></text>
-              <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '10.32px', letterSpacing: '0em' }}><tspan x="147.635" y="55.3328">(root)</tspan></text>
+              <path d="M161 86C184.748 86 204 66.7482 204 43C204 19.2518 184.748 0 161 0C137.252 0 118 19.2518 118 43C118 66.7482 137.252 86 161 86Z" fill="#2E5A35"></path>
+              <text fill="white" style={{ whiteSpace: "pre", fontFamily: "Arial", fontSize: "12.04px", letterSpacing: "0em" }}><tspan x="119.791" y="42.8382">CustomerRoot</tspan></text>
+              <text fill="white" style={{ whiteSpace: "pre", fontFamily: "Arial", fontSize: "10.32px", letterSpacing: "0em" }}><tspan x="147.635" y="55.3328">(root)</tspan></text>
               <path d="M408 77.5C426.778 77.5 442 62.2777 442 43.5C442 24.7223 426.778 9.5 408 9.5C389.222 9.5 374 24.7223 374 43.5C374 62.2777 389.222 77.5 408 77.5Z" fill="black"/>
               <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '9.35px', letterSpacing: '0em' }}><tspan x="376.727" y="42.379">WishListEntity</tspan></text>
               <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '8.5px', letterSpacing: '0em' }}><tspan x="393.173" y="55.1699">(entity)</tspan></text>
@@ -304,16 +362,53 @@ export default function OverviewAnimation(): React.JSX.Element {
               <circle cx="221.5" cy="139.5" r="7.5" fill="#00E725"/>
               <path d="M225.192 137.185C225.407 137.401 225.407 137.751 225.192 137.967L220.789 142.391C220.574 142.607 220.225 142.607 220.01 142.391L217.808 140.179C217.593 139.963 217.593 139.612 217.808 139.396C218.023 139.18 218.372 139.18 218.587 139.396L220.4 141.216L224.415 137.185C224.629 136.969 224.979 136.969 225.194 137.185H225.192Z" fill="white"/>
               <circle cx="221.5" cy="167.5" r="7.5" fill="#E65361"/>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M225.287 171.047C224.893 171.441 224.255 171.441 223.861 171.047L217.953 165.139C217.559 164.745 217.559 164.107 217.953 163.713C218.347 163.319 218.985 163.319 219.379 163.713L225.287 169.621C225.681 170.015 225.681 170.653 225.287 171.047Z" fill="white"/>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M217.713 171.108C217.319 170.714 217.319 170.075 217.713 169.682L223.621 163.774C224.015 163.38 224.653 163.38 225.047 163.774C225.441 164.168 225.441 164.806 225.047 165.2L219.139 171.108C218.745 171.501 218.107 171.501 217.713 171.108Z" fill="white"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M225.287 171.047C224.893 171.441 224.255 171.441 223.861 171.047L217.953 165.139C217.559 164.745 217.559 164.107 217.953 163.713C218.347 163.319 218.985 163.319 219.379 163.713L225.287 169.621C225.681 170.015 225.681 170.653 225.287 171.047Z" fill="white"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M217.713 171.108C217.319 170.714 217.319 170.075 217.713 169.682L223.621 163.774C224.015 163.38 224.653 163.38 225.047 163.774C225.441 164.168 225.441 164.806 225.047 165.2L219.139 171.108C218.745 171.501 218.107 171.501 217.713 171.108Z" fill="white"/>
               <circle cx="475.5" cy="152.5" r="20.5" fill="#E65361"/>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M485.851 162.195C484.775 163.271 483.03 163.271 481.953 162.195L465.805 146.047C464.729 144.97 464.729 143.225 465.805 142.149C466.882 141.073 468.627 141.073 469.703 142.149L485.851 158.297C486.928 159.373 486.928 161.118 485.851 162.195Z" fill="white"/>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M465.149 162.361C464.073 161.285 464.073 159.54 465.149 158.463L481.297 142.315C482.373 141.239 484.118 141.239 485.195 142.315C486.271 143.392 486.271 145.137 485.195 146.213L469.047 162.361C467.97 163.437 466.225 163.437 465.149 162.361Z" fill="white"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M485.851 162.195C484.775 163.271 483.03 163.271 481.953 162.195L465.805 146.047C464.729 144.97 464.729 143.225 465.805 142.149C466.882 141.073 468.627 141.073 469.703 142.149L485.851 158.297C486.928 159.373 486.928 161.118 485.851 162.195Z" fill="white"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M465.149 162.361C464.073 161.285 464.073 159.54 465.149 158.463L481.297 142.315C482.373 141.239 484.118 141.239 485.195 142.315C486.271 143.392 486.271 145.137 485.195 146.213L469.047 162.361C467.97 163.437 466.225 163.437 465.149 162.361Z" fill="white"/>
               <circle cx="221.5" cy="59.5" r="7.5" fill="#00E725"/>
               <path d="M225.192 57.1845C225.407 57.4005 225.407 57.7513 225.192 57.9673L220.789 62.3907C220.574 62.6067 220.225 62.6067 220.01 62.3907L217.808 60.179C217.593 59.963 217.593 59.6122 217.808 59.3962C218.023 59.1803 218.372 59.1803 218.587 59.3962L220.4 61.2157L224.415 57.1845C224.629 56.9685 224.979 56.9685 225.194 57.1845H225.192Z" fill="white"/>
               <circle cx="475" cy="40" r="20" fill="#00E725"/>
               <path d="M484.845 33.8253C485.418 34.4013 485.418 35.3366 484.845 35.9126L473.104 47.7085C472.53 48.2845 471.599 48.2845 471.026 47.7085L465.155 41.8106C464.582 41.2346 464.582 40.2992 465.155 39.7232C465.728 39.1473 466.659 39.1473 467.233 39.7232L472.067 44.5752L482.772 33.8253C483.345 33.2493 484.276 33.2493 484.85 33.8253H484.845Z" fill="white"/>
             </g>
+
+            {/* Step 6 elements */}
+            <g data-step="6"  style={{ transform: 'translateX(150px) translateY(185px) scale(1.8)' }}>
+              
+              <g data-transition="opacity5to6" opacity="0">
+                <rect y="7" width="146" height="194" rx="14" fill="#ABFFAF"/>
+                <rect x="171" y="7" width="146" height="194" rx="14" fill="#FFABAD"/>
+                <path d="M83 193C100.673 193 115 178.673 115 161C115 143.327 100.673 129 83 129C65.3269 129 51 143.327 51 161C51 178.673 65.3269 193 83 193Z" fill="#2E5A35"/>
+                <path d="M235 193C252.673 193 267 178.673 267 161C267 143.327 252.673 129 235 129C217.327 129 203 143.327 203 161C203 178.673 217.327 193 235 193Z" fill="#2E5A35"/>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '8.96px', letterSpacing: '0em' }}><tspan x="61.0451" y="160.798">OrderRoot</tspan></text>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '8.96px', letterSpacing: '0em' }}><tspan x="213.045" y="160.798">OrderRoot</tspan></text>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '7.68px', letterSpacing: '0em' }}><tspan x="73.1349" y="170.213">(root)</tspan></text>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '7.68px', letterSpacing: '0em' }}><tspan x="225.135" y="170.213">(root)</tspan></text>
+                <circle cx="298.5" cy="25.5" r="13.5" fill="#E65361"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M305.317 31.8843C304.608 32.5931 303.459 32.5931 302.75 31.8843L292.116 21.2503C291.407 20.5415 291.407 19.3923 292.116 18.6834C292.825 17.9746 293.974 17.9746 294.683 18.6834L305.317 29.3175C306.025 30.0263 306.025 31.1755 305.317 31.8843Z" fill="white"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M291.683 31.9938C290.975 31.285 290.975 30.1358 291.683 29.427L302.317 18.7929C303.026 18.0841 304.175 18.0841 304.884 18.7929C305.593 19.5018 305.593 20.651 304.884 21.3598L294.25 31.9938C293.541 32.7026 292.392 32.7026 291.683 31.9938Z" fill="white"/>
+                <circle cx="19.5" cy="25.5" r="13.5" fill="#00E725"/>
+                <path d="M26.1454 21.3321C26.5324 21.7209 26.5324 22.3523 26.1454 22.7411L18.2199 30.7033C17.8329 31.0921 17.2044 31.0921 16.8174 30.7033L12.8546 26.7222C12.4676 26.3334 12.4676 25.702 12.8546 25.3132C13.2416 24.9245 13.8701 24.9245 14.2571 25.3132L17.5202 28.5883L24.7461 21.3321C25.133 20.9433 25.7615 20.9433 26.1485 21.3321H26.1454Z" fill="white"/>
+                <path d="M82.0001 51.0101C82.0056 51.5624 82.4578 52.0055 83.0101 52L92.0096 51.909C92.5619 51.9035 93.0051 51.4513 92.9995 50.899C92.9939 50.3467 92.5417 49.9036 91.9894 49.9091L83.9898 49.99L83.909 41.9904C83.9035 41.4381 83.4513 40.9949 82.899 41.0005C82.3467 41.0061 81.9036 41.4583 81.9091 42.0106L82.0001 51.0101ZM131.286 0.300071L82.2858 50.3001L83.7142 51.6999L132.714 1.69993L131.286 0.300071Z" fill="black"/>
+                <path d="M83.5444 126.048C83.2438 126.349 82.7562 126.349 82.4556 126.048L77.5555 121.148C77.2548 120.847 77.2548 120.36 77.5555 120.059C77.8562 119.758 78.3437 119.758 78.6444 120.059L83 124.415L87.3556 120.059C87.6563 119.758 88.1438 119.758 88.4445 120.059C88.7452 120.36 88.7452 120.847 88.4445 121.148L83.5444 126.048ZM83.77 84V125.504H82.23V84H83.77Z" fill="black"/>
+                <path d="M235.544 125.048C235.244 125.349 234.756 125.349 234.456 125.048L229.556 120.148C229.255 119.847 229.255 119.36 229.556 119.059C229.856 118.758 230.344 118.758 230.644 119.059L235 123.415L239.356 119.059C239.656 118.758 240.144 118.758 240.444 119.059C240.745 119.36 240.745 119.847 240.444 120.148L235.544 125.048ZM235.77 83V124.504H234.23V83H235.77Z" fill="black"/>
+                <path d="M236 51.0101C235.994 51.5624 235.542 52.0055 234.99 52L225.99 51.909C225.438 51.9035 224.995 51.4513 225.001 50.899C225.006 50.3467 225.458 49.9036 226.011 49.9091L234.01 49.99L234.091 41.9904C234.097 41.4381 234.549 40.9949 235.101 41.0005C235.653 41.0061 236.096 41.4583 236.091 42.0106L236 51.0101ZM186.714 0.300071L235.714 50.3001L234.286 51.6999L185.286 1.69993L186.714 0.300071Z" fill="black"/>
+                <rect x="189" y="54" width="88" height="24" rx="7" fill="#FF4D4D"/>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="210.089" y="73.6818">Root Command</tspan></text>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="216.192" y="64.6818">CreateOrder</tspan></text>
+                <rect x="43" y="56" width="88" height="24" rx="7" fill="#1FA2FF"/>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', letterSpacing: '0em' }}><tspan x="70.4746" y="75.6818">Root Query</tspan></text>
+                <text fill="white" style={{ whiteSpace: 'pre', fontFamily: 'Arial', fontSize: '6px', fontWeight: 'bold', letterSpacing: '0em' }}><tspan x="73.2285" y="66.6818">FindOrder</tspan></text>
+              </g>
+
+              <g data-transition="5to6" style={{ transform: 'translateX(-50px) scale(.777)' }} opacity="0" >
+                <path d="M161 86C184.748 86 204 66.7482 204 43C204 19.2518 184.748 0 161 0C137.252 0 118 19.2518 118 43C118 66.7482 137.252 86 161 86Z" fill="#2E5A35"></path>
+                <text fill="white" style={{ whiteSpace: "pre", fontFamily: "Arial", fontSize: "12.04px", letterSpacing: "0em" }}><tspan x="119.791" y="42.8382">CustomerRoot</tspan></text>
+                <text fill="white" style={{ whiteSpace: "pre", fontFamily: "Arial", fontSize: "10.32px", letterSpacing: "0em" }}><tspan x="147.635" y="55.3328">(root)</tspan></text>
+              </g>
+            </g>
+
           </g>
         </svg>
       </div>
