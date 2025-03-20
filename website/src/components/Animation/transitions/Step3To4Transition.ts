@@ -26,8 +26,9 @@ export const Step3To4Transition: Transition = {
         // Animate the root element's position
         anime({
           targets: svg.querySelector('g[data-step="4root"]'),
-          translateX: [150, 250],
-          translateY: [150, 200],
+          translateX: [180, 250],
+          translateY: [160, 200],
+          scale: 1.2,
           duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad'
         });
@@ -35,8 +36,9 @@ export const Step3To4Transition: Transition = {
         // Animate the entity element's position
         anime({
           targets: svg.querySelector('g[data-step="4entity"]'),
-          translateX: [150, 520],
+          translateX: [170, 520],
           translateY: [150, 90],
+          scale: 1.2,
           duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad',
           complete: () => resolve()
@@ -49,8 +51,9 @@ export const Step3To4Transition: Transition = {
         // Animate the root element back to its original position
         anime({
           targets: svg.querySelector('g[data-step="4root"]'),
-          translateX: [250, 150],
-          translateY: [200, 150],
+          translateX: [250, 180],
+          translateY: [200, 160],
+          scale: 1.5,
           duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad'
         });
@@ -58,8 +61,9 @@ export const Step3To4Transition: Transition = {
         // Animate the entity element back to its original position
         anime({
           targets: svg.querySelector('g[data-step="4entity"]'),
-          translateX: [520, 150],
+          translateX: [520, 170],
           translateY: [90, 150],
+          scale: 1.5,
           duration: skipAnimation ? 0 : TRANSITION_DURATION*1.5,
           easing: 'easeInOutQuad',
           complete: () => {

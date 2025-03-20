@@ -11,8 +11,8 @@ export const Step2To3Transition: Transition = {
         // Animate customer aggregate to slightly smaller scale
         anime({
           targets: svg.querySelector('g[data-aggregate="customer"]'),
-          scale: [1.8, 1.2],
-          translateX: [400, 200],
+          scale: [1.8, 1.5],
+          translateX: [400, 250],
           duration: skipAnimation ? 0 : TRANSITION_DURATION,
           easing: 'easeInOutQuad'
         });
@@ -33,7 +33,7 @@ export const Step2To3Transition: Transition = {
         anime({
           targets: svg.querySelector('g[data-aggregate="customer"]'),
           scale: [1.2, 1.8],
-          translateX: [200, 400],
+          translateX: [250, 400],
           duration: skipAnimation ? 0 : TRANSITION_DURATION,
           easing: 'easeInOutQuad'
         });
