@@ -37,11 +37,11 @@ export default function OverviewAnimation(): React.JSX.Element {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
       <svg 
         ref={svgRef} 
-        width="800" 
-        height="680" 
+        width="680" 
+        height="578" 
         viewBox="0 0 800 680" 
         xmlns="http://www.w3.org/2000/svg"
         style={{ backgroundColor: "#00FF00" }}
@@ -169,7 +169,7 @@ export default function OverviewAnimation(): React.JSX.Element {
           </g>
 
           {/* Step 4 elements */}
-          <g data-step="4" style={{ opacity: 0 }}>
+          <g data-step="4" style={{ transform: 'translateX(50px) translateY(200px)', opacity: 0 }}>
             <g data-step="4root" style={{ transform: 'translateX(200px) translateY(350px) scale(1.2)' }}>
               <circle cx="0" cy="-70" r="50" fill="rgba(46,90,53,1)"></circle>
               <text x="0" y="-70" fontFamily="Arial" fontSize="14" textAnchor="middle" fill="white">CustomerRoot</text>
