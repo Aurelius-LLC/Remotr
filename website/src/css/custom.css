@@ -28,3 +28,19 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.arrow {
+  fill: black;
+}
+
+[data-theme='dark'] .arrow {
+  fill: white;
+}
+
+#an-opinionated-distributed-framework-built-on-net-orleans-with-cqrs-and-ddd {
+  color: #555;
+}
+
+[data-theme='dark'] #an-opinionated-distributed-framework-built-on-net-orleans-with-cqrs-and-ddd {
+  color: #fff;
+}
