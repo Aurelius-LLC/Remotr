@@ -1,0 +1,22 @@
+---
+description: 
+globs: website/docs/*.md
+alwaysApply: false
+---
+First, carefully read the old documentation: [README.md](mdc:README.md)
+
+When creating or modifying documentation, remember that we've renamed a few different things:
+1. "Grain Partitions" are now "Aggregates"
+2. "Managers" or "Manager Grains" are now "Roots" or "Aggregate Roots"
+3. "Children" or "Child Grains" are now "Entities"
+
+Always be concise, never include any "fluffy" language, and remember that you are making this for software engineers, so do not overexplain things that an average software engineer would already know.
+
+Include headers, subheaders, bullet points, numbering, and try to never use paragraphs unless absolutely necessary. Try to put visual diagrams wherever possible, put a "TODO" note with what diagram should be created, like this:
+TODO: Create a diagram that shows what deadlocking looks like.
+
+If there are areas that you need clarification for, ask a question in the chat before making changes or writing the documentation.
+
+Make reference to other documentation files as often as possible. The documentation files can be found at: website/docs/ and have an *.md or *.mdx extension.
+
+When creating a reference to another documentation file, include the words, "TODO: link to: " beforehand which shows that we probably need to look back at this and include a fragment identifier for the proper section in the future. For example, linking [rapid-prototyping.md](mdc:website/docs/features-and-advantages/rapid-prototyping.md) would look like, "TODO: Link to [Rapid Prototyping](mdc:rapid-prototyping.md)" if the current .md file was in the same directory as the link is relative.

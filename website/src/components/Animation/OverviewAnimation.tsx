@@ -44,10 +44,10 @@ const stepMetadata = [
   {
     // TODO: Insert link for deadlocks page.
     // TODO: Insert link for sagas eventually.
-    // TODO: Insert link at bottom for next page.
+    // TODO: Insert link at bottom for "recommended readings:".
     fragment: "root-to-root",
     title: 'Root to Root calls',
-    description: <p>The commands or queries of an AggregateRoot can call queries on other AggregateRoots, but not commands. <br /><br />This is because different aggregates could be placed on different nodes in the cluster, and distributed transactions aren't supported with Remotr.  <br /><br />This also drastically reduces the risk of deadlocking as it's nearly impossible to create a deadlock within an aggregate, and queries can't deadlock by nature.</p>,
+    description: <p>The commands or queries of an AggregateRoot <i>can call queries</i> on other AggregateRoots, <i>but not commands.</i><br /><br />This is because different aggregates could be placed on different nodes in the server cluster, and distributed transactions aren't supported with Remotr.  <br /><br />This also drastically reduces the risk of deadlocking as it's nearly impossible to create a deadlock within an aggregate, and queries can't deadlock by nature.</p>,
   }
 ];
 
