@@ -8,8 +8,5 @@ public abstract class AddressableChild
 
     internal abstract void SetGrainId(ComponentId addressable, GrainId grainId);
 
-    public string GetPrimaryKey()
-    {
-        return Address.ItemId;
-    }
+    public string EntityKey => Address.ItemId;
 }

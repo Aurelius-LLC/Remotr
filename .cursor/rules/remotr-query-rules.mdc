@@ -1,0 +1,6 @@
+---
+description: Implementing RootQueryHandler or EntityQueryHandler
+globs: 
+alwaysApply: false
+---
+When creating query handlers, having 2 generic types always means that the first generic type is always the type of the Entity state or Aggregate Root, and the second generic type is always an output of the Execute method. If there are three types, the second changes. The second becomes an input type for the execute function, and the third becomes the output type of that method.

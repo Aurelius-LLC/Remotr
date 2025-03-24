@@ -4,41 +4,39 @@ sidebar_position: 2
 
 # Creating Queries
 
-Queries can only read entity state. Both commands and queries can inject any dependencies they need through constructor injection.
+Root queries can only call other queries, entity queries can also read the entity's state. Both commands and queries can inject any dependencies they need through constructor injection.
+
+## Available Methods and Properties
+
+Root and entity query handlers have most of the same methods and properties, but entity queries have access to state:
+
+<Tabs>
+    <TabItem value="root-query-handler" label="RootQueryHandler" default>
+        <p>Shared properties</p>
+        <ul>
+            <li>`IInternalQueryFactory QueryFactory`: Make Remotr queries on other Aggregate Roots or Entities.</li>
+            <li>`IGrainFactory GrainFactory`: For using regular Orleans grains.</li>
+        </ul>
+    </TabItem>
+    <TabItem value="entity-query-handler" label="EntityQueryHandler">
+        <p>Shared properties</p>
+        <ul>
+            <li>`IInternalQueryFactory QueryFactory`: Make Remotr queries on other Aggregate Roots or Entities.</li>
+            <li>`IGrainFactory GrainFactory`: For using regular Orleans grains.</li>
+        </ul>
+        <p>Unique properties</p>
+        <ul>
+            <li>`string EntityKey`: Gets the key of the entity being queried. Entity keys are always strings.</li>
+            <li>`State GetState()`: Retrieves the current state of the entity.</li>
+        </ul>
+    </TabItem>
+</Tabs>
+
+## The Entity State
+
+The following examples will work with this entity state:
 
 ```csharp
-public class FindCustomerById : EntityQueryHandler<CustomerDirectoryState, CustomerInfo, string>
-{
-    private readonly ILogger<FindCustomerById> _logger;
-    private readonly IAuthService _authService;
-
-    public FindCustomerById(
-        ILogger<FindCustomerById> logger,
-        IAuthService _authService)
-    {
-        _logger = logger;
-        this._authService = _authService;
-    }
-
-    public override async Task<CustomerInfo> Execute(string customerId)
-    {
-        var state = await GetState();
-
-        _logger.LogInformation("Finding customer by ID: {CustomerId}", customerId);
-        
-        // Map the customer ID to a username using the auth service
-        string username = await _authService.GetUsernameFromCustomerId(customerId);
-        
-        if (string.IsNullOrEmpty(username) || !state.CustomersByUsername.ContainsKey(username))
-        {
-            _logger.LogWarning("No customer found for ID: {CustomerId}", customerId);
-            return CustomerInfo.NotFound;
-        }
-        
-        return state.CustomersByUsername[username];
-    }
-}
-
 [GenerateSerializer]
 public sealed record CustomerInfo
 {
@@ -55,60 +53,214 @@ public sealed record CustomerInfo
 }
 ```
 
-## Available Methods
+## Example Queries without Input
 
-Query handlers have access to the following methods:
+Remotr query handlers can work with or without input parameters. You can create simple query handlers that don't require input, or more complex ones that take parameters to filter or process the data, or to even make decisions as to what other queries to call.
 
-- `GetState()`: Retrieves the current state of the entity.
-- `EntityId`: Gets the ID of the entity being queried.
-- `EntityType`: Gets the type name of the entity.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-## Queries with Input Parameters
+<Tabs>
+  <TabItem value="root-query" label="RootQueryHandler" default>
 
-Queries can also accept input parameters:
 
 ```csharp
-// Query definition with input
-public record GetCustomerPurchaseHistory(DateTime StartDate, DateTime EndDate);
 
-// Query handler that accepts input parameters
-public class RetrieveCustomerPurchaseHistory : 
-    EntityQueryHandler<CustomerState, PurchaseHistoryResult, GetCustomerPurchaseHistory>
+public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<CustomerInfo>> // This query is for "ICustomerRoot".
 {
-    private readonly IPurchaseRepository _purchaseRepository;
-    
-    public RetrieveCustomerPurchaseHistory(IPurchaseRepository purchaseRepository)
+    private readonly IExternalQueryFactory _queryFactory;
+    private readonly IVipService _vipService;
+
+    public GetVipCustomerDetails(
+        IExternalQueryFactory queryFactory,
+        IVipService vipService)
     {
-        _purchaseRepository = purchaseRepository;
+        _queryFactory = queryFactory;
+        _vipService = vipService;
     }
-    
-    public override async Task<PurchaseHistoryResult> Execute(GetCustomerPurchaseHistory query)
+
+    public override async Task<List<CustomerInfo>> Execute()
     {
+        // Get all VIP customer IDs from a service
+        var vipCustomerIds = await _vipService.GetAllVipCustomerIds();
+        
+        var results = new List<CustomerInfo>();
+        
+        foreach (var customerId in vipCustomerIds)
+        {
+
+            /*
+            / Call the no-input entity query to get customer details
+            / Note how we're using the query factory to get the aggregate
+            / and then calling the query directly
+            */
+
+            var customerInfo = await _queryFactory
+                .GetAggregate<ICustomerAggregate>()
+                .GetCustomerDetails()  // This calls our no-input entity query
+                .Run(customerId);      // Pass the entity ID to run against
+                
+
+            results.Add(customerInfo);
+        }
+        
+        return results;
+    }
+}
+```
+  </TabItem>
+  <TabItem value="entity-query" label="EntityQueryHandler">
+
+```csharp
+public class GetCustomerDetails : EntityQueryHandler<CustomerState, CustomerInfo>
+{
+    private readonly ILogger<GetCustomerDetails> _logger;
+
+    public GetCustomerDetails(ILogger<GetCustomerDetails> logger)
+    {
+        _logger = logger;
+    }
+
+    public override async Task<CustomerInfo> Execute()
+    {
+        /*
+        /
+        / Entity queries can access entity state.
+        /
+        */
         var state = await GetState();
         
-        // Use the input parameters in the query
-        var purchases = await _purchaseRepository.GetPurchasesForCustomer(
-            EntityId, 
-            query.StartDate, 
-            query.EndDate
-        );
-        
-        return new PurchaseHistoryResult
+
+        if (state == null || string.IsNullOrEmpty(state.FirstName))
         {
-            CustomerId = EntityId,
-            CustomerName = $"{state.FirstName} {state.LastName}",
-            TimeRange = $"{query.StartDate:d} - {query.EndDate:d}",
-            Purchases = purchases.ToList()
+            _logger.LogWarning("No customer found with ID: {CustomerId}", EntityId);
+            return CustomerInfo.NotFound;
+        }
+        
+        return new CustomerInfo
+        {
+            FirstName = state.FirstName,
+            LastName = state.LastName,
+            PhoneNumber = state.PhoneNumber,
+            Address = state.Address
         };
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+
+## Example Queries with Input
+
+Remotr query handlers can accept at most one input parameter to filter or process data. These input parameters are serialized and deserialized automatically, allowing you to pass complex objects between services.
+
+
+<Tabs>
+  <TabItem value="root-query-input" label="RootQueryHandler" default>
+
+```csharp
+public class CheckCustomersAtAddress : RootQueryHandler<AddressVerificationRequest, List<string>>
+{
+    private readonly IExternalQueryFactory _queryFactory;
+
+    public CheckCustomersAtAddress(
+        IExternalQueryFactory queryFactory)
+    {
+        _queryFactory = queryFactory;
+    }
+
+    public override async Task<List<string>> Execute(AddressVerificationRequest request)
+    {
+        // The input parameter contains everything we need to know:
+        // - Which customers to check
+        // - What address to verify against
+        
+        var matchingCustomerIds = new List<string>();
+        
+        foreach (var customerId in request.CustomerIds)
+        {
+            // Call an entity query that requires an input parameter
+            var livesAtAddress = await _queryFactory
+                .GetAggregate<ICustomerAggregate>()
+                .DoesCustomerLiveAtAddress(new AddressCheckRequest { Address = request.Address })  // This calls our entity query with input
+                .Run(customerId);
+                
+            // Only add customers who live at the specified address
+            if (livesAtAddress)
+            {
+                matchingCustomerIds.Add(customerId);
+            }
+        }
+        
+        return matchingCustomerIds;
     }
 }
 
 [GenerateSerializer]
-public sealed record PurchaseHistoryResult
+public record AddressVerificationRequest
 {
-    public string CustomerId { get; init; } = string.Empty;
-    public string CustomerName { get; init; } = string.Empty;
-    public string TimeRange { get; init; } = string.Empty;
-    public List<Purchase> Purchases { get; init; } = new();
+    public List<string> CustomerIds { get; init; } = new();
+    public Address Address { get; init; }
 }
 ```
+
+  </TabItem>
+  <TabItem value="entity-query-input" label="EntityQueryHandler">
+
+```csharp
+public class DoesCustomerLiveAtAddress : EntityQueryHandler<CustomerDirectoryState, AddressCheckRequest, bool>
+{
+    private readonly ILogger<DoesCustomerLiveAtAddress> _logger;
+
+    public DoesCustomerLiveAtAddress(
+        ILogger<DoesCustomerLiveAtAddress> logger)
+    {
+        _logger = logger;
+    }
+
+    public override async Task<bool> Execute(AddressCheckRequest request)
+    {
+        var state = await GetState();
+        
+        _logger.LogInformation("Checking if customer lives at address: {Address}", request.Address);
+        
+        if (!state.CustomersByUsername.TryGetValue(state.CurrentUsername, out var customerInfo))
+        {
+            _logger.LogWarning("No customer found with username: {Username}", state.CurrentUsername);
+            return false;
+        }
+
+        // Check if any of the customer's registered addresses match the provided one
+        bool matchFound = customerInfo.Addresses.Any(addr => 
+            string.Equals(addr.Street, request.Address.Street, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.City, request.Address.City, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.State, request.Address.State, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.ZipCode, request.Address.ZipCode, StringComparison.OrdinalIgnoreCase));
+        
+        _logger.LogInformation("Address match result for customer {CustomerId}: {Result}", 
+            customerInfo.CustomerId, matchFound);
+            
+        return matchFound;
+    }
+}
+
+[GenerateSerializer]
+public record AddressCheckRequest
+{
+    public Address Address { get; init; }
+}
+
+[GenerateSerializer]
+public record Address
+{
+    public string Street { get; init; }
+    public string City { get; init; }
+    public string State { get; init; }
+    public string ZipCode { get; init; }
+}
+```
+
+  </TabItem>
+</Tabs>

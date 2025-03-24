@@ -47,7 +47,7 @@ Remotr provides a unique blend of safety and performance through its message pro
 
 3. **Location Agnosticism**:
    - Developers work with Aggregate Roots and Entities through their logical identities
-   - The runtime automatically handles placement and routing of messages
+   - The runtime automatically handles placement and routing of requests
    - Aggregates are automatically placed within the distributed environment
 
 ### Key Benefits

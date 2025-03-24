@@ -29,6 +29,21 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+/* Tab group styling */
+.tabs-container {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+[data-theme='dark'] .tabs-container {
+  background-color: #2a2a2a;
+}
+
+code {
+  background-color: rgba(0, 229, 255, 0.2);
+}
+
 .arrow {
   fill: black;
 }

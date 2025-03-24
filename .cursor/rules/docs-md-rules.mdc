@@ -20,3 +20,5 @@ If there are areas that you need clarification for, ask a question in the chat b
 Make reference to other documentation files as often as possible. The documentation files can be found at: website/docs/ and have an *.md or *.mdx extension.
 
 When creating a reference to another documentation file, include the words, "TODO: link to: " beforehand which shows that we probably need to look back at this and include a fragment identifier for the proper section in the future. For example, linking [rapid-prototyping.md](mdc:website/docs/features-and-advantages/rapid-prototyping.md) would look like, "TODO: Link to [Rapid Prototyping](mdc:rapid-prototyping.md)" if the current .md file was in the same directory as the link is relative.
+
+When creating an example of a RootQueryHandler or EntityQueryHandler, never include more information than necessary. Don't include unnecessary dependencies. Never inject "repositories" into the constructors.

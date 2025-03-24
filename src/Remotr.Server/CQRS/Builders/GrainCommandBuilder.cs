@@ -183,6 +183,20 @@ public class GrainCommandBuilder<T, C, Q, K> : IGrainCommandBuilder<T, C, Q, K> 
         );
     }
 
+    public IGrainCommandBaseBuilder<T, C, Q> ConvertToBaseBuilder() {
+        return new GrainCommandBaseBuilder<T, C, Q> (
+            grainFactory,
+            resolveEntityGrain,
+            new UniversalBuilder<T, object>(
+                new MergeStepsWrapper<K, object, object> {
+                    Step1 = _builder.ExecutionStep,
+                    Step2 = new EmptyStep(),
+                    Merger = new TakeSecond<K, object>()
+                }
+            )
+        );
+    }
+
     public Task<K> RunAggregate<X>(X aggregate) where X : T, IAggregateRoot
     {
         _ranWith?.Invoke(aggregate);

@@ -29,6 +29,9 @@ public interface IGrainQueryBuilder<T, Q, K> : IProduceUniversalBuilder<T, K>, I
         IEnumerable<Input> inputs,
         Func<IGrainQueryBuilder<T, Q, Input>, IGrainQueryBuilder<T, Q, Output>> operation
     );
+
+
+    public IGrainQueryBaseBuilder<T, Q> ConvertToBaseBuilder();
 }
 
 public static class GrainQueryBuilderExtensions

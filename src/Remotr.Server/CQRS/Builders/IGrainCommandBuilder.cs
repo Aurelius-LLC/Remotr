@@ -36,6 +36,8 @@ public interface IGrainCommandBuilder<T, C, Q, K> : IProduceUniversalBuilder<T, 
         IEnumerable<Input> inputs,
         Func<IGrainCommandBuilder<T, C, Q, Input>, IGrainCommandBuilder<T, C, Q, Output>> operation
     );
+
+    public IGrainCommandBaseBuilder<T, C, Q> ConvertToBaseBuilder();
 }
 
 public static class GrainCommandBuilderExtensions

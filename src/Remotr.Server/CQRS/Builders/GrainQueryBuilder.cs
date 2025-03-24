@@ -158,6 +158,20 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
         );
     }
 
+    public IGrainQueryBaseBuilder<T, Q> ConvertToBaseBuilder() {
+        return new GrainQueryBaseBuilder<T, Q> (
+            grainFactory,
+            resolveEntityGrain,
+            new UniversalBuilder<T, object>(
+                new MergeStepsWrapper<K, object, object> {
+                    Step1 = _builder.ExecutionStep,
+                    Step2 = new EmptyStep(),
+                    Merger = new TakeSecond<K, object>()
+                }
+            )
+        );
+    }
+
     public Task<K> RunAggregate<X>(X aggregate) where X : T, IAggregateRoot
     {
         _ranWith?.Invoke(aggregate);
