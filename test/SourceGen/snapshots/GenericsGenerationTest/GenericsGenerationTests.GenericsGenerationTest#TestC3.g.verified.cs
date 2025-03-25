@@ -13,7 +13,7 @@ public class TestC3 : RootCommandHandler<ITestAggregate, int, double>
     {
         return await CommandFactory.GetEntity<GenericsGenerationTest.TestState>()
             .Tell<TestCommand3Type<GenericsGenerationTest.TestState, int, double>, int, double>(input)
-            .Run(GetPrimaryKeyString());
+            .Run(GetRootKeyString());
     }
 }
 

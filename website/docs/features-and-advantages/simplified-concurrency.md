@@ -8,7 +8,7 @@ Remotr provides an elegant approach to concurrency management in distributed sys
 
 ## Understanding Aggregates in Remotr
 
-**Definition of Virtual actors:**\
+**What are "Virtual Actors"?**\
 Distributed objects with several special properties:
 - Single-Threaded
 - Use a queue to process incoming requests in total isolation

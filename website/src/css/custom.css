@@ -59,3 +59,12 @@ code {
 [data-theme='dark'] #an-opinionated-distributed-framework-built-on-net-orleans-with-cqrs-and-ddd {
   color: #fff;
 }
+
+.navbar {
+  background-color: #eeeeee;
+}
+
+
+[data-theme='dark'] .navbar {
+  background-color: #444444;
+}

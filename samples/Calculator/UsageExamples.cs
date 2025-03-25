@@ -11,7 +11,8 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         // 1. Is sent as a single RPC
         // 2. Will be executed in the order specified
         // 3. Will all succeed or fail together (ACID)
-    public async Task SimpleArithmetic() {
+    public async Task SimpleArithmetic() 
+    {
         // CalculatorState starts at 0.
         // This algorithm returns 1 given an initial state of 0.
         var algorithm = commandFactory.GetAggregate<ICalculatorAggregate>()
@@ -23,7 +24,8 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
             .GetValue();
     }
 
-    public async Task CachingChains() {
+    public async Task CachingChains() 
+    {
 
         // CalculatorState starts at 0.
         // This algorithm returns 1 given an initial state of 0.
@@ -45,7 +47,8 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         var result3 = await algorithm.Run("Target1"); // Returns 1.5
     }
 
-    public async Task AdvancedChaining() {
+    public async Task AdvancedChaining() 
+    {
         // This example demonstrates advanced chaining with forEach reduce operations
         
         // Start with adding 120 to the calculator state (initially 0)
@@ -87,7 +90,8 @@ public class SimpleExamples(IExternalCommandFactory commandFactory, IExternalQue
         // The state is now 10, however, the returned value is 140.
     }
 
-    public async Task OnlyQueries() {
+    public async Task OnlyQueries() 
+    {
         // Because we are using the query factory, we can only use queries.
         // This is infectious, meaning that queries run here can only run queries themselves.
         // Assuming the state is 120, the prime factors of 120: [2, 2, 2, 3, 5]

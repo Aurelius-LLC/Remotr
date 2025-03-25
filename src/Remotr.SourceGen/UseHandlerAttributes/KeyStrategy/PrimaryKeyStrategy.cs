@@ -11,6 +11,6 @@ public class PrimaryKeyStrategy : IHandlerKeyStrategy
     /// <returns>A string representing the GetPrimaryKeyString() method call.</returns>
     public string GenerateKeyStrategy()
     {
-        return "GetPrimaryKeyString()";
+        return "GetRootKeyString()";
     }
 } 

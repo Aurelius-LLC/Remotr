@@ -9,27 +9,27 @@ public abstract class AddressableManager
 
     internal abstract void SetGrainId(IAddressable addressable, GrainId grainId);
 
-    public Guid GetPrimaryKey()
+    public Guid GetRootKey()
     {
         return Address.GetPrimaryKey();
     }
 
-    public Guid GetPrimaryKey(out string keyExt)
+    public Guid GetRootKey(out string keyExt)
     {
         return Address.GetPrimaryKey(out keyExt);
     }
 
-    public long GetPrimaryKeyLong()
+    public long GetRootKeyLong()
     {
         return Address.GetPrimaryKeyLong();
     }
 
-    public long GetPrimaryKeyLong(out string keyExt)
+    public long GetRootKeyLong(out string keyExt)
     {
         return Address.GetPrimaryKeyLong(out keyExt);
     }
 
-    public string GetPrimaryKeyString()
+    public string GetRootKeyString()
     {
         var stringKey = Address.GetPrimaryKeyString();
         var isGuid = Guid.TryParse(stringKey, out var guidKey);

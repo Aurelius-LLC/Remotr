@@ -4,7 +4,9 @@ sidebar_position: 2
 
 # Creating Queries
 
-Root queries can only call other queries, entity queries can also read the entity's state. Both commands and queries can inject any dependencies they need through constructor injection.
+- Root queries can only call other queries
+- Entity queries can also read the entity's state
+- Both commands and queries can inject any dependencies they need through the constructor via DI.
 
 ## Available Methods and Properties
 
@@ -12,19 +14,28 @@ Root and entity query handlers have most of the same methods and properties, but
 
 <Tabs>
     <TabItem value="root-query-handler" label="RootQueryHandler" default>
-        <p>Shared properties</p>
+        <p><b>Shared properties</b></p>
         <ul>
-            <li>`IInternalQueryFactory QueryFactory`: Make Remotr queries on other Aggregate Roots or Entities.</li>
+            <li>`IInternalQueryFactory QueryFactory`: Make Remotr queries on other aggregate roots or entities.</li>
             <li>`IGrainFactory GrainFactory`: For using regular Orleans grains.</li>
+        </ul>
+        <p><b>Unique properties: key fetchers</b></p>
+        <p>Unlike entities, roots can have a number of different ways to choose how they will be addressed including via Guid, string, long, or a compound of Guid+string or Guid+long. Here are the available methods for fetching the key depending on the key strategy chosen:</p>
+        <ul>
+            <li>`Guid GetRootKey()`: Gets the key of the root being as a `Guid`. Will throw an exception if a Guid can't be formed from the key.</li>
+            <li>`string GetRootKeyString()`: Gets the key of the root being queried. In this case, it will return the `string` value of the key regardless of what the actual type of the key is.</li>
+            <li>`Guid GetRootKey(out string keyExt)`: Gets the key of the root being as a `Guid`, and outputs a string variable for the secondary key. Will throw an exception if a Guid can't be formed from the key.</li>
+            <li>`long GetRootKey()`: Gets the key of the root being as a `long`. Will throw an exception if a long can't be formed from the key.</li>
+            <li>`long GetRootKeyLong(out string keyExt)`: Gets the key of the root being as a `long`, and outputs a string variable for the secondary key. Will throw an exception if a long can't be formed from the key.</li>
         </ul>
     </TabItem>
     <TabItem value="entity-query-handler" label="EntityQueryHandler">
-        <p>Shared properties</p>
+        <p><b>Shared properties</b></p>
         <ul>
             <li>`IInternalQueryFactory QueryFactory`: Make Remotr queries on other Aggregate Roots or Entities.</li>
             <li>`IGrainFactory GrainFactory`: For using regular Orleans grains.</li>
         </ul>
-        <p>Unique properties</p>
+        <p><b>Unique properties</b></p>
         <ul>
             <li>`string EntityKey`: Gets the key of the entity being queried. Entity keys are always strings.</li>
             <li>`State GetState()`: Retrieves the current state of the entity.</li>
@@ -68,14 +79,10 @@ import TabItem from '@theme/TabItem';
 
 public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<CustomerInfo>> // This query is for "ICustomerRoot".
 {
-    private readonly IExternalQueryFactory _queryFactory;
     private readonly IVipService _vipService;
 
-    public GetVipCustomerDetails(
-        IExternalQueryFactory queryFactory,
-        IVipService vipService)
+    public GetVipCustomerDetails(IVipService vipService)
     {
-        _queryFactory = queryFactory;
         _vipService = vipService;
     }
 
@@ -95,7 +102,7 @@ public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<Custom
             / and then calling the query directly
             */
 
-            var customerInfo = await _queryFactory
+            var customerInfo = await QueryFactory
                 .GetAggregate<ICustomerAggregate>()
                 .GetCustomerDetails()  // This calls our no-input entity query
                 .Run(customerId);      // Pass the entity ID to run against
@@ -163,13 +170,6 @@ Remotr query handlers can accept at most one input parameter to filter or proces
 ```csharp
 public class CheckCustomersAtAddress : RootQueryHandler<AddressVerificationRequest, List<string>>
 {
-    private readonly IExternalQueryFactory _queryFactory;
-
-    public CheckCustomersAtAddress(
-        IExternalQueryFactory queryFactory)
-    {
-        _queryFactory = queryFactory;
-    }
 
     public override async Task<List<string>> Execute(AddressVerificationRequest request)
     {
@@ -182,9 +182,10 @@ public class CheckCustomersAtAddress : RootQueryHandler<AddressVerificationReque
         foreach (var customerId in request.CustomerIds)
         {
             // Call an entity query that requires an input parameter
-            var livesAtAddress = await _queryFactory
+            var livesAtAddress = await QueryFactory
                 .GetAggregate<ICustomerAggregate>()
-                .DoesCustomerLiveAtAddress(new AddressCheckRequest { Address = request.Address })  // This calls our entity query with input
+                .DoesCustomerLiveAtAddress(
+                    new AddressCheckRequest { Address = request.Address })  // This calls our entity query with input
                 .Run(customerId);
                 
             // Only add customers who live at the specified address

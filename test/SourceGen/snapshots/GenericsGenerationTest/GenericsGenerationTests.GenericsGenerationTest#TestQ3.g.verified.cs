@@ -13,7 +13,7 @@ public class TestQ3 : RootQueryHandler<ITestAggregate, int, double>
     {
         return await QueryFactory.GetEntity<GenericsGenerationTest.TestState>()
             .Ask<TestQuery3Type<GenericsGenerationTest.TestState, int, double>, int, double>(input)
-            .Run(GetPrimaryKeyString());
+            .Run(GetRootKeyString());
     }
 }
 
