@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Remotr.SourceGen.UseHandlerAttributes;
-using Remotr.SourceGen.RemotrGenAttribute;
+using Remotr.SourceGen.UseShortcutsAttribute;
 
 namespace Remotr.SourceGen;
 
@@ -17,8 +17,8 @@ public static class Generators
     public static IIncrementalGenerator GetCqrsCollectionGenerator() => new HandlerAttributeIncrementalGenerator();
 
     /// <summary>
-    /// Gets the RemotrGenerator instance.
+    /// Gets the UseShortcutserator instance.
     /// </summary>
-    /// <returns>A new instance of the RemotrGenerator.</returns>
-    public static IIncrementalGenerator GetRemotrGenerator() => new RemotrGenerator();
+    /// <returns>A new instance of the UseShortcutserator.</returns>
+    public static IIncrementalGenerator GetUseShortcutserator() => new UseShortcutserator();
 } 

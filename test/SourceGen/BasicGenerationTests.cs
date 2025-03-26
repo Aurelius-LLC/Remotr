@@ -23,7 +23,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand1Type : EntityCommandHandler<TestState>
 {
     public override Task Execute()
@@ -32,7 +32,7 @@ public class TestCommand1Type : EntityCommandHandler<TestState>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand2Type : EntityCommandHandler<TestState, double>
 {
     public override async Task<double> Execute()
@@ -41,7 +41,7 @@ public class TestCommand2Type : EntityCommandHandler<TestState, double>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand3Type : EntityCommandHandler<TestState, int, double>
 {
     public override async Task<double> Execute(int input)
@@ -50,7 +50,7 @@ public class TestCommand3Type : EntityCommandHandler<TestState, int, double>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery2Type : EntityQueryHandler<TestState, double>
 {
     public override async Task<double> Execute()
@@ -59,7 +59,7 @@ public class TestQuery2Type : EntityQueryHandler<TestState, double>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery3Type : EntityQueryHandler<TestState, int, double>
 {
     public override async Task<double> Execute(int input)
@@ -98,7 +98,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand3Type : EntityCommandHandler<TestState, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
@@ -107,7 +107,7 @@ public class TestCommand3Type : EntityCommandHandler<TestState, TestInputObject,
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery3Type : EntityQueryHandler<TestState, TestInputObject, TestOutputObject>
 {
     public override async Task<TestOutputObject> Execute(TestInputObject input)
@@ -155,7 +155,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand1Type : RootCommandHandler<ITestAggregate, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
@@ -164,7 +164,7 @@ public class TestCommand1Type : RootCommandHandler<ITestAggregate, TestInputObje
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery3Type : RootQueryHandler<ITestAggregate, TestInputObject, TestOutputObject>
 {
     public override async Task<TestOutputObject> Execute(TestInputObject input)

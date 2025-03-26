@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class AddEventToDay : EntityCommandHandler<DayState, EventState, DayState>
 {
     public override async Task<DayState> Execute(EventState input)

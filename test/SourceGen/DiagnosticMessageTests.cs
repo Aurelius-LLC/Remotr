@@ -293,17 +293,17 @@ public record TestState
     }
 
     [Fact]
-    public async Task RemotrGenAttributeOnInvalidTargetTest()
+    public async Task UseShortcutsAttributeOnInvalidTargetTest()
     {
         const string source = @"
 using Remotr;
-namespace " + nameof(RemotrGenAttributeOnInvalidTargetTest) + @";
+namespace " + nameof(UseShortcutsAttributeOnInvalidTargetTest) + @";
 
 public interface ITestAggregate : IAggregateRoot, IGrainWithStringKey
 {
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommandType
 {
     public Task<double> Execute()
@@ -323,7 +323,7 @@ public record TestState
         // Verify the output
         await Verify(
             () => Task.FromResult(driver), 
-            settings: Utils.GetVerifySettings(nameof(RemotrGenAttributeOnInvalidTargetTest))
+            settings: Utils.GetVerifySettings(nameof(UseShortcutsAttributeOnInvalidTargetTest))
         );
     }
 }

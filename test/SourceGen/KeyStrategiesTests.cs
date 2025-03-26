@@ -39,7 +39,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand2Type : EntityCommandHandler<TestState, double>
 {
     public override async Task<double> Execute()
@@ -48,7 +48,7 @@ public class TestCommand2Type : EntityCommandHandler<TestState, double>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand3Type : EntityCommandHandler<TestState, TestInputObject, double>
 {
     public override async Task<double> Execute(TestInputObject input)
@@ -57,7 +57,7 @@ public class TestCommand3Type : EntityCommandHandler<TestState, TestInputObject,
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery2Type : EntityQueryHandler<TestState, double>
 {
     public override async Task<double> Execute()
@@ -66,7 +66,7 @@ public class TestQuery2Type : EntityQueryHandler<TestState, double>
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery3Type : EntityQueryHandler<TestState, double, double>
 {
     public override async Task<double> Execute(double input)

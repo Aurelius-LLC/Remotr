@@ -2,10 +2,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Remotr.SourceGen.RemotrGenAttribute;
+namespace Remotr.SourceGen.UseShortcutsAttribute;
 
 /// <summary>
-/// Generates the RemotrGen attribute source code.
+/// Generates the UseShortcuts attribute source code.
 /// </summary>
 public class RemotrAttributeGenerator
 {
@@ -17,24 +17,24 @@ public class RemotrAttributeGenerator
     {
         context.RegisterPostInitializationOutput(ctx => 
         {
-            ctx.AddSource("RemotrGenAttribute.g.cs", SourceText.From(GetRemotrGenAttributeSource(), Encoding.UTF8));
+            ctx.AddSource("UseShortcutsAttribute.g.cs", SourceText.From(GetUseShortcutsAttributeSource(), Encoding.UTF8));
         });
     }
 
     /// <summary>
-    /// Gets the source code for the RemotrGenAttribute.
+    /// Gets the source code for the UseShortcutsAttribute.
     /// </summary>
     /// <returns>The attribute source code.</returns>
-    private string GetRemotrGenAttributeSource()
+    private string GetUseShortcutsAttributeSource()
     {
         return @"
 using System;
 namespace Remotr
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    internal sealed class RemotrGenAttribute : Attribute
+    internal sealed class UseShortcutsAttribute : Attribute
     {
-        public RemotrGenAttribute() { }
+        public UseShortcutsAttribute() { }
     }
 }";
     }

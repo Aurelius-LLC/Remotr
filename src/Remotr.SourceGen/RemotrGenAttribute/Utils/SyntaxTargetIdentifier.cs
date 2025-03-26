@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Remotr.SourceGen.RemotrGenAttribute.Utils;
+namespace Remotr.SourceGen.UseShortcutsAttribute.Utils;
 
 /// <summary>
 /// Utility class for identifying syntax targets for code generation.

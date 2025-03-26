@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class GetEventState : EntityQueryHandler<EventState, EventState>
 {
     public override async Task<EventState> Execute()

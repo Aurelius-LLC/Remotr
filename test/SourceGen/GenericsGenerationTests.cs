@@ -22,7 +22,7 @@ public interface ITestAggregate : Remotr.IAggregateRoot, IGrainWithStringKey
 {
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand1Type<T> : EntityCommandHandler<T> where T : ITest
 {
     public override async Task Execute()
@@ -31,7 +31,7 @@ public class TestCommand1Type<T> : EntityCommandHandler<T> where T : ITest
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand2Type<T, K> : EntityCommandHandler<T, K> where K : new() where T : ITest
 {
     public override async Task<double> Execute()
@@ -40,7 +40,7 @@ public class TestCommand2Type<T, K> : EntityCommandHandler<T, K> where K : new()
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestCommand3Type<T, K, V> : EntityCommandHandler<T, K, V> where K : new() where V : new() where T : new()
 {
     public override Task<V> Execute(K input)
@@ -49,7 +49,7 @@ public class TestCommand3Type<T, K, V> : EntityCommandHandler<T, K, V> where K :
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery2Type<T, K> : EntityQueryHandler<T, K> where K : new() where T : ITest
 {
     public override async Task<K> Execute()
@@ -58,7 +58,7 @@ public class TestQuery2Type<T, K> : EntityQueryHandler<T, K> where K : new() whe
     }
 }
 
-[RemotrGen]
+[UseShortcuts]
 public class TestQuery3Type<T, K, V> : EntityQueryHandler<T, K, V> where K : new() where V : new() where T : ITest
 {
     public override async Task<V> Execute(K input)

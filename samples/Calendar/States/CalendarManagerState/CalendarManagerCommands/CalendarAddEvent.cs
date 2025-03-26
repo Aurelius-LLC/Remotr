@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class CalendarAddEvent : EntityCommandHandler<CalendarManagerState, EventState, EventState>
 {
     public override async Task<EventState> Execute(EventState eventState)

@@ -13,8 +13,8 @@ Remotr.SourceGen/
 │   ├── KeyStrategy/                    # Strategies for handling keys
 │   ├── Utils/                          # Utility classes and helpers
 │   └── Validators/                     # Validation components
-├── RemotrGenAttribute/                 # Remotr generator components
-│   ├── RemotrGenerator.cs              # Main generator implementation
+├── UseShortcutsAttribute/                 # Remotr generator components
+│   ├── UseShortcutserator.cs              # Main generator implementation
 │   ├── RemotrExecutor.cs               # Orchestrates validation and generation
 │   ├── RemotrAttributeGenerator.cs     # Generates attribute code
 │   └── Utils/                          # Utility classes for the Remotr generator
@@ -55,9 +55,9 @@ The generator is organized into the following components:
 3. **Handler Generators**
    - Specific generators for different handler types.
 
-### RemotrGenerator
+### UseShortcutserator
 
-The RemotrGenerator processes classes marked with the `[RemotrGen]` attribute and generates extension methods for various handler types. It uses a plugin architecture where different handler generators can be registered.
+The UseShortcutserator processes classes marked with the `[UseShortcuts]` attribute and generates extension methods for various handler types. It uses a plugin architecture where different handler generators can be registered.
 
 ### Extension Generators
 
@@ -93,7 +93,7 @@ public interface ICalculatorAggregate : IAggregateRoot, IGrainWithStringKey
 
 ```csharp
 // Stateful command handler implementation
-[RemotrGen]
+[UseShortcuts]
 public class MultiplyState : EntityCommandHandler<CalculatorState, double, double>
 {
     public override async Task<double> Execute(double input)
@@ -108,7 +108,7 @@ public class MultiplyState : EntityCommandHandler<CalculatorState, double, doubl
 }
 
 // Stateful query handler implementation
-[RemotrGen]
+[UseShortcuts]
 public class GetPrimeFactorsState : EntityQueryHandler<CalculatorState, int, List<int>>
 {
     public override async Task<List<int>> Execute(int input)
@@ -124,7 +124,7 @@ public class GetPrimeFactorsState : EntityQueryHandler<CalculatorState, int, Lis
 To add new handler types:
 
 1. For HandlerAttributeIncrementalGenerator, implement a new handler generator and register it.
-2. For RemotrGenerator, extend the existing generator components or implement new ones.
+2. For UseShortcutserator, extend the existing generator components or implement new ones.
 3. For extension generators, implement the appropriate interface (IStatelessExtensionGenerator or IStatefulExtensionGenerator).
 
 ## Contributing

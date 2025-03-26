@@ -1,7 +1,7 @@
 
 namespace Remotr.Samples.Calculator;
 
-[RemotrGen]
+[UseShortcuts]
 public class GetPrimeFactorsState : EntityQueryHandler<CalculatorState, IEnumerable<double>>
 {
     public override async Task<IEnumerable<double>> Execute()

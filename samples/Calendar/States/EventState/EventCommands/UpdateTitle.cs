@@ -6,7 +6,7 @@
 
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class UpdateTitle : EntityCommandHandler<EventState, string, EventState>
 {
     public override async Task<EventState> Execute(string title)

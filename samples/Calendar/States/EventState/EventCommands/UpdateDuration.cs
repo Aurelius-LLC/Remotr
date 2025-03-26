@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class UpdateDuration : EntityCommandHandler<EventState, TimeOnly, EventState>
 {
     public override async Task<EventState> Execute(TimeOnly duration)

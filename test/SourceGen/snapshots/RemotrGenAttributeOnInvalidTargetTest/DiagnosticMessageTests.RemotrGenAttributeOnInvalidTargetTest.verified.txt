@@ -2,12 +2,12 @@
   Diagnostics: [
     {
       Id: REMOTR020,
-      Title: Invalid RemotrGen target,
+      Title: Invalid UseShortcuts target,
       Severity: Error,
       WarningLevel: 0,
       Location: : (8,0)-(15,1),
-      MessageFormat: The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
-      Message: The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
+      MessageFormat: The UseShortcuts attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
+      Message: The UseShortcuts attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler,
       Category: Remotr
     }
   ]

@@ -2,7 +2,7 @@
 
 namespace Remotr.Samples.Calculator;
 
-[RemotrGen]
+[UseShortcuts]
 public class GetValueState<T> : EntityQueryHandler<T, double> where T : IContainValue, new()
 {
     public override async Task<double> Execute()

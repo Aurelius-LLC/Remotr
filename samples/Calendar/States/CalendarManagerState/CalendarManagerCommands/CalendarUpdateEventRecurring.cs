@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class CalendarUpdateEventRecurring : EntityCommandHandler<CalendarManagerState, (Guid eventId, bool isRecurring), EventState>
 {
     public override async Task<EventState> Execute((Guid eventId, bool isRecurring) input)

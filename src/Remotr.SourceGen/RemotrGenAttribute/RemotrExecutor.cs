@@ -4,10 +4,10 @@ using Remotr.SourceGen.UseHandlerAttributes.ExtensionGenerators;
 using Remotr.StatefulExtensionGenerators;
 using Remotr.StatelessExtensionGenerators;
 
-namespace Remotr.SourceGen.RemotrGenAttribute;
+namespace Remotr.SourceGen.UseShortcutsAttribute;
 
 /// <summary>
-/// Executes the code generation for classes with the RemotrGen attribute.
+/// Executes the code generation for classes with the UseShortcuts attribute.
 /// </summary>
 public class RemotrExecutor
 {
@@ -15,8 +15,8 @@ public class RemotrExecutor
     private readonly ExtensionsGeneratorExecutor _statelessExtensionGenerator;
     private static readonly DiagnosticDescriptor InvalidTargetDiagnostic = new(
         id: "REMOTR020",
-        title: "Invalid RemotrGen target",
-        messageFormat: "The RemotrGen attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler",
+        title: "Invalid UseShortcuts target",
+        messageFormat: "The UseShortcuts attribute can only be applied to classes that extend RootQueryHandler, RootCommandHandler, EntityQueryHandler, or EntityCommandHandler",
         category: "Remotr",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -39,7 +39,7 @@ public class RemotrExecutor
     }
 
     /// <summary>
-    /// Executes the code generation for a class declaration with the RemotrGen attribute.
+    /// Executes the code generation for a class declaration with the UseShortcuts attribute.
     /// </summary>
     /// <param name="classDeclaration">The class declaration to process</param>
     /// <param name="isValid">Whether the class is a valid target for code generation</param>

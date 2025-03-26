@@ -1,16 +1,16 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Remotr.SourceGen.RemotrGenAttribute.Utils;
+using Remotr.SourceGen.UseShortcutsAttribute.Utils;
 
-namespace Remotr.SourceGen.RemotrGenAttribute;
+namespace Remotr.SourceGen.UseShortcutsAttribute;
 
 /// <summary>
 /// Source generator for Remotr that generates extension methods for various handler types.
-/// This generator processes classes marked with the RemotrGen attribute and generates
+/// This generator processes classes marked with the UseShortcuts attribute and generates
 /// appropriate extension methods based on the handler type.
 /// </summary>
 [Generator]
-public class RemotrGenerator : IIncrementalGenerator
+public class UseShortcutserator : IIncrementalGenerator
 {
     /// <summary>
     /// Initializes the generator and registers the necessary syntax providers and outputs.
@@ -22,7 +22,7 @@ public class RemotrGenerator : IIncrementalGenerator
         var attributeGenerator = new RemotrAttributeGenerator();
         attributeGenerator.RegisterAttributeSource(context);
 
-        // Get all class declarations with the RemotrGen attribute
+        // Get all class declarations with the UseShortcuts attribute
         IncrementalValuesProvider<(ClassDeclarationSyntax ClassDeclaration, bool IsValid)> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => SyntaxTargetIdentifier.IsSyntaxTargetForGeneration(s),

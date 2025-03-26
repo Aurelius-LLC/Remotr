@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class AddReminder : EntityCommandHandler<EventState, (TimeSpan timeSpan, ScheduledReminder reminder), EventState>
 {
     public override async Task<EventState> Execute((TimeSpan timeSpan, ScheduledReminder reminder) input)

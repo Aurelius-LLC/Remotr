@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class CalendarRescheduleEvent : EntityCommandHandler<CalendarManagerState, (Guid eventId, DateOnly newDate), EventState>
 {
     public override async Task<EventState> Execute((Guid eventId, DateOnly newDate) input)

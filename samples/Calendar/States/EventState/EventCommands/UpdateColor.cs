@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class UpdateColor : EntityCommandHandler<EventState, string, EventState>
 {
     public override async Task<EventState> Execute(string color)

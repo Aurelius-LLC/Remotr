@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calculator;
 
-[RemotrGen]
+[UseShortcuts]
 public class DivideState : EntityCommandHandler<CalculatorState, double, double>
 {
     public override async Task<double> Execute(double input)

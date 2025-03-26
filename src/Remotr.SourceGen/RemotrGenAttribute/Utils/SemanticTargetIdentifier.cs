@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Remotr.SourceGen.RemotrGenAttribute.Utils;
+namespace Remotr.SourceGen.UseShortcutsAttribute.Utils;
 
 /// <summary>
 /// Utility class for identifying semantic targets for code generation.
@@ -12,11 +12,11 @@ public static class SemanticTargetIdentifier
     /// Gets the semantic model target for code generation.
     /// </summary>
     /// <param name="context">The generator syntax context</param>
-    /// <returns>The class declaration if it has the RemotrGen attribute and is valid, null otherwise</returns>
+    /// <returns>The class declaration if it has the UseShortcuts attribute and is valid, null otherwise</returns>
     public static (ClassDeclarationSyntax? ClassDeclaration, bool IsValid) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
-        bool hasRemotrGenAttribute = false;
+        bool hasUseShortcutsAttribute = false;
 
         foreach (var attributeList in classDeclaration.AttributeLists)
         {
@@ -30,15 +30,15 @@ public static class SemanticTargetIdentifier
                 var attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 var fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                if (fullName == "Remotr.RemotrGenAttribute")
+                if (fullName == "Remotr.UseShortcutsAttribute")
                 {
-                    hasRemotrGenAttribute = true;
+                    hasUseShortcutsAttribute = true;
                     break;
                 }
             }
         }
 
-        if (!hasRemotrGenAttribute)
+        if (!hasUseShortcutsAttribute)
         {
             return (null, false);
         }

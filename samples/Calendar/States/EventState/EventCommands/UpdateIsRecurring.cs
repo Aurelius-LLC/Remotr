@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class UpdateIsRecurring : EntityCommandHandler<EventState, bool, EventState>
 {
     public override async Task<EventState> Execute(bool isRecurring)

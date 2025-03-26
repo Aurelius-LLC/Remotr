@@ -1,6 +1,6 @@
 namespace Remotr.Samples.Calendar;
 
-[RemotrGen]
+[UseShortcuts]
 public class CalendarRemoveEventReminder : EntityCommandHandler<CalendarManagerState, (Guid eventId, TimeSpan reminderTimeSpan), EventState>
 {
     public override async Task<EventState> Execute((Guid eventId, TimeSpan reminderTimeSpan) input)

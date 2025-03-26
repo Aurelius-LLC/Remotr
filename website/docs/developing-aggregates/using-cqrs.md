@@ -8,7 +8,7 @@ import ChainExample from '@site/static/img/chain_example.webp';
 
 ## Simple Usage
 
-**To interact with Aggregates** from non-aggregate code (like API controllers) without using the source generator:
+**To interact with Aggregates** from non-aggregate code (like API controllers) without using the [source generator](source-generation.md):
 
 - Queries are called like `.Ask<Query, InputType, OutputType>(input)`
 - Commands are called like `.Tell<Command, InputType, OutputType>(input)`
@@ -56,7 +56,7 @@ public class ApiCustomerController
 
 In Remotr, all commands against an aggregate have ACID properties; however, a unique property of Remotr is that commands and queries can be chained together.\
 \
-For example (using the source generator):
+For example *(using the source generator)*:
 
 <img src={ChainExample} />
 \

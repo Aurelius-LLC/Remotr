@@ -45,10 +45,10 @@ public static class Utils {
 
         // Create instances of our generators
         var handlerGenerator = new HandlerAttributeIncrementalGenerator();
-        var remotrGenerator = Generators.GetRemotrGenerator();
+        var UseShortcutserator = Generators.GetUseShortcutserator();
         
         // Create the driver that will run our generators
-        GeneratorDriver driver = CSharpGeneratorDriver.Create([handlerGenerator, remotrGenerator]);
+        GeneratorDriver driver = CSharpGeneratorDriver.Create([handlerGenerator, UseShortcutserator]);
         
         // Run the source generators
         driver = driver.RunGenerators(compilation);

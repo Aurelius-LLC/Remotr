@@ -68,29 +68,9 @@ Remotr provides a unique blend of safety and performance through its message pro
 
 ## CQRS-Powered Interleaving
 
-*"Interleaving"* within an actor is when an actor allows for multiple requests to be processed at once; however, actors still retain their single-threadedness.\
+*"Interleaving"* is when an actor allows for multiple requests to be processed at once; however, actors still retain their single-threadedness.\
 \
 Remotr implements a Command Query Responsibility Segregation (CQRS) pattern that allows commands and queries to operate with minimal interference:
 
 - **Interleaved Queries**: Because queries are guaranteed to never result in state changes, queries are always able to interleave with ongoing commands or other queries. 
 - **Transactional Isolation**: Commands are properly isolated using transaction metadata to maintain data consistency, meaning that queries will always view a consistent version of the Aggregate's state.
-
-## Deadlock Prevention
-
-Traditional actor systems often suffer from deadlocks when actors need to communicate with each other. Remotr's design prevents most deadlocks by organizing related entities into aggregates with clear boundaries and allowing for interleaving queries across different aggregates.
-
-## Simplified Development Model
-
-Remotr's concurrency model simplifies development by:
-
-- **Compositional State Management**: Build complex domain models through composition while maintaining concurrency safety
-- **Query/Command Separation**: Clean separation of read and write operations without requiring separate databases
-- **Single-threaded Execution**: Aggregate roots and entities never execute on more than one thread simultaneously, eliminating the need for locks.
-
-## Performance Benefits
-
-The concurrency model in Remotr provides several performance advantages:
-
-- **Improved Throughput**: Non-blocking queries allow the system to handle more requests concurrently
-- **Reduced Latency**: Queries don't wait for commands to complete before executing
-- **Scalability**: The architecture allows for horizontal scaling while maintaining consistency guarantees

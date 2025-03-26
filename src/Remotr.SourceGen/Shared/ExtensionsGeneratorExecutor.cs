@@ -112,7 +112,7 @@ public class ExtensionsGeneratorExecutor(List<IExtensionGenerator> extensionGene
         bool isCommandHandler,
         string interfaceType)
     {
-        // Generate extensions using RemotrGen generators
+        // Generate extensions using UseShortcuts generators
         var extensionsBuilder = new StringBuilder();
         extensionsBuilder.AppendLine();
         extensionsBuilder.AppendLine($"public static class {interfaceName}{alias}Extensions");

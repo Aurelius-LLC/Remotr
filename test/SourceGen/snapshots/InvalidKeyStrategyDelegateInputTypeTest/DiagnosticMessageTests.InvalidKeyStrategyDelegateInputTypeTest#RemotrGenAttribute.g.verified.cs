@@ -1,11 +1,11 @@
-﻿//HintName: RemotrGenAttribute.g.cs
+﻿//HintName: UseShortcutsAttribute.g.cs
 
 using System;
 namespace Remotr
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    internal sealed class RemotrGenAttribute : Attribute
+    internal sealed class UseShortcutsAttribute : Attribute
     {
-        public RemotrGenAttribute() { }
+        public UseShortcutsAttribute() { }
     }
 }
