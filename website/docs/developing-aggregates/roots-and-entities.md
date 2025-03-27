@@ -25,6 +25,7 @@ Aggregate Roots are [virtual actors](../features-and-advantages/simplified-concu
 
 - Always empty.
 - Defines how the Root is accessed.
+    - TODO: List different interfaces for different types of access
 
 ```csharp
 // Create your grain interface
@@ -111,6 +112,10 @@ public sealed record CustomerState
 
 All operations on Aggregates happen through Commands and Queries following the CQRS pattern.
 
+Read more here:\
+[Creating Queries](creating-queries.md)\
+[Creating Commands](creating-commands.md)
+
 ## Common Patterns
 
 ### Singleton Entity Pattern
@@ -146,7 +151,6 @@ TODO: Link to [Simplified Concurrency](../features-and-advantages/simplified-con
 1. **Keep Roots Empty**: Never add methods directly to Aggregate Roots
 2. **Entity Key Types**: Entity keys must always be strings
 3. **No Cross-Aggregate Commands**: Never execute commands across different aggregates
-4. **Handle Entity Dependencies**: When entities depend on each other, execute commands from the Aggregate Root
-5. **Size Matters**: Design aggregates to handle reasonably-sized groups of related entities
+4. **Size Matters**: Design aggregates to handle reasonably-sized groups of related entities
 
 For more information on how aggregates manage concurrency and message processing, see TODO: Link to [Aggregate Architecture](../features-and-advantages/simplified-concurrency.md#aggregate-architecture) and [Message Processing and Concurrency](../features-and-advantages/simplified-concurrency.md#message-processing-and-concurrency).

@@ -63,7 +63,7 @@ Remotr provides a unique blend of safety and performance through its message pro
   - Natural modeling of domain concepts as Roots and Entities
 
 - **Scalability**:
-  - Aggregates can be distributed across a cluster of servers
+  - Aggregates are automatically distributed across a cluster of servers
   - New servers can be added seamlessly
 
 ## CQRS-Powered Interleaving
@@ -73,4 +73,4 @@ Remotr provides a unique blend of safety and performance through its message pro
 Remotr implements a Command Query Responsibility Segregation (CQRS) pattern that allows commands and queries to operate with minimal interference:
 
 - **Interleaved Queries**: Because queries are guaranteed to never result in state changes, queries are always able to interleave with ongoing commands or other queries. 
-- **Transactional Isolation**: Commands are properly isolated using transaction metadata to maintain data consistency, meaning that queries will always view a consistent version of the Aggregate's state.
+- **Transactional Isolation**: Commands are properly isolated using transaction metadata to maintain data consistency, meaning that queries will always view a consistent version of the Aggregate's state even when interleaving with ongoing commands.

@@ -18,7 +18,7 @@ Remotr was created to simplify 3 common scenarios:</p>
    4. [Orleans Feature Differences](#Orleans-Feature-Differences)  
    5. [BAD PRACTICES](#BAD-PRACTICES)  
    6. [Patterns](#Patterns)
-   7. [Testing with Remotr](#Testing-with-Remotr)
+   7. [Testing Aggregates](#Testing-Aggregates)
    8. [Examples](#Examples)
 
 ## Quickstart
