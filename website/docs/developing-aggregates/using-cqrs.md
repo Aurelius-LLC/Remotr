@@ -61,3 +61,42 @@ For example *(using the source generator)*:
 <img src={ChainExample} />
 \
 Both the command and query factory can chain requests; however, the command factory has access to both queries *and* commands.
+
+
+## Advanced Chaining
+
+
+## Why "Run"?
+
+In [.Net Orleans](https://learn.microsoft.com/en-us/dotnet/orleans/overview), the framework that Remotr is built on, rather than calling `.Run(Id)` at the end of the request call, the "grains" are first fetched by reference, and then requests can be run against them. For example (roughly taken from [here](https://learn.microsoft.com/en-us/dotnet/orleans/grains/)):
+```csharp
+IPlayerGrain player = GrainFactory.GetGrain<IPlayerGrain>(playerId);
+await player.JoinGame(game);
+```
+\
+In Remotr, `.Run(Id)` occurs at the end of the chain of queries or commands, and this allows for storing a transactional chain in a local variable to reuse it for different roots or entities. It also allows for logically modifying the chain as needed.
+
+**For example:**
+```csharp
+var documentCreator = CommandFactory
+    .GetEntity<SharedDocumentState>()
+    .CreateDocument() // Initially create the document.
+    .SetPrivacyPolicy(documentsInput.ArePrivate); // Set the privacy policy.
+
+if (input.AreGroupDocuments) {
+    documentCreator = documentCreator
+        .MergeSplit( // This allows us to return the original type as required.
+            (b) => b.ForEach(
+                input.GroupMembers!.Value,
+                (b) => b.AddGroupMember()
+            ),
+            (b) => b, // Do nothing with this, it's just here to maintain the original type.
+            new TakeSecond(), // Take the second returned value
+        );
+}
+
+// Create the document for each passed request
+for (var id in documentsInput.docIds) {
+    await documentCreator.Run(id);
+}
+```

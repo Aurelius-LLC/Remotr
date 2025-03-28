@@ -23,7 +23,7 @@ public class SimpleStepWithInputAsyncWrapper<From, Input, To> : ExecutionStep<To
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<To> Run()
+    public override async ValueTask<To> ExecuteStep()
     {
         if (PreviousStep != null)
         {

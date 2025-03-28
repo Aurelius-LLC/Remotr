@@ -8,10 +8,12 @@ public class MapStepWrapper<Mapper, Input, Output> : ExecutionStepWithInput<Inpu
 
     public override void PassCqCreator(ICqCreator creator)
     {
-        mapper = creator.InstantiateMapper<Mapper>();
+        if (mapper == null) {
+            mapper = creator.InstantiateMapper<Mapper>();
+        }
     }
 
-    public override Output Run(Input input)
+    public override Output ExecuteStep(Input input)
     {
         return mapper!.Execute(input);
     }
@@ -23,7 +25,7 @@ public class MapStepWrapper<Input, Output> : ExecutionStepWithInput<Input, Outpu
     [Id(0)]
     public IMapInput<Input, Output> Mapper { get; init; } = default!;
 
-    public override Output Run(Input input)
+    public override Output ExecuteStep(Input input)
     {
         return Mapper.Execute(input);
     }

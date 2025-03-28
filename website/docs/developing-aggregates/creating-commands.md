@@ -33,16 +33,10 @@ public sealed record CustomerInfo
     public string LastName { get; init; } = string.Empty;
     public string PhoneNumber { get; init; } = string.Empty;
     public string Address { get; init; } = string.Empty;
-    
-    public static CustomerInfo NotFound => new() 
-    { 
-        FirstName = "Not", 
-        LastName = "Found" 
-    };
 }
 ```
 
-## Example Commands
+## Types of Commands
 
 Remotr command handlers can work with or without input parameters and can produce an output or not.\
 \
@@ -57,7 +51,7 @@ import TabItem from '@theme/TabItem';
 
 <Tabs>
   <TabItem value="root-command-no-io" label="RootCommandHandler" default>
-
+*The below example includes a transactional chain of queries and commands which is discussed extensively in [Using Commands and Queries](using-cqrs.md#transactional-chaining).*
 ```csharp
 [UseShortcuts]
 public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
@@ -74,8 +68,8 @@ public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
         _logger.LogInformation("Resetting all customers for root {RootId}", GetRootKeyString());
         
         // Get a list of customers to reset
-        var customerIds = await QueryFactory
-            .GetAggregate<ICustomerRoot>()
+        var customerIds = await CommandFactory
+            .GetEntity<CustomersListState>()
             .GetAllCustomerIds() // Getting all the customer IDs
             .ThenForEach( // Take the list of customer IDs and do something with each value.
                 (b) => b.ThenResetCustomer() // Resetting the customer for each ID found.

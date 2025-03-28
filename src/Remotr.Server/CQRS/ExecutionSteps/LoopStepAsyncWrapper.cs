@@ -11,7 +11,7 @@ public class LoopStepAsyncWrapper<From, To> : ExecutionStepWithInputAsync<IEnume
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<IEnumerable<To>> Run(IEnumerable<From> input)
+    public override async ValueTask<IEnumerable<To>> ExecuteStep(IEnumerable<From> input)
     {
         List<To> transforms = new();
         foreach (var i in input)

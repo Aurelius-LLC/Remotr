@@ -55,12 +55,6 @@ public sealed record CustomerInfo
     public string LastName { get; init; } = string.Empty;
     public string PhoneNumber { get; init; } = string.Empty;
     public string Address { get; init; } = string.Empty;
-    
-    public static CustomerInfo NotFound => new() 
-    { 
-        FirstName = "Not", 
-        LastName = "Found" 
-    };
 }
 ```
 
@@ -141,7 +135,7 @@ public class GetCustomerDetails : EntityQueryHandler<CustomerState, CustomerInfo
         if (state == null || string.IsNullOrEmpty(state.FirstName))
         {
             _logger.LogWarning("No customer found with ID: {CustomerId}", EntityId);
-            return CustomerInfo.NotFound;
+            throw new Exception("Customer not found");
         }
         
         return new CustomerInfo

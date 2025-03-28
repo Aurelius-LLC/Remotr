@@ -13,7 +13,7 @@ public class FilterStepWrapper<Mapper, Input, Output> : ExecutionStepWithInput<I
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<Output> Run(Input input)
+    public override IEnumerable<Output> ExecuteStep(Input input)
     {
         List<Output> items = new();
         foreach (var i in input)
@@ -39,7 +39,7 @@ public class FilterStepWrapper<Input, Output> : ExecutionStepWithInput<Input, IE
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<Output> Run(Input input)
+    public override IEnumerable<Output> ExecuteStep(Input input)
     {
         List<Output> items = new();
         foreach (var i in input)

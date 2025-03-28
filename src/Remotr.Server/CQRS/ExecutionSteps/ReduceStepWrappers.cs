@@ -8,10 +8,12 @@ public class ReduceStepWrapper<Reducer, IO> : ExecutionStepWithInput<IEnumerable
 
     public override void PassCqCreator(ICqCreator creator)
     {
-        reducer = creator.InstantiateReducer<Reducer>();
+        if (reducer == null) {
+            reducer = creator.InstantiateReducer<Reducer>();
+        }
     }
 
-    public override IO Run(IEnumerable<IO> input)
+    public override IO ExecuteStep(IEnumerable<IO> input)
     {
 
         IO? curr = default;
@@ -38,7 +40,7 @@ public class ReduceStepWrapper<IO> : ExecutionStepWithInput<IEnumerable<IO>, IO>
 
     public override void PassCqCreator(ICqCreator creator) { }
 
-    public override IO Run(IEnumerable<IO> input)
+    public override IO ExecuteStep(IEnumerable<IO> input)
     {
 
         IO? curr = default;

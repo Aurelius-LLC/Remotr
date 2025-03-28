@@ -9,10 +9,12 @@ public class AsyncQueryWrapper<IGrainType, Query, Output> : ExecutionStep<Output
 
     public override void PassCqCreator(ICqCreator creator)
     {
-        query = creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Output>>();
+        if (query == null) {
+            query = creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Output>>();
+        }
     }
 
-    public override async ValueTask<Output> Run()
+    public override async ValueTask<Output> ExecuteStep()
     {
         return await query!.Execute();
     }
@@ -30,7 +32,7 @@ public class AsyncQueryWrapper<IGrainType, Query, Input, Output> : ExecutionStep
         query = creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Input, Output>>();
     }
 
-    public override async ValueTask<Output> Run(Input input)
+    public override async ValueTask<Output> ExecuteStep(Input input)
     {
         return await query!.Execute(input);
     }

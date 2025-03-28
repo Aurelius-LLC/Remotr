@@ -12,7 +12,7 @@ public class AsyncCommandWrapper<IGrainType, Command> : ExecutionStep<object>
         command = creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType>>();
     }
 
-    public override async ValueTask<object> Run()
+    public override async ValueTask<object> ExecuteStep()
     {
         await command!.Execute();
         return new object();
@@ -29,10 +29,10 @@ public class AsyncCommandWrapper<IGrainType, Command, Output> : ExecutionStep<Ou
 
     public override void PassCqCreator(ICqCreator creator)
     {
-        command = creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType, Output>>();
+        command ??= creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType, Output>>();
     }
 
-    public override async ValueTask<Output> Run()
+    public override async ValueTask<Output> ExecuteStep()
     {
         return await command!.Execute();
     }
@@ -52,7 +52,7 @@ public class AsyncCommandWrapper<IGrainType, Command, Input, Output> : Execution
         command = creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType, Input, Output>>();
     }
 
-    public override async ValueTask<Output> Run(Input input)
+    public override async ValueTask<Output> ExecuteStep(Input input)
     {
         return await command!.Execute(input);
     }

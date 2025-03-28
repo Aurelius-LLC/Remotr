@@ -11,7 +11,7 @@ public class LoopStepWrapper<From, To> : ExecutionStepWithInput<IEnumerable<From
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<To> Run(IEnumerable<From> input)
+    public override IEnumerable<To> ExecuteStep(IEnumerable<From> input)
     {
         List<To> transforms = new();
         foreach (var i in input)

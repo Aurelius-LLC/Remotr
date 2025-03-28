@@ -41,20 +41,21 @@ Remotr provides a unique blend of safety and performance through its message pro
    - This ensures consistent processing of operations that affect multiple entities
 
 2. **Entity-Level Parallelism**:
-   - Each Entity is its own virtual actor with an independent message queue
+   - Each Entity is its own *virtual actor with an independent message queue
    - Entities can process messages concurrently with other entities in the same aggregate
-   - Single-threaded processing and request isolation per entity preserves state consistency as entities can't "share" state.
+   - Single-threaded processing and request isolation per entity preserves state consistency as entities can't "share" state.\
+   \
+      \* Entities have all the properties of virtual actors, except that they are guaranteed to be co-located with their aggregate root.
 
 3. **Location Agnosticism**:
    - Developers work with Aggregate Roots and Entities through their logical identities
-   - The runtime automatically handles placement and routing of requests
-   - Aggregates are automatically placed within the distributed environment
+   - The .Net Orleans runtime automatically handles distributing aggregates and routing of requests
 
 ### Key Benefits
 
 - **Safe Concurrency by Design**: 
   - Entity state is protected by single-threaded processing
-  - Aggregate-level consistency is guaranteed by the Root's message queue
+  - Aggregate-level consistency is guaranteed by the Root's message queue for commands
   - Multi-threading within aggregates happens automatically where safe
 
 - **Simplified Development**:
@@ -73,4 +74,4 @@ Remotr provides a unique blend of safety and performance through its message pro
 Remotr implements a Command Query Responsibility Segregation (CQRS) pattern that allows commands and queries to operate with minimal interference:
 
 - **Interleaved Queries**: Because queries are guaranteed to never result in state changes, queries are always able to interleave with ongoing commands or other queries. 
-- **Transactional Isolation**: Commands are properly isolated using transaction metadata to maintain data consistency, meaning that queries will always view a consistent version of the Aggregate's state even when interleaving with ongoing commands.
+- **Transactional Isolation**: Commands are properly isolated using transaction metadata coupled with deep copies of entity state to maintain data consistency, meaning that queries will always view a consistent version of the Aggregate's state even when interleaving with ongoing commands.

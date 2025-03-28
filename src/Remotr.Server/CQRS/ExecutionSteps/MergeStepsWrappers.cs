@@ -20,7 +20,7 @@ public class MergeStepsWrapper<Input1, Input2, Output> : ExecutionStep<Output>
     }
 
 
-    public override async ValueTask<Output> Run()
+    public override async ValueTask<Output> ExecuteStep()
     {
         var result1 = await Step1.Run();
         var result2 = await Step2.Run();
@@ -45,11 +45,13 @@ public class MergeStepsWrapper<Merger, Input1, Input2, Output> : ExecutionStep<O
     {
         Step1.PassCqCreator(creator);
         Step2.PassCqCreator(creator);
-        merger = creator.InstantiateMerger<Merger>();
+        if (merger == null) {
+            merger = creator.InstantiateMerger<Merger>();
+        }
     }
 
 
-    public override async ValueTask<Output> Run()
+    public override async ValueTask<Output> ExecuteStep()
     {
         var result1 = await Step1.Run();
         var result2 = await Step2.Run();
