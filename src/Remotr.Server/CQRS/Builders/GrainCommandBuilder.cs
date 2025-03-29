@@ -211,6 +211,11 @@ public class GrainCommandBuilder<T, C, Q, K> : IGrainCommandBuilder<T, C, Q, K> 
         {
             await _ranWith(entityGrain);
         }
-        return await entityGrain.Execute(_builder.ExecutionStep, interleave);
+        if (interleave) {
+            return await entityGrain.ExecuteInterleaving(_builder.ExecutionStep);
+        }
+        else {
+            return await entityGrain.ExecuteNotInterleaving(_builder.ExecutionStep);
+        }
     }
 }

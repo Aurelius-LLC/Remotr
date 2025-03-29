@@ -1,7 +1,9 @@
+using Orleans.Concurrency;
 using Orleans.Runtime;
 
 namespace Remotr;
 
+[StatelessWorker(1)]
 public abstract class IsolatedTransactionalGrain : Grain, IIncomingGrainCallFilter, IOutgoingGrainCallFilter, IGetAggregateRoot
 {
     protected abstract TransactionMetadata? GetTransactionMetadata();

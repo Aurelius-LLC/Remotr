@@ -7,7 +7,6 @@ using Remotr.Testing;
 
 namespace Remotr;
 
-[MayInterleave(nameof(ArgHasInterleaveAttribute))]
 public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateEntity<T> where T : new()
 {
 
@@ -54,16 +53,6 @@ public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateE
             NotifyManagerOfTransactionParticipation,
             GetTransactionMetadata
         );
-    }
-
-
-    public static bool ArgHasInterleaveAttribute(IInvokable req)
-    {
-        if (req.GetMethodName() == "Execute<TOutput>" && (bool)req.GetArgument(1)! == true)
-        {
-            return true;
-        }
-        return false;
     }
 
     /// <summary>
@@ -166,8 +155,20 @@ public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateE
     }
 
 
-    public async Task<TOutput> Execute<TOutput>(ExecutionStep<TOutput> execution, bool interleave)
+    public async Task<TOutput> ExecuteInterleaving<TOutput>(ExecutionStep<TOutput> execution)
     {
+        return await Execute(execution);
+    }
+
+
+    public async Task<TOutput> ExecuteNotInterleaving<TOutput>(ExecutionStep<TOutput> execution)
+    {
+        return await Execute(execution);
+    }
+
+    private async Task<TOutput> Execute<TOutput>(ExecutionStep<TOutput> execution)
+    {
+
         var testIdObj = RequestContext.Get("remotrTestId");
         if (testIdObj != null)
         {

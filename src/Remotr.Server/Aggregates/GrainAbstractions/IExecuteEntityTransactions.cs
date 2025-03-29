@@ -1,7 +1,12 @@
 ﻿
+using Orleans.Concurrency;
+
 namespace Remotr;
 
 public interface IExecuteEntityTransactions : IGrain
 {
-    Task<TOutput> Execute<TOutput>(ExecutionStep<TOutput> execution, bool interleave);
+    [AlwaysInterleave]
+    Task<TOutput> ExecuteInterleaving<TOutput>(ExecutionStep<TOutput> execution);
+    
+    Task<TOutput> ExecuteNotInterleaving<TOutput>(ExecutionStep<TOutput> execution);
 }

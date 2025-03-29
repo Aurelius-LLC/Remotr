@@ -186,6 +186,11 @@ public class GrainQueryBuilder<T, Q, K> : IGrainQueryBuilder<T, Q, K> where T : 
         {
             await _ranWith(entityGrain);
         }
-        return await entityGrain.Execute(_builder.ExecutionStep, interleave);
+        if (interleave) {
+            return await entityGrain.ExecuteInterleaving(_builder.ExecutionStep);
+        }
+        else {
+            return await entityGrain.ExecuteNotInterleaving(_builder.ExecutionStep);
+        }
     }
 }

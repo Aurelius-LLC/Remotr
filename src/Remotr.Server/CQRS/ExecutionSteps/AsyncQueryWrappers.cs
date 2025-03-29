@@ -9,9 +9,7 @@ public class AsyncQueryWrapper<IGrainType, Query, Output> : ExecutionStep<Output
 
     public override void PassCqCreator(ICqCreator creator)
     {
-        if (query == null) {
-            query = creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Output>>();
-        }
+        query ??= creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Output>>();
     }
 
     public override async ValueTask<Output> ExecuteStep()
