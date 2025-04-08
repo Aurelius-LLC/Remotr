@@ -23,13 +23,14 @@ public class SimpleStepWithInputAsyncWrapper<From, Input, To> : ExecutionStep<To
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<To> ExecuteStep()
+    public override async ValueTask<To> ExecuteStep(bool useCache)
     {
         if (PreviousStep != null)
         {
-            await PreviousStep.Run();
+            await PreviousStep.Run(useCache);
         }
-        return await CurrentStep.Run(StepInput);
+        var result = await CurrentStep.Run(StepInput, useCache);
+        return result;
     }
 }
 #pragma warning restore ORLEANS0010 // Add missing [Alias]

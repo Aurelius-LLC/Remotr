@@ -15,9 +15,9 @@ public class PropBridgeStepWrapper<From, To> : ExecutionStepWithInputAsync<From,
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<To> ExecuteStep(From input)
+    public override async ValueTask<To> ExecuteStep(From input, bool useCache)
     {
         BridgeStep.Value = input;
-        return await CurrentStep.Run();
+        return await CurrentStep.Run(useCache);
     }
 }

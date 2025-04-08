@@ -13,7 +13,7 @@ public class ReduceStepWrapper<Reducer, IO> : ExecutionStepWithInput<IEnumerable
         }
     }
 
-    public override IO ExecuteStep(IEnumerable<IO> input)
+    public override IO ExecuteStep(IEnumerable<IO> input, bool useCache)
     {
 
         IO? curr = default;
@@ -40,7 +40,7 @@ public class ReduceStepWrapper<IO> : ExecutionStepWithInput<IEnumerable<IO>, IO>
 
     public override void PassCqCreator(ICqCreator creator) { }
 
-    public override IO ExecuteStep(IEnumerable<IO> input)
+    public override IO ExecuteStep(IEnumerable<IO> input, bool useCache)
     {
 
         IO? curr = default;

@@ -10,6 +10,7 @@ public class AddState : EntityCommandHandler<CalculatorState, double, double>
                 Value = (await GetState()).Value + input 
             }
         );
-        return (await GetState()).Value;
+        var value = (await GetState()).Value;
+        return value;
     }
 }

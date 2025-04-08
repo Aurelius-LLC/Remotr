@@ -12,7 +12,7 @@ public class AsyncCommandWrapper<IGrainType, Command> : ExecutionStep<object>
         command = creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType>>();
     }
 
-    public override async ValueTask<object> ExecuteStep()
+    public override async ValueTask<object> ExecuteStep(bool useCache = true)
     {
         await command!.Execute();
         return new object();
@@ -32,7 +32,7 @@ public class AsyncCommandWrapper<IGrainType, Command, Output> : ExecutionStep<Ou
         command ??= creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType, Output>>();
     }
 
-    public override async ValueTask<Output> ExecuteStep()
+    public override async ValueTask<Output> ExecuteStep(bool useCache = true)
     {
         return await command!.Execute();
     }
@@ -52,7 +52,7 @@ public class AsyncCommandWrapper<IGrainType, Command, Input, Output> : Execution
         command = creator.InstantiateCommand<Command, IAsyncCommandHandler<IGrainType, Input, Output>>();
     }
 
-    public override async ValueTask<Output> ExecuteStep(Input input)
+    public override async ValueTask<Output> ExecuteStep(Input input, bool useCache = true)
     {
         return await command!.Execute(input);
     }

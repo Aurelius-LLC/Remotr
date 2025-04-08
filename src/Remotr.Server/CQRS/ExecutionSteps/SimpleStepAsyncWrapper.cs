@@ -19,12 +19,12 @@ public class SimpleStepAsyncWrapper<From, To> : ExecutionStep<To>
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<To> ExecuteStep()
+    public override async ValueTask<To> ExecuteStep(bool useCache)
     {
         if (PreviousStep != null)
         {
-            await PreviousStep.Run();
+            await PreviousStep.Run(useCache);
         }
-        return await CurrentStep.Run();
+        return await CurrentStep.Run(useCache);
     }
 }

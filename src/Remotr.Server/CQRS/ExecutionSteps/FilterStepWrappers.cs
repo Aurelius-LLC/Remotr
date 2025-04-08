@@ -13,12 +13,13 @@ public class FilterStepWrapper<Mapper, Input, Output> : ExecutionStepWithInput<I
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<Output> ExecuteStep(Input input)
+    public override IEnumerable<Output> ExecuteStep(Input input, bool useCache = true)
     {
         List<Output> items = new();
         foreach (var i in input)
         {
-            if (CurrentStep.Run(i))
+            // Ignore useCache value, as this should set a precedent to not use the cache.
+            if (CurrentStep.Run(i, false))
             {
                 items.Add(i);
             }
@@ -39,12 +40,13 @@ public class FilterStepWrapper<Input, Output> : ExecutionStepWithInput<Input, IE
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<Output> ExecuteStep(Input input)
+    public override IEnumerable<Output> ExecuteStep(Input input, bool useCache = true)
     {
         List<Output> items = new();
         foreach (var i in input)
         {
-            if (CurrentStep.Run(i))
+            // Ignore useCache value, as this should set a precedent to not use the cache.
+            if (CurrentStep.Run(i, false))
             {
                 items.Add(i);
             }

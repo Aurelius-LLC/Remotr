@@ -12,7 +12,7 @@ public class AsyncQueryWrapper<IGrainType, Query, Output> : ExecutionStep<Output
         query ??= creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Output>>();
     }
 
-    public override async ValueTask<Output> ExecuteStep()
+    public override async ValueTask<Output> ExecuteStep(bool useCache = true)
     {
         return await query!.Execute();
     }
@@ -30,7 +30,7 @@ public class AsyncQueryWrapper<IGrainType, Query, Input, Output> : ExecutionStep
         query = creator.InstantiateQuery<Query, IAsyncQueryHandler<IGrainType, Input, Output>>();
     }
 
-    public override async ValueTask<Output> ExecuteStep(Input input)
+    public override async ValueTask<Output> ExecuteStep(Input input, bool useCache = true)
     {
         return await query!.Execute(input);
     }

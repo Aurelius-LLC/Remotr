@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{63B095CE-2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGenTests", "test\SourceGen\SourceGenTests.csproj", "{670FAD2A-0E83-4729-AE62-3336F61752CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotrTests", "test\RemotrTests\RemotrTests.csproj", "{A252AFEA-8D16-4561-83A4-9CC88E909298}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{670FAD2A-0E83-4729-AE62-3336F61752CC} = {63B095CE-2E7F-427F-8F13-7D8348E7C1E6}
+		{A252AFEA-8D16-4561-83A4-9CC88E909298} = {63B095CE-2E7F-427F-8F13-7D8348E7C1E6}
 	EndGlobalSection
 EndGlobal

@@ -16,6 +16,9 @@ internal sealed class TransactionStateCache
 
     private JsonSerializerOptions _jsonSerializerOptions;
 
+    // Track the current fetch operation and its timestamp
+    private Task<object>? _currentFetchTask;
+
     public TransactionStateCache(JsonSerializerOptions jsonSerializerOptions, Func<ITransactionalStateFetcher> getFetcherFunc, IServiceProvider serviceProvider)
     {
         _jsonSerializerOptions = jsonSerializerOptions;
@@ -69,15 +72,36 @@ internal sealed class TransactionStateCache
             return cachedItem!.CachedItemForRead!;
         }
 
-        // Get item and cache it.
-        var item = await GetFetcherFunc().GetState<T>(itemId);
-        ItemCache[itemId] = new()
+        // Check if there's already a fetch in progress for this timestamp
+        if (_currentFetchTask != null)
         {
-            CachedItemForRead = item,
-        };
+            // Wait for the existing fetch to complete
+            await _currentFetchTask;
+            // The result should now be in the cache
+            return ItemCache[itemId].CachedItemForRead!;
+        }
 
-        // Always copy and then return the state to keep it safe from modifications.
-        return _deepCopier.Copy(item);
+        // Start a new fetch operation
+        var fetchTask = GetFetcherFunc().GetState<T>(itemId);
+        _currentFetchTask = fetchTask.ContinueWith(t => (object)t.Result);
+
+        try
+        {
+            // Get item and cache it
+            var item = await fetchTask;
+            ItemCache[itemId] = new()
+            {
+                CachedItemForRead = item,
+            };
+
+            // Always copy and then return the state to keep it safe from modifications.
+            return _deepCopier.Copy(item);
+        }
+        finally
+        {
+            // Clear the fetch task reference once complete
+            _currentFetchTask = null;
+        }
     }
 
     public async ValueTask<T> GetState<T>(string itemId, Guid transactionId) where T : new()

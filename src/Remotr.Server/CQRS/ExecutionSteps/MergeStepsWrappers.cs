@@ -20,10 +20,10 @@ public class MergeStepsWrapper<Input1, Input2, Output> : ExecutionStep<Output>
     }
 
 
-    public override async ValueTask<Output> ExecuteStep()
+    public override async ValueTask<Output> ExecuteStep(bool useCache = true)
     {
-        var result1 = await Step1.Run();
-        var result2 = await Step2.Run();
+        var result1 = await Step1.Run(useCache);
+        var result2 = await Step2.Run(useCache);
         return Merger.Execute(result1, result2);
     }
 }
@@ -51,10 +51,10 @@ public class MergeStepsWrapper<Merger, Input1, Input2, Output> : ExecutionStep<O
     }
 
 
-    public override async ValueTask<Output> ExecuteStep()
+    public override async ValueTask<Output> ExecuteStep(bool useCache)
     {
-        var result1 = await Step1.Run();
-        var result2 = await Step2.Run();
+        var result1 = await Step1.Run(useCache);
+        var result2 = await Step2.Run(useCache);
         return merger!.Execute(result1, result2);
     }
 }

@@ -11,6 +11,7 @@ public class MultiplyState : EntityCommandHandler<CalculatorState, double, doubl
                 Value = (await GetState()).Value * input 
             }
         );
-        return (await GetState()).Value;
+        var value = (await GetState()).Value;
+        return value;
     }
 }

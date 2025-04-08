@@ -13,7 +13,7 @@ public class MapStepWrapper<Mapper, Input, Output> : ExecutionStepWithInput<Inpu
         }
     }
 
-    public override Output ExecuteStep(Input input)
+    public override Output ExecuteStep(Input input, bool useCache = true)
     {
         return mapper!.Execute(input);
     }
@@ -25,7 +25,7 @@ public class MapStepWrapper<Input, Output> : ExecutionStepWithInput<Input, Outpu
     [Id(0)]
     public IMapInput<Input, Output> Mapper { get; init; } = default!;
 
-    public override Output ExecuteStep(Input input)
+    public override Output ExecuteStep(Input input, bool useCache = true)
     {
         return Mapper.Execute(input);
     }

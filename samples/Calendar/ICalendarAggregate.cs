@@ -15,6 +15,7 @@ namespace Remotr.Samples.Calendar;
 [UseCommand(typeof(CalendarUpdateEventRecurring), "UpdateEventRecurring", fixedKey: CalendarManagerKey)]
 [UseCommand(typeof(CalendarUpdateEventTime), "UpdateEventTime", fixedKey: CalendarManagerKey)]
 [UseCommand(typeof(CalendarUpdateEventTitle), "UpdateEventTitle", fixedKey: CalendarManagerKey)]
+[UseCommand(typeof(CalendarFailCommand), "Fail", fixedKey: CalendarManagerKey)]
 [UseQuery(typeof(CalendarGetEventsOnDay), "GetDaysEvents", fixedKey: CalendarManagerKey)]
 [UseQuery(typeof(CalendarGetEvent), "GetEvent", fixedKey: CalendarManagerKey)]
 public interface ICalendarAggregate : IAggregateRoot, IGrainWithStringKey

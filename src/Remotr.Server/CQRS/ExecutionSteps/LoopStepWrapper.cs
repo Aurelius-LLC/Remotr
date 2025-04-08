@@ -11,12 +11,13 @@ public class LoopStepWrapper<From, To> : ExecutionStepWithInput<IEnumerable<From
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override IEnumerable<To> ExecuteStep(IEnumerable<From> input)
+    public override IEnumerable<To> ExecuteStep(IEnumerable<From> input, bool useCache = true)
     {
         List<To> transforms = new();
         foreach (var i in input)
         {
-            transforms.Add(CurrentStep.Run(i));
+            // Ignore useCache value, as this should set a precedent to not use the cache.
+            transforms.Add(CurrentStep.Run(i, false));
         }
         return transforms;
     }

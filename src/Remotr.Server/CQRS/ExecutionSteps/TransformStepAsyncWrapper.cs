@@ -16,9 +16,9 @@ public class TransformStepAsyncWrapper<From, To> : ExecutionStep<To>
         CurrentStep.PassCqCreator(creator);
     }
 
-    public override async ValueTask<To> ExecuteStep()
+    public override async ValueTask<To> ExecuteStep(bool useCache)
     {
-        var input = await PreviousStep.Run();
-        return await CurrentStep.Run(input);
+        var input = await PreviousStep.Run(useCache);
+        return await CurrentStep.Run(input, useCache);
     }
 }

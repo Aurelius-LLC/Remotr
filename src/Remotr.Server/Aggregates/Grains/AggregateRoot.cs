@@ -241,7 +241,7 @@ public abstract class AggregateRoot<T> : Grain, IAggregateRoot, IIncomingGrainCa
             _managerCqCreator.mockContainer = ServiceProvider.GetRequiredService<ICqMockContainerFactory>()
                     .GetContainer(testId);
 
-            // Ensuring this manager grain is only being used by a single test.
+            // Ensuring this aggregate root grain is only being used by a single test.
             await GrainFactory.GetGrain<ITestManagerIsolatorGrain>(
                 this.GetGrainId().ToString()
             ).EnsureTestIsolation(testId);
