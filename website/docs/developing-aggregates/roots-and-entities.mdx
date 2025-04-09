@@ -121,7 +121,24 @@ Read more here:\
 ### Singleton Entity Pattern
 
 When an Aggregate needs only one instance of a particular Entity:
-
+<ToggledGenerationExample>
+<WithGeneration>
+```csharp
+[UseShortcuts]
+public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggregate, UpdateCustomerInfoInput, bool>
+{
+    public override async Task<bool> Execute(UpdateCustomerInfoInput input)
+    {
+        var customerId = this.GetAggregateId();
+        return await CommandFactory
+            .GetEntity<CustomerState>()
+            .UpdateCustomerInfo(input)
+            .Run("Customer"); // "Customer" is the singleton Entity ID
+    }
+}
+```
+</WithGeneration>
+<WithoutGeneration>
 ```csharp
 public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggregate, UpdateCustomerInfoInput, bool>
 {
@@ -135,6 +152,8 @@ public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggr
     }
 }
 ```
+</WithoutGeneration>
+</ToggledGenerationExample>
 
 ## Concurrency Model
 

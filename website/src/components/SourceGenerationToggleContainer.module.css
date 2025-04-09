@@ -1,0 +1,23 @@
+.container {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  margin-bottom: 0.5rem;
+}
+
+.container>span {
+  font-weight: bold;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+} 

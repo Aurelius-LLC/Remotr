@@ -31,6 +31,11 @@ const config: Config = {
     locales: ['en'],
   },
 
+  // Load client modules
+  clientModules: [
+    './src/client-modules/source-generation-toggle.ts',
+  ],
+
   presets: [
     [
       'classic',

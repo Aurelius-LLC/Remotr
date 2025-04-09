@@ -44,14 +44,12 @@ These examples all use the [source generator](source-generation.md) which allows
 \
 There are three basic patterns available:
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 ### Commands with No Input and No Output
 
 <Tabs>
   <TabItem value="root-command-no-io" label="RootCommandHandler" default>
 *The below example includes a transactional chain of queries and commands which is discussed extensively in [Using Commands and Queries](using-cqrs.md#transactional-chaining).*
+        <div class="sampleWithGeneration">
 ```csharp
 [UseShortcuts]
 public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
@@ -78,6 +76,7 @@ public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
     }
 }
 ```
+        </div>
 
   </TabItem>
   <TabItem value="entity-command-no-io" label="EntityCommandHandler">

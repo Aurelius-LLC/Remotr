@@ -62,9 +62,6 @@ public sealed record CustomerInfo
 
 Remotr query handlers can work with or without input parameters. You can create simple query handlers that don't require input, or more complex ones that take parameters to filter or process the data, or to even make decisions as to what other queries to call.
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 <Tabs>
   <TabItem value="root-query" label="RootQueryHandler" default>
 

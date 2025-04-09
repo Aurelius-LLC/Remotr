@@ -1,11 +1,8 @@
-using System.Collections.Immutable;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using Remotr;
 using Remotr.Testing;
 using Remotr.Samples.Calculator;
-using Remotr.Samples.Calendar;
 
 namespace RemotrTests.Tests;
 
