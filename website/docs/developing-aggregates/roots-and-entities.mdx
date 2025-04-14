@@ -140,6 +140,7 @@ public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggr
 </WithGeneration>
 <WithoutGeneration>
 ```csharp
+
 public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggregate, UpdateCustomerInfoInput, bool>
 {
     public override async Task<bool> Execute(UpdateCustomerInfoInput input)

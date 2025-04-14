@@ -102,7 +102,7 @@ public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateE
         AlivenessKey = Guid.NewGuid();
     }
 
-    protected async Task DeferredTransactionCallback(Func<Task> callback)
+    private async Task DeferredTransactionCallback(Func<Task> callback)
     {
         var callbackId = Guid.NewGuid();
         _deferredTransactionCallbacks.Add(callbackId, callback);
@@ -137,14 +137,7 @@ public sealed class AggregateEntity<T> : IsolatedTransactionalGrain, IAggregateE
         });
     }
 
-
-    protected async Task ClearState()
-    {
-        _stateCache.ClearState(ComponentId.ItemId, ParticipatingTransactionId, ParticipatingTransactionTimestamp);
-        await NotifyManagerOfTransactionParticipation();
-    }
-
-    protected async ValueTask NotifyManagerOfTransactionParticipation()
+    private async ValueTask NotifyManagerOfTransactionParticipation()
     {
         // Notify manager grain of transaction participation if not already done.
         if (!notifiedManagerOfChanges)

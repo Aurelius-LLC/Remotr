@@ -23,4 +23,9 @@ public abstract class BaseEntityCommandHandler<TState> : BaseEntityQueryHandler<
     {
         return Updater.UpdateState(newState);
     }
+    
+    public ValueTask ClearState()
+    {
+        return Updater.ClearState();
+    }
 }

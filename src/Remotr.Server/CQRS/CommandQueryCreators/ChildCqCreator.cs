@@ -89,6 +89,18 @@ internal class ChildCqCreator<T> : ICqCreator, ICanReadState<T>, ICanUpdateState
         await _notifyManagerOfTransactionParticipation();
     }
 
+    public async ValueTask ClearState()
+    {
+        if (RequestContext.Get("readOnly") is bool readOnly && readOnly)
+        {
+            throw new InvalidOperationException("Cannot clear state in read-only context.");
+        }
+
+        _stateCache.ClearState(_componentId.ItemId, ParticipatingTransactionId, ParticipatingTransactionTimestamp);
+        
+        await _notifyManagerOfTransactionParticipation();
+    }
+
 
 
     public TRequired InstantiateQuery<TActual, TRequired>()

@@ -49,7 +49,9 @@ There are three basic patterns available:
 <Tabs>
   <TabItem value="root-command-no-io" label="RootCommandHandler" default>
 *The below example includes a transactional chain of queries and commands which is discussed extensively in [Using Commands and Queries](using-cqrs.md#transactional-chaining).*
-        <div class="sampleWithGeneration">
+
+<ToggledGenerationExample>
+<WithGeneration>
 ```csharp
 [UseShortcuts]
 public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
@@ -76,7 +78,36 @@ public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
     }
 }
 ```
-        </div>
+</WithGeneration>
+<WithoutGeneration>
+```csharp
+
+public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
+{
+    private readonly ILogger<ResetAllCustomers> _logger;
+    
+    public ResetAllCustomers(ILogger<ResetAllCustomers> logger)
+    {
+        _logger = logger;
+    }
+    
+    public override async Task Execute()
+    {
+        _logger.LogInformation("Resetting all customers for root {RootId}", GetRootKeyString());
+        
+        // Get a list of customers to reset
+        var customerIds = await CommandFactory
+            .GetEntity<CustomersListState>()
+            .Ask<GetAllCustomerIds, IEnumerable<string>>() // Getting all the customer IDs
+            .ThenForEach( // Take the list of customer IDs and do something with each value.
+                (b) => b.ThenTell<ResetCustomer, string, bool>() // Resetting the customer for each ID found.
+            )
+            .Run();
+    }
+}
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
 
   </TabItem>
   <TabItem value="entity-command-no-io" label="EntityCommandHandler">
@@ -117,6 +148,8 @@ public class ResetCustomer : EntityCommandHandler<CustomerState>
 <Tabs>
   <TabItem value="root-command-output" label="RootCommandHandler" default>
 
+<ToggledGenerationExample>
+<WithGeneration>
 ```csharp
 [UseShortcuts]
 public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
@@ -143,7 +176,36 @@ public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
     }
 }
 ```
+</WithGeneration>
+<WithoutGeneration>
+```csharp
 
+public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
+{
+    private readonly ILogger<CreateNewCustomer> _logger;
+    
+    public CreateNewCustomer(ILogger<CreateNewCustomer> logger)
+    {
+        _logger = logger;
+    }
+    
+    public override async Task<string> Execute()
+    {
+        var newCustomerId = Guid.NewGuid().ToString();
+        _logger.LogInformation("Creating new customer with ID: {CustomerId}", newCustomerId);
+        
+        // Initialize the new customer
+        await CommandFactory
+            .GetEntity<CustomerState>()
+            .Tell<InitializeCustomer, bool>()
+            .Run(newCustomerId);
+            
+        return newCustomerId;
+    }
+}
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
   </TabItem>
   <TabItem value="entity-command-output" label="EntityCommandHandler">
 
@@ -184,6 +246,8 @@ public class InitializeCustomer : EntityCommandHandler<CustomerState, bool>
 <Tabs>
   <TabItem value="root-command-input-output" label="RootCommandHandler" default>
 
+<ToggledGenerationExample>
+<WithGeneration>
 ```csharp
 [UseShortcuts]
 public class UpdateCustomer : RootCommandHandler<ICustomerRoot, UpdateCustomerRequest, bool>
@@ -203,7 +267,7 @@ public class UpdateCustomer : RootCommandHandler<ICustomerRoot, UpdateCustomerRe
         return await CommandFactory
             .GetEntity<CustomerState>()
             .UpdateCustomerInfo(
-                new UpdateCustomerInfoInput(
+                new UpdateCustomerRequest(
                     request.FirstName,
                     request.LastName,
                     request.PhoneNumber,
@@ -220,6 +284,46 @@ public sealed record UpdateCustomerRequest(
     string PhoneNumber,
     string Address);
 ```
+</WithGeneration>
+<WithoutGeneration>
+```csharp
+
+public class UpdateCustomer : RootCommandHandler<ICustomerRoot, UpdateCustomerRequest, bool>
+{
+    private readonly ILogger<UpdateCustomer> _logger;
+    
+    public UpdateCustomer(ILogger<UpdateCustomer> logger)
+    {
+        _logger = logger;
+    }
+    
+    public override async Task<bool> Execute(UpdateCustomerRequest request)
+    {
+        _logger.LogInformation("Updating customer with ID: {CustomerId}", request.CustomerId);
+        
+        // Call entity command to update customer info
+        return await CommandFactory
+            .GetEntity<CustomerState>()
+            .Tell<UpdateCustomerInfo, UpdateCustomerRequest, CustomerInfo> (
+                new UpdateCustomerRequest(
+                    request.FirstName,
+                    request.LastName,
+                    request.PhoneNumber,
+                    request.Address))
+            .Run(request.CustomerId);
+    }
+}
+
+[GenerateSerializer]
+public sealed record UpdateCustomerRequest(
+    string CustomerId,
+    string FirstName,
+    string LastName,
+    string PhoneNumber,
+    string Address);
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
 
   </TabItem>
   <TabItem value="entity-command-input-output" label="EntityCommandHandler">

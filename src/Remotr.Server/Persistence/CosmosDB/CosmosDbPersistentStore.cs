@@ -80,14 +80,28 @@ public sealed record CosmosDbPersistentStore : IPersistentStore
 
     public async Task<IDictionary<string, string>> ExecuteTransaction(IEnumerable<TransactionStateOperation> transactionOperations, GrainId grainId)
     {
+        return await ExecuteTransactionInternal(transactionOperations, grainId, false);
+    }
+
+    private async Task<IDictionary<string, string>> ExecuteTransactionInternal(IEnumerable<TransactionStateOperation> transactionOperations, GrainId grainId, bool isRetry)
+    {
         await InitializeContainer();
         var partitionKey = _grainIdToPartitionKey(grainId);
+
+        // Convert to list to preserve order
+        var operations = transactionOperations.ToList();
+        
+        // If there are no operations to process, return empty result
+        if (operations.Count == 0)
+        {
+            return new Dictionary<string, string>();
+        }
 
         // Create transactional batch.
         var transactionalBatch = _container!.CreateTransactionalBatch(new(partitionKey));
 
         // Add operations to transactional batch.
-        foreach (var transactionOperation in transactionOperations)
+        foreach (var transactionOperation in operations)
         {
             var type = transactionOperation.TransactionOperationType;
             var itemId = transactionOperation.ItemId;
@@ -111,9 +125,57 @@ public sealed record CosmosDbPersistentStore : IPersistentStore
         }
 
         // Execute transactional batch.
-        var responses = await transactionalBatch.ExecuteAsync();
+        TransactionalBatchResponse responses = await transactionalBatch.ExecuteAsync();
 
-        // If transaction failed, throw exception.
+        // If transaction failed, check if it's due to deleting non-existent items
+        if (!responses.IsSuccessStatusCode && !isRetry)
+        {
+            // Check if failures are all 404s on delete operations
+            bool shouldRetry = true;
+            var operationsToRetry = new List<TransactionStateOperation>();
+            
+            for (int i = 0; i < operations.Count; i++)
+            {
+                var response = responses[i];
+                var operation = operations[i];
+                
+                // If this operation succeeded, keep it
+                if (response.IsSuccessStatusCode)
+                {
+                    operationsToRetry.Add(operation);
+                    continue;
+                }
+                
+                // If this is a delete that failed with 404 (not found), skip it in retry
+                if (operation.TransactionOperationType == TransactionStateOperationType.Delete && 
+                    response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    continue;
+                }
+                
+                // If we encounter any other type of failure, don't retry
+                shouldRetry = false;
+                break;
+            }
+            
+            if (shouldRetry)
+            {
+                // If no operations to retry (all were deletes with 404), 
+                // consider the transaction successful
+                if (operationsToRetry.Count == 0)
+                {
+                    return new Dictionary<string, string>();
+                }
+                
+                // Otherwise, retry with filtered operations
+                if (operationsToRetry.Count < operations.Count)
+                {
+                    return await ExecuteTransactionInternal(operationsToRetry, grainId, true);
+                }
+            }
+        }
+
+        // If transaction failed and we couldn't recover, throw exception
         if (!responses.IsSuccessStatusCode)
         {
             throw new Exception(responses.ErrorMessage);
@@ -121,8 +183,8 @@ public sealed record CosmosDbPersistentStore : IPersistentStore
 
         // Get dictionary mapping item ids to the new state of the updated item.
         var updatedItems = new Dictionary<string, string>();
-        var itemIds = transactionOperations.Select(transactionOperation => transactionOperation.ItemId).ToList();
-        var transactionOperationTypes = transactionOperations.Select(transactionOperation => transactionOperation.TransactionOperationType).ToList();
+        var itemIds = operations.Select(transactionOperation => transactionOperation.ItemId).ToList();
+        var transactionOperationTypes = operations.Select(transactionOperation => transactionOperation.TransactionOperationType).ToList();
 
         List<(string itemId, Task<string> result)> readingItems = new();
         for (var i = 0; i < itemIds.Count; i++)

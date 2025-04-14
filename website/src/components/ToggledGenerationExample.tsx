@@ -36,13 +36,21 @@ interface GenerationComponentProps {
 export function WithGeneration({ children }: GenerationComponentProps) {
   const { isEnabled } = useGenerationState();
   if (!isEnabled) return null;
-  return <>{children}</>;
+  return <>
+    <p><i>This example uses the source generator. Toggle this for all examples in the left menu. Learn more about this
+      <a href="/docs/developing-aggregates/source-generation"> here</a>.
+    </i></p>
+    {children}
+  </>;
 }
 
 export function WithoutGeneration({ children }: GenerationComponentProps) {
   const { isEnabled } = useGenerationState();
   if (isEnabled) return null;
-  return <>{children}</>;
+  return <>
+    <p><i>This example doesn't use the source generator. Toggle this for all examples in the left menu.</i></p>
+    {children}
+  </>;
 }
 
 interface ToggledGenerationExampleProps {

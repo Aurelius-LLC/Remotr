@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Orleans.Concurrency;
 using Remotr.Testing;
 
 namespace Remotr;
@@ -97,7 +98,7 @@ public abstract class AggregateRoot<T> : Grain, IAggregateRoot, IIncomingGrainCa
         await StartTransaction(async () => await entityGrain.HandleCallback(callbackId));
     }
 
-    public virtual async Task<T> GetState<T>(string itemId) where T : new()
+    public virtual async Task<Immutable<StateType>> GetState<StateType>(string itemId) where StateType : new()
     {
         // Check if item is in cache and get it if it is.
         var inCache = Cache.TryGetValue(itemId, out var value);
@@ -106,12 +107,12 @@ public abstract class AggregateRoot<T> : Grain, IAggregateRoot, IIncomingGrainCa
         if (inCache)
         {
             Cache.Remove(itemId);
-            var x = typeof(T);
-            return JsonSerializer.Deserialize<T>(value!, options: _jsonSerializerOptions)!;
+            var x = typeof(StateType);
+            return new Immutable<StateType>(JsonSerializer.Deserialize<StateType>(value!, options: _jsonSerializerOptions)!);
         }
 
         // If not in cache, get from persistent store and return.
-        return await PersistentStore.ReadItem<T>(itemId, this.GetGrainId());
+        return new Immutable<StateType>(await PersistentStore.ReadItem<StateType>(itemId, this.GetGrainId()));
     }
 
     public Task NotifyOfTransactionParticipation(Guid transactionId, GrainId grainId, Guid activationId)

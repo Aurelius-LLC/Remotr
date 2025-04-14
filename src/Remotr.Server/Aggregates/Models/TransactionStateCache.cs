@@ -17,7 +17,7 @@ internal sealed class TransactionStateCache
     private JsonSerializerOptions _jsonSerializerOptions;
 
     // Track the current fetch operation and its timestamp
-    private Task<object>? _currentFetchTask;
+    private Task<object?>? _currentFetchTask;
 
     public TransactionStateCache(JsonSerializerOptions jsonSerializerOptions, Func<ITransactionalStateFetcher> getFetcherFunc, IServiceProvider serviceProvider)
     {
@@ -69,7 +69,7 @@ internal sealed class TransactionStateCache
 
         if (!stateHasFinishedTransaction && isItemCached && cachedItem!.CachedItemForRead != null)
         {
-            return cachedItem!.CachedItemForRead!;
+            return _deepCopier.Copy(cachedItem!.CachedItemForRead!);
         }
 
         // Check if there's already a fetch in progress for this timestamp
@@ -78,12 +78,12 @@ internal sealed class TransactionStateCache
             // Wait for the existing fetch to complete
             await _currentFetchTask;
             // The result should now be in the cache
-            return ItemCache[itemId].CachedItemForRead!;
+            return _deepCopier.Copy(ItemCache[itemId].CachedItemForRead!);
         }
 
         // Start a new fetch operation
         var fetchTask = GetFetcherFunc().GetState<T>(itemId);
-        _currentFetchTask = fetchTask.ContinueWith(t => (object)t.Result);
+        _currentFetchTask = fetchTask.ContinueWith(t => (object?)t.Result);
 
         try
         {
@@ -112,6 +112,13 @@ internal sealed class TransactionStateCache
         // Return item if in cache and (was not updated or only updated within this transaction).
         if (isItemCached && cachedItem!.CachedItemForTransaction != null && cachedItem!.CachedItemForTransaction.TransactionId == transactionId)
         {
+            // Check if the item was marked as deleted in this transaction
+            if (cachedItem.CachedItemForTransaction.IsDeleted)
+            {
+                // If deleted, return a new instance
+                return new T();
+            }
+            
             return _deepCopier.Copy(cachedItem!.CachedItemForTransaction!.Item);
         }
 
@@ -173,7 +180,7 @@ internal sealed class TransactionStateCache
     // TODO: fix bug where it won't clear the state if the item hasn't been fetched first.
     public void ClearState(string itemId, Guid transactionId, DateTime transactionTimestamp)
     {
-        // Remove from cache if it exists.
+        // Set the item to be deleted in the cache if it's there already.
         if (ItemCache.TryGetValue(itemId, out CachedItem? value))
         {
             ItemCache[itemId] = value with
