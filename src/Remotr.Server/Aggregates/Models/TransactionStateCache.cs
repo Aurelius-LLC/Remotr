@@ -91,11 +91,11 @@ internal sealed class TransactionStateCache
             var item = await fetchTask;
             ItemCache[itemId] = new()
             {
-                CachedItemForRead = item,
+                CachedItemForRead = item.Value,
             };
 
             // Always copy and then return the state to keep it safe from modifications.
-            return _deepCopier.Copy(item);
+            return _deepCopier.Copy(item.Value);
         }
         finally
         {
@@ -137,11 +137,11 @@ internal sealed class TransactionStateCache
         var item = await GetFetcherFunc().GetState<T>(itemId);
         ItemCache[itemId] = new()
         {
-            CachedItemForRead = item,
+            CachedItemForRead = item.Value,
         };
 
         // Always copy and then return the state to keep it safe from modifications.
-        return _deepCopier.Copy(item);
+        return _deepCopier.Copy(item.Value);
     }
 
     public void UpdateState<T>(string itemId, T item, Guid transactionId, DateTime transactionTimestamp) where T : new()

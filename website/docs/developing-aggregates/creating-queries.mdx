@@ -65,9 +65,10 @@ Remotr query handlers can work with or without input parameters. You can create 
 <Tabs>
   <TabItem value="root-query" label="RootQueryHandler" default>
 
-
+<ToggledGenerationExample>
+<WithGeneration>
 ```csharp
-
+[UseShortcuts]
 public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<CustomerInfo>> // This query is for "ICustomerRoot".
 {
     private readonly IVipService _vipService;
@@ -106,10 +107,58 @@ public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<Custom
     }
 }
 ```
+</WithGeneration>
+<WithoutGeneration>
+```csharp
+
+public class GetVipCustomerDetails : RootQueryHandler<ICustomerRoot, List<CustomerInfo>> // This query is for "ICustomerRoot".
+{
+    private readonly IVipService _vipService;
+
+    public GetVipCustomerDetails(IVipService vipService)
+    {
+        _vipService = vipService;
+    }
+
+    public override async Task<List<CustomerInfo>> Execute()
+    {
+        // Get all VIP customer IDs from a service
+        var vipCustomerIds = await _vipService.GetAllVipCustomerIds();
+        
+        var results = new List<CustomerInfo>();
+        
+        foreach (var customerId in vipCustomerIds)
+        {
+
+            /*
+            / Call the no-input entity query to get customer details
+            / Note how we're using the query factory to get the aggregate
+            / and then calling the query directly
+            */
+
+            var customerInfo = await QueryFactory
+                .GetAggregate<ICustomerAggregate>()
+                .Ask<GetCustomerDetails, CustomerInfo>()  // This calls our no-input entity query
+                .Run(customerId);      // Pass the entity ID to run against
+                
+
+            results.Add(customerInfo);
+        }
+        
+        return results;
+    }
+}
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
+
   </TabItem>
   <TabItem value="entity-query" label="EntityQueryHandler">
 
+<ToggledGenerationExample>
+<WithGeneration>
 ```csharp
+[UseShortcuts]
 public class GetCustomerDetails : EntityQueryHandler<CustomerState, CustomerInfo>
 {
     private readonly ILogger<GetCustomerDetails> _logger;
@@ -145,7 +194,47 @@ public class GetCustomerDetails : EntityQueryHandler<CustomerState, CustomerInfo
     }
 }
 ```
+</WithGeneration>
+<WithoutGeneration>
+```csharp
 
+public class GetCustomerDetails : EntityQueryHandler<CustomerState, CustomerInfo>
+{
+    private readonly ILogger<GetCustomerDetails> _logger;
+
+    public GetCustomerDetails(ILogger<GetCustomerDetails> logger)
+    {
+        _logger = logger;
+    }
+
+    public override async Task<CustomerInfo> Execute()
+    {
+        /*
+        /
+        / Entity queries can access entity state.
+        /
+        */
+        var state = await GetState();
+        
+
+        if (state == null || string.IsNullOrEmpty(state.FirstName))
+        {
+            _logger.LogWarning("No customer found with ID: {CustomerId}", EntityId);
+            throw new Exception("Customer not found");
+        }
+        
+        return new CustomerInfo
+        {
+            FirstName = state.FirstName,
+            LastName = state.LastName,
+            PhoneNumber = state.PhoneNumber,
+            Address = state.Address
+        };
+    }
+}
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
   </TabItem>
 </Tabs>
 
@@ -158,7 +247,10 @@ Remotr query handlers can accept at most one input parameter to filter or proces
 <Tabs>
   <TabItem value="root-query-input" label="RootQueryHandler" default>
 
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
+[UseShortcuts]
 public class CheckCustomersAtAddress : RootQueryHandler<AddressVerificationRequest, List<string>>
 {
 
@@ -197,6 +289,50 @@ public record AddressVerificationRequest
     public Address Address { get; init; }
 }
 ```
+        </WithGeneration>
+        <WithoutGeneration>
+```csharp
+
+public class CheckCustomersAtAddress : RootQueryHandler<AddressVerificationRequest, List<string>>
+{
+
+    public override async Task<List<string>> Execute(AddressVerificationRequest request)
+    {
+        // The input parameter contains everything we need to know:
+        // - Which customers to check
+        // - What address to verify against
+        
+        var matchingCustomerIds = new List<string>();
+        
+        foreach (var customerId in request.CustomerIds)
+        {
+            // Call an entity query that requires an input parameter
+            var livesAtAddress = await QueryFactory
+                .GetAggregate<ICustomerAggregate>()
+                .Ask<DoesCustomerLiveAtAddress, AddressCheckRequest, bool> (
+                    new AddressCheckRequest { Address = request.Address })  // This calls our entity query with input
+                .Run(customerId);
+                
+            // Only add customers who live at the specified address
+            if (livesAtAddress)
+            {
+                matchingCustomerIds.Add(customerId);
+            }
+        }
+        
+        return matchingCustomerIds;
+    }
+}
+
+[GenerateSerializer]
+public record AddressVerificationRequest
+{
+    public List<string> CustomerIds { get; init; } = new();
+    public Address Address { get; init; }
+}
+```
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
   <TabItem value="entity-query-input" label="EntityQueryHandler">

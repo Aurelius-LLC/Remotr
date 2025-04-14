@@ -48,4 +48,30 @@ public class CqrsChainingTests(ClusterFixture fixture)
             }
         );
     }
+
+    [Fact]
+    public async Task StepsShouldIsolateOutputsTest() {
+        var testRunner = fixture.Services.GetRequiredService<ITestRunner>();
+        await testRunner.RunTest(
+            (ICqMockBuilder mocker) => mocker,
+            async (commandFactory, queryFactory) =>
+            {
+                var result = await commandFactory.GetAggregate<ICalendarAggregate>()
+                    .AddEvent(new EventState () {
+                        Title = "Test",
+                        Duration = new (2),
+                    })
+                    .MergeSplit(
+                        // This updates the input.
+                        (b1) => b1.ThenUpdateEventStateInput(),
+                        // But this is the value we are taking, which should NOT have the updated input.
+                        (b2) => b2,
+                        new TakeSecond<EventState, EventState>()
+                    )
+                    .Run("StepsShouldIsolateOutputsTest");
+                
+                result.Duration.Should().Be(new TimeOnly(2));
+            }
+        );
+    }
 }
