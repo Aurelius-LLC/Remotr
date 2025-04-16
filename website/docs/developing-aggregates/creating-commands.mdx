@@ -112,6 +112,8 @@ public class ResetAllCustomers : RootCommandHandler<ICustomerRoot>
   </TabItem>
   <TabItem value="entity-command-no-io" label="EntityCommandHandler">
 
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
 [UseShortcuts]
 public class ResetCustomer : EntityCommandHandler<CustomerState>
@@ -139,6 +141,37 @@ public class ResetCustomer : EntityCommandHandler<CustomerState>
     }
 }
 ```
+        </WithGeneration>
+        <WithoutGeneration>
+```csharp
+
+public class ResetCustomer : EntityCommandHandler<CustomerState>
+{
+    private readonly ILogger<ResetCustomer> _logger;
+    
+    public ResetCustomer(ILogger<ResetCustomer> logger)
+    {
+        _logger = logger;
+    }
+    
+    public override async Task Execute()
+    {
+        _logger.LogInformation("Resetting customer with ID: {CustomerId}", EntityKey);
+        
+        var defaultState = new CustomerState
+        {
+            FirstName = string.Empty,
+            LastName = string.Empty,
+            PhoneNumber = string.Empty,
+            Address = string.Empty
+        };
+        
+        await UpdateState(defaultState);
+    }
+}
+```
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
 </Tabs>
@@ -148,8 +181,8 @@ public class ResetCustomer : EntityCommandHandler<CustomerState>
 <Tabs>
   <TabItem value="root-command-output" label="RootCommandHandler" default>
 
-<ToggledGenerationExample>
-<WithGeneration>
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
 [UseShortcuts]
 public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
@@ -176,8 +209,8 @@ public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
     }
 }
 ```
-</WithGeneration>
-<WithoutGeneration>
+        </WithGeneration>
+        <WithoutGeneration>
 ```csharp
 
 public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
@@ -204,11 +237,13 @@ public class CreateNewCustomer : RootCommandHandler<ICustomerRoot, string>
     }
 }
 ```
-</WithoutGeneration>
-</ToggledGenerationExample>
+        </WithoutGeneration>
+    </ToggledGenerationExample>
   </TabItem>
   <TabItem value="entity-command-output" label="EntityCommandHandler">
 
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
 [UseShortcuts]
 public class InitializeCustomer : EntityCommandHandler<CustomerState, bool>
@@ -237,6 +272,38 @@ public class InitializeCustomer : EntityCommandHandler<CustomerState, bool>
     }
 }
 ```
+        </WithGeneration>
+        <WithoutGeneration>
+```csharp
+
+public class InitializeCustomer : EntityCommandHandler<CustomerState, bool>
+{
+    private readonly ILogger<InitializeCustomer> _logger;
+    
+    public InitializeCustomer(ILogger<InitializeCustomer> logger)
+    {
+        _logger = logger;
+    }
+    
+    public override async Task<bool> Execute()
+    {
+        _logger.LogInformation("Initializing new customer with ID: {CustomerId}", EntityKey);
+        
+        var initialState = new CustomerState
+        {
+            FirstName = "New",
+            LastName = "Customer",
+            PhoneNumber = string.Empty,
+            Address = string.Empty
+        };
+        
+        await UpdateState(initialState);
+        return true;
+    }
+}
+```
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
 </Tabs>
@@ -246,8 +313,8 @@ public class InitializeCustomer : EntityCommandHandler<CustomerState, bool>
 <Tabs>
   <TabItem value="root-command-input-output" label="RootCommandHandler" default>
 
-<ToggledGenerationExample>
-<WithGeneration>
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
 [UseShortcuts]
 public class UpdateCustomer : RootCommandHandler<ICustomerRoot, UpdateCustomerRequest, bool>
@@ -284,8 +351,8 @@ public sealed record UpdateCustomerRequest(
     string PhoneNumber,
     string Address);
 ```
-</WithGeneration>
-<WithoutGeneration>
+        </WithGeneration>
+        <WithoutGeneration>
 ```csharp
 
 public class UpdateCustomer : RootCommandHandler<ICustomerRoot, UpdateCustomerRequest, bool>
@@ -322,12 +389,14 @@ public sealed record UpdateCustomerRequest(
     string PhoneNumber,
     string Address);
 ```
-</WithoutGeneration>
-</ToggledGenerationExample>
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
   <TabItem value="entity-command-input-output" label="EntityCommandHandler">
 
+    <ToggledGenerationExample>
+        <WithGeneration>
 ```csharp
 [UseShortcuts]
 public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
@@ -364,6 +433,46 @@ public sealed record UpdateCustomerInfoInput(
     string PhoneNumber,
     string Address);
 ```
+        </WithGeneration>
+        <WithoutGeneration>
+```csharp
+        
+public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+{
+    private readonly ILogger<UpdateCustomerInfo> _logger;
+
+    public UpdateCustomerInfo(ILogger<UpdateCustomerInfo> logger)
+    {
+        _logger = logger;
+    }
+
+    public override async Task<bool> Execute(UpdateCustomerInfoInput input)
+    {
+        _logger.LogInformation("Updating user info for customer with ID: {CustomerId}", EntityKey);
+
+        var state = await GetState();
+        var newState = state with
+        {
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            PhoneNumber = input.PhoneNumber,
+            Address = input.Address
+        };
+        
+        await UpdateState(newState);
+        return true;
+    }
+}
+
+[GenerateSerializer]
+public sealed record UpdateCustomerInfoInput(
+    string FirstName,
+    string LastName,
+    string PhoneNumber,
+    string Address);
+```
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
 </Tabs>

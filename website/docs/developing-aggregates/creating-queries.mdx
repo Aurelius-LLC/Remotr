@@ -337,7 +337,11 @@ public record AddressVerificationRequest
   </TabItem>
   <TabItem value="entity-query-input" label="EntityQueryHandler">
 
+    <ToggledGenerationExample>
+        <WithGeneration>
+
 ```csharp
+[UseShortcuts]
 public class DoesCustomerLiveAtAddress : EntityQueryHandler<CustomerDirectoryState, AddressCheckRequest, bool>
 {
     private readonly ILogger<DoesCustomerLiveAtAddress> _logger;
@@ -389,6 +393,63 @@ public record Address
     public string ZipCode { get; init; }
 }
 ```
+        </WithGeneration>
+        <WithoutGeneration>
+```csharp
+
+public class DoesCustomerLiveAtAddress : EntityQueryHandler<CustomerDirectoryState, AddressCheckRequest, bool>
+{
+    private readonly ILogger<DoesCustomerLiveAtAddress> _logger;
+
+    public DoesCustomerLiveAtAddress(
+        ILogger<DoesCustomerLiveAtAddress> logger)
+    {
+        _logger = logger;
+    }
+
+    public override async Task<bool> Execute(AddressCheckRequest request)
+    {
+        var state = await GetState();
+        
+        _logger.LogInformation("Checking if customer lives at address: {Address}", request.Address);
+        
+        if (!state.CustomersByUsername.TryGetValue(state.CurrentUsername, out var customerInfo))
+        {
+            _logger.LogWarning("No customer found with username: {Username}", state.CurrentUsername);
+            return false;
+        }
+
+        // Check if any of the customer's registered addresses match the provided one
+        bool matchFound = customerInfo.Addresses.Any(addr => 
+            string.Equals(addr.Street, request.Address.Street, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.City, request.Address.City, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.State, request.Address.State, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(addr.ZipCode, request.Address.ZipCode, StringComparison.OrdinalIgnoreCase));
+        
+        _logger.LogInformation("Address match result for customer {CustomerId}: {Result}", 
+            customerInfo.CustomerId, matchFound);
+            
+        return matchFound;
+    }
+}
+
+[GenerateSerializer]
+public record AddressCheckRequest
+{
+    public Address Address { get; init; }
+}
+
+[GenerateSerializer]
+public record Address
+{
+    public string Street { get; init; }
+    public string City { get; init; }
+    public string State { get; init; }
+    public string ZipCode { get; init; }
+}
+```
+        </WithoutGeneration>
+    </ToggledGenerationExample>
 
   </TabItem>
 </Tabs>
