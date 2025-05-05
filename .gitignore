@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # Verified files for checking tests.
 *.received.*
+
+.DS_Store
