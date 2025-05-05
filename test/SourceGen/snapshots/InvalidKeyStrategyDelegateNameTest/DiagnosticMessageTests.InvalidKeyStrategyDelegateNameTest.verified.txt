@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR012,
+      Title: Static method not found,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(11,1),
+      MessageFormat: Could not find static method '{0}' on interface '{1}',
+      Message: Could not find static method 'NonExistentMethod' on interface 'ITestAggregate',
+      Category: Remotr
+    }
+  ]
+}

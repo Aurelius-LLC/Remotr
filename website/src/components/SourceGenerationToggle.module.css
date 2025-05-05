@@ -1,0 +1,74 @@
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 10px;
+  border-bottom: 1px solid #333333;
+  margin-bottom: 10px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: var(--ifm-color-emphasis-300);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.toggle:hover {
+  opacity: 0.9;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.toggle.enabled {
+  background-color: var(--ifm-color-primary);
+}
+
+/* Dark mode specific styling */
+[data-theme='dark'] .toggle {
+  background-color: var(--ifm-color-emphasis-600);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .toggle.enabled {
+  background-color: var(--ifm-color-primary);
+}
+
+.thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggle.enabled .thumb {
+  transform: translateX(20px);
+}
+
+/* Initial visibility states - since toggle is enabled by default */
+:global(.sampleWithGeneration) {
+  display: block;
+}
+
+:global(.sampleWithoutGeneration) {
+  display: none;
+} 

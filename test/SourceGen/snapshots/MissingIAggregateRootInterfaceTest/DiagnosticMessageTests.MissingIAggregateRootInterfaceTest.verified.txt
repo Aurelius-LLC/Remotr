@@ -1,0 +1,24 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR001,
+      Title: Interface must implement IAggregateRoot,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(9,1),
+      MessageFormat: The interface '{0}' with {1} attribute must implement IAggregateRoot,
+      Message: The interface 'ITestAggregate' with UseCommandAttribute attribute must implement IAggregateRoot,
+      Category: Remotr
+    },
+    {
+      Id: REMOTR001,
+      Title: Interface must implement IAggregateRoot,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(9,1),
+      MessageFormat: The interface '{0}' with {1} attribute must implement IAggregateRoot,
+      Message: The interface 'ITestAggregate' with UseQueryAttribute attribute must implement IAggregateRoot,
+      Category: Remotr
+    }
+  ]
+}

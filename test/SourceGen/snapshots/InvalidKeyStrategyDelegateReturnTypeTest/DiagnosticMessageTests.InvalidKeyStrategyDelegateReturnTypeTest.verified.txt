@@ -1,0 +1,14 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR013,
+      Title: Invalid method return type,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(11,1),
+      MessageFormat: The static method '{0}' must return a string,
+      Message: The static method 'SetValue3TypeKey' must return a string,
+      Category: Remotr
+    }
+  ]
+}

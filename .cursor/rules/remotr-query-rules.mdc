@@ -1,0 +1,8 @@
+---
+description: Implementing RootQueryHandler or EntityQueryHandler. Creating Commands or Queries.
+globs: 
+alwaysApply: false
+---
+When creating query handlers, having 2 generic types always means that the first generic type is always the type of the Entity state or Aggregate Root, and the second generic type is always an output of the Execute method. If there are three types, the second changes. The second becomes an input type for the execute function, and the third becomes the output type of that method.
+
+Depending on if it's created for an AggregateRoot or an Entity, look for examples by searching for "EntityCommandHandler" or "EntityQueryHandler" for entities, and "RootCommandHandler" or "RootQueryHandler" for roots. Do a grep command in the command line on the codebase to find these examples. 

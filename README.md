@@ -18,7 +18,7 @@ Remotr was created to simplify 3 common scenarios:</p>
    4. [Orleans Feature Differences](#Orleans-Feature-Differences)  
    5. [BAD PRACTICES](#BAD-PRACTICES)  
    6. [Patterns](#Patterns)
-   7. [Testing with Remotr](#Testing-with-Remotr)
+   7. [Testing Aggregates](#Testing-Aggregates)
    8. [Examples](#Examples)
 
 ## Quickstart
@@ -85,15 +85,15 @@ Remotr was created to simplify 3 common scenarios:</p>
 
          // Make the Manager Grain interface.
          // Using "Api" or "Manager" before Grain can signal that it's a Manager grain
-         public interface ICustomerApiGrain : ITransactionManagerGrain, IGrainWithGuidKey // For Manager grains, you can define what type of Grain key they will use.
+         public interface ICustomerApiGrain : IAggregateRoot, IGrainWithGuidKey // For Manager grains, you can define what type of Grain key they will use.
          {
             // This will ALWAYS be empty.
             // The interface simply defines how the Manager grain is accessed.
          }
 
          // Make the Manager Grain implementation.
-         // Need to have Manager Grains inherit from TransactionManagerGrain<IType> and IType
-         public class CustomerApiGrain : TransactionManagerGrain<ICustomerApiGrain>, ICustomerApiGrain
+         // Need to have Manager Grains inherit from AggregateRoot<IType> and IType
+         public class CustomerApiGrain : AggregateRoot<ICustomerApiGrain>, ICustomerApiGrain
          {
             // Define what persistent store to use
             // This comes from the previous code block cosmosBuilder.AddContainer("Customer" ...
@@ -234,13 +234,13 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
               
 
       3) **Creating Commands and Queries** 
-         1) **Creating Commands:** Extend StatefulCommandHandler to create a command
+         1) **Creating Commands:** Extend EntityCommandHandler to create a command
             ```csharp
 
-            // StatefulCommandHandler Generic Forms:
-            // 1) StatefulCommandHandler<TState>
-            // 2) StatefulCommandHandler<TState, TOuput>
-            // 3) StatefulCommandHandler<TState, TInput, TOutput>
+            // EntityCommandHandler Generic Forms:
+            // 1) EntityCommandHandler<TState>
+            // 2) EntityCommandHandler<TState, TOuput>
+            // 3) EntityCommandHandler<TState, TInput, TOutput>
             //
             // - TState is the state of the child grain the command is acting on.
             // - TOutput is return value from executing the command.
@@ -248,7 +248,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
             //
             // Because updating customer info requires input, we are using the third
             // generic form.
-            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
                 private readonly ILogger _logger;
 
@@ -259,7 +259,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
                 }
                 public override async Task<bool> Execute(UpateCustomerInfoInput input)
                 {
-                  _logger.LogInformation("Updating user info for customer with ID: {}", this.GetManagerId());
+                  _logger.LogInformation("Updating user info for customer with ID: {}", this.GetAggregateId());
 
                   // Update customer info
                   ...
@@ -276,14 +276,14 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
             - Only the first generic type parameter is required. This is the case if the command does not take input and returns nothing.
             - If the command does take input, all three type parameters are required. This is because the two type parameters are treated as the state of the child grain and the return value of Execute.
             - If you do need an input, but do not want to return anything, a best practice is to return a bool the signals success or failure.
-         2) **Creating Queries:** Extend StatefulQueryHandler to create a query
-            - The generic type parameters are the same as StatefulCommandHandler and have the same constraints.
-            - The only difference is that StatefulQueryHandler cannot update state or call commands.
+         2) **Creating Queries:** Extend EntityQueryHandler to create a query
+            - The generic type parameters are the same as EntityCommandHandler and have the same constraints.
+            - The only difference is that EntityQueryHandler cannot update state or call commands.
 
       4) **Reading and Writing State**
          1) Only for Child Grains
             ```csharp
-            public class UpdateCustomerInfo : StatefulCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
+            public class UpdateCustomerInfo : EntityCommandHandler<CustomerState, UpdateCustomerInfoInput, bool>
             {
                 public override async Task<bool> Execute(UpateCustomerInfoInput input)
                 {
@@ -316,7 +316,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
              public async Task<CustomerInfo> GetCustomerInfo(Guid customerId)
              {
                  return await _queryFactory
-                     .GetManager<ICustomerApiGrain>()
+                     .GetAggregate<ICustomerApiGrain>()
                      .Ask<RetrieveCustomerInfo, CustomerInfo>()
                      .Run(customerId);
              }
@@ -339,7 +339,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
              public Task UpdateCustomerInformation(Guid customerId, UpdateCustomerInfoInput input)
              {
                  await _commandFactory
-                     .GetManagerGrain<ICustomerApiGrain>()
+                     .GetAggregate<ICustomerApiGrain>()
                      .Tell<UpdateCustomerInfo, UpdateCustomerInfoInput, bool>(input)
                      .Run(customerId);
              }
@@ -385,7 +385,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
          ```csharp
          public static class CustomerCommandExtensions
          {
-             public static async Task<CustomerInfo> GetCustomerInfo(this BaseStatefulCommandHandler<CustomerState> target)
+             public static async Task<CustomerInfo> GetCustomerInfo(this BaseEntityCommandHandler<CustomerState> target)
              {
                  var state = await target.GetState();
                  return new CustomerInfo
@@ -399,12 +399,12 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
          }
          ```
          - Extension methods can be added for queries and commands of a specific type.
-         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands; however, because it extends the `BaseStatefulCommandHandler<TState>`, it can only be used by commands. Extensions on `BaseStatefulQueryHandler<TState>` can be used by both commands and queries.
+         - In the above example, the mapping of CustomerState to CustomerInfo may be used by multiple different CustomerState commands; however, because it extends the `BaseEntityCommandHandler<TState>`, it can only be used by commands. Extensions on `BaseEntityQueryHandler<TState>` can be used by both commands and queries.
 
 
 
    8. Other Useful Methods  
-      1) **GetManagerId() on Child Grains**\
+      1) **GetAggregateId() on Child Grains**\
          **This shouldn’t be used to call the Manager Grain ever**, and it should only be used in rare situations anyways, but it is sometimes useful. The downside of this method being accessible is that it’s possible to make Child Grains less reusable for other Manager Grain types if they are tightly coupled with a particular Manager Grain type.  
 
       2) **`String GetPrimaryKey()` for Child Grains**\
@@ -440,7 +440,7 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
 
 4. **Child to Self-Manager Calls:** Calling the Manager Grain of a Child Grain from the Child Grain itself. This is an inversion of the expected control flow, and usually makes it impossible to reuse Child Grains for other types of Manager Grains. It will also cause a deadlock (on itself) if you run a command against the Manager Grain from one of that Manager Grain’s Child Grains.
 
-5. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having ChildGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
+5. **Large Grain Partitions:** Having a huge grain partition that will likely have much of the partition in memory at once (by nature of having EntityGrains called). Because grain partitions exist altogether on a single silo, this will likely cause performance issues.
    - **Example:** The IoT security sensors for an entire building should most likely not go directly through a single grain partition, even if it would be convenient for them to do so. This is assuming that they are constantly feeding data, which would slow the grain partition to a halt given hundreds of commands per second. That’s not to say that Remotr couldn’t be utilized, but it’s important to design the grain partitions with this in mind.  
 
 
@@ -448,13 +448,13 @@ Because child grains are always technically StatelessWorker Grains (an Orleans f
 ## Common Useful Remotr Patterns  
 1. **Singleton Child Grain IDs:**
   ```csharp
-  public sealed class ApiUpdateCustomerInfo : StatelessCommandHandler<ICustomerApiGrain, UpdateCustomerInfoInput, bool>
+  public sealed class ApiUpdateCustomerInfo : RootCommandHandler<ICustomerApiGrain, UpdateCustomerInfoInput, bool>
   {
       public override async Task<Post?> Execute(SaveStreaksInput input)
       {
-         var customerId = this.GetManagerId(); // This will be the the manager grain's Id.
+         var customerId = this.GetAggregateId(); // This will be the the manager grain's Id.
           return await CommandFactory
-              .GetChild<CustomerState>()
+              .GetEntity<CustomerState>()
               .Tell<UpdateCustomerInof, UpdateCustomerInfoInput, bool>(input)
               .Run("Customer"); // Customer will be the Id of all CustomerState objects.
               // This is a singleton on a per-grain-partition basis.

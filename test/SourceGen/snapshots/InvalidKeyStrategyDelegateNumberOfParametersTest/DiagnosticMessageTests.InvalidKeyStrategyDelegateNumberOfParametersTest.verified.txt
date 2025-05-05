@@ -1,0 +1,24 @@
+﻿{
+  Diagnostics: [
+    {
+      Id: REMOTR014,
+      Title: Method parameter mismatch,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(16,1),
+      MessageFormat: The static method '{0}' must accept a parameter because the handler has an input,
+      Message: The static method 'SetValue3TypeKey' must accept a parameter because the handler has an input,
+      Category: Remotr
+    },
+    {
+      Id: REMOTR015,
+      Title: Method parameter mismatch,
+      Severity: Error,
+      WarningLevel: 0,
+      Location: : (5,0)-(16,1),
+      MessageFormat: The static method '{0}' must not have parameters because the handler does not have an input,
+      Message: The static method 'SetValue2TypeKey' must not have parameters because the handler does not have an input,
+      Category: Remotr
+    }
+  ]
+}

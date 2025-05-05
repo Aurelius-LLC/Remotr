@@ -1,0 +1,176 @@
+---
+sidebar_position: 1
+---
+
+# Roots and Entities
+
+## What Are Aggregates?
+
+Aggregates in Remotr are logical groupings of state that work as a cohesive unit:
+
+1. **Aggregate Root** - The entry point and controller for the entire aggregate
+2. **Entities** - Individual components within the aggregate that manage specific state
+3. **Transactional Boundary** - All changes across an aggregate are transactional
+
+TODO: Create a diagram showing the relationship between an Aggregate Root and its Entities.
+
+## Creating an Aggregate Root
+
+Aggregate Roots are [virtual actors](../features-and-advantages/simplified-concurrency.md#understanding-aggregates-in-remotr) that:
+- Act as the entry point to all operations on an aggregate
+- Control all transaction boundaries
+- Have no direct state of their own
+
+### Step 1: Define the Interface
+
+- Always empty.
+- Defines how the Root is accessed.
+    - TODO: List different interfaces for different types of access
+
+```csharp
+// Create your grain interface
+using Remotr;
+
+namespace MyNamespace;
+
+// Define the Aggregate Root interface
+public interface ICustomerAggregate : IAggregateRoot, IGrainWithGuidKey
+{
+    // The interface is always empty
+    // It simply defines how the Aggregate Root is accessed
+}
+```
+
+### Step 2: Implement the Root
+
+```csharp
+// Implement the Aggregate Root
+public class CustomerAggregate : AggregateRoot<ICustomerAggregate>, ICustomerAggregate
+{
+    // Define what persistent store to use
+    // This references container name from your configuration (e.g. "Customer")
+    public CustomerAggregate([FromKeyedServices("Customer")] IPersistentStore persistentStore) 
+        : base(persistentStore)
+    {
+        // The constructor will always be empty
+    }
+}
+```
+
+### Important Notes
+
+- **Empty Interface and Implementation**: Aggregate Roots never have methods directly on them
+- **Addressing**: Roots can use any Orleans key type (Guid, string, long)
+- **Entry Point**: All interactions happen through Commands and Queries
+
+## Creating Entities
+
+Entities are virtual actors that:
+- Hold and manage state within an aggregate
+- Are accessed only through their Aggregate Root
+- Are co-located with their Aggregate Root
+
+### Step 1: Define the Entity State
+
+```csharp
+// Don't forget the GenerateSerializer attribute
+[GenerateSerializer]
+public sealed record CustomerState
+{
+    // An Id property is required for Cosmos Items
+    // Entities are unique by Id within an Aggregate
+    [Id(0)]
+    public string Id { get; set; }
+    
+    // Needed to differentiate partitions (depends on the Cosmos Container)
+    [Id(1)]
+    public Guid CustomerId { get; set; }
+
+    // Always add the "Id" attribute to state properties
+    [Id(2)]
+    public string FirstName { get; set; } = string.Empty;
+
+    [Id(3)]
+    public string LastName { get; set; } = string.Empty;
+
+    [Id(4)]
+    public string PhoneNumber { get; set; } = string.Empty;
+
+    [Id(5)]
+    public string Address { get; set; } = string.Empty;
+}
+```
+
+### Important Rules for Entity State
+
+- Always add the `GenerateSerializer` attribute to entity states
+- States should always have a string `Id` property
+- Include an additional property to identify the aggregate (e.g., `CustomerId`)
+- All properties must have the `[Id(n)]` attribute (Orleans requirement)
+
+## Commands and Queries
+
+All operations on Aggregates happen through Commands and Queries following the CQRS pattern.
+
+Read more here:\
+[Creating Queries](creating-queries.md)\
+[Creating Commands](creating-commands.md)
+
+## Common Patterns
+
+### Singleton Entity Pattern
+
+When an Aggregate needs only one instance of a particular Entity:
+<ToggledGenerationExample>
+<WithGeneration>
+```csharp
+[UseShortcuts]
+public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggregate, UpdateCustomerInfoInput, bool>
+{
+    public override async Task<bool> Execute(UpdateCustomerInfoInput input)
+    {
+        var customerId = this.GetAggregateId();
+        return await CommandFactory
+            .GetEntity<CustomerState>()
+            .UpdateCustomerInfo(input)
+            .Run("Customer"); // "Customer" is the singleton Entity ID
+    }
+}
+```
+</WithGeneration>
+<WithoutGeneration>
+```csharp
+
+public sealed class UpdateCustomerRootCommand : RootCommandHandler<ICustomerAggregate, UpdateCustomerInfoInput, bool>
+{
+    public override async Task<bool> Execute(UpdateCustomerInfoInput input)
+    {
+        var customerId = this.GetAggregateId();
+        return await CommandFactory
+            .GetEntity<CustomerState>()
+            .Tell<UpdateCustomerInfo, UpdateCustomerInfoInput, bool>(input)
+            .Run("Customer"); // "Customer" is the singleton Entity ID
+    }
+}
+```
+</WithoutGeneration>
+</ToggledGenerationExample>
+
+## Concurrency Model
+
+Aggregates provide a powerful concurrency model that balances safety and performance:
+
+- **Commands** run sequentially and cannot interleave with other commands
+- **Queries** can interleave with commands and other queries
+- **Entities** can process messages concurrently within the same aggregate
+
+TODO: Link to [Simplified Concurrency](../features-and-advantages/simplified-concurrency.md#cqrs-powered-interleaving) for more details on how aggregates process requests.
+
+## Best Practices
+
+1. **Keep Roots Empty**: Never add methods directly to Aggregate Roots
+2. **Entity Key Types**: Entity keys must always be strings
+3. **No Cross-Aggregate Commands**: Never execute commands across different aggregates
+4. **Size Matters**: Design aggregates to handle reasonably-sized groups of related entities
+
+For more information on how aggregates manage concurrency and message processing, see TODO: Link to [Aggregate Architecture](../features-and-advantages/simplified-concurrency.md#aggregate-architecture) and [Message Processing and Concurrency](../features-and-advantages/simplified-concurrency.md#message-processing-and-concurrency).
